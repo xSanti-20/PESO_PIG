@@ -1,0 +1,54 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\M\u0026M CONSTRUCTORA\\source\\repos\\API PESO_PIG\\Backend\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{45618DAC-2E38-484E-AA70-1D3487BAA3D1}|API PESO_PIG\\API PESO_PIG.csproj|c:\\users\\m\u0026m constructora\\source\\repos\\api peso_pig\\backend\\api peso_pig\\controllers\\weighing.controller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{45618DAC-2E38-484E-AA70-1D3487BAA3D1}|API PESO_PIG\\API PESO_PIG.csproj|solutionrelative:api peso_pig\\controllers\\weighing.controller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{45618DAC-2E38-484E-AA70-1D3487BAA3D1}|API PESO_PIG\\API PESO_PIG.csproj|c:\\users\\m\u0026m constructora\\source\\repos\\api peso_pig\\backend\\api peso_pig\\controllers\\piglet.controller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{45618DAC-2E38-484E-AA70-1D3487BAA3D1}|API PESO_PIG\\API PESO_PIG.csproj|solutionrelative:api peso_pig\\controllers\\piglet.controller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Weighing.Controller.cs",
+              "DocumentMoniker": "C:\\Users\\M\u0026M CONSTRUCTORA\\source\\repos\\API PESO_PIG\\Backend\\API PESO_PIG\\Controllers\\Weighing.Controller.cs",
+              "RelativeDocumentMoniker": "API PESO_PIG\\Controllers\\Weighing.Controller.cs",
+              "ToolTip": "C:\\Users\\M\u0026M CONSTRUCTORA\\source\\repos\\API PESO_PIG\\Backend\\API PESO_PIG\\Controllers\\Weighing.Controller.cs",
+              "RelativeToolTip": "API PESO_PIG\\Controllers\\Weighing.Controller.cs",
+              "ViewState": "AgIAAC8AAAAAAAAAAAAgwE4AAAA4AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-09-09T17:20:16.862Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "Piglet.Controller.cs",
+              "DocumentMoniker": "C:\\Users\\M\u0026M CONSTRUCTORA\\source\\repos\\API PESO_PIG\\Backend\\API PESO_PIG\\Controllers\\Piglet.Controller.cs",
+              "RelativeDocumentMoniker": "API PESO_PIG\\Controllers\\Piglet.Controller.cs",
+              "ToolTip": "C:\\Users\\M\u0026M CONSTRUCTORA\\source\\repos\\API PESO_PIG\\Backend\\API PESO_PIG\\Controllers\\Piglet.Controller.cs",
+              "RelativeToolTip": "API PESO_PIG\\Controllers\\Piglet.Controller.cs",
+              "ViewState": "AgIAACEAAAAAAAAAAAAYwD8AAAA3AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-09-09T17:19:13.437Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
