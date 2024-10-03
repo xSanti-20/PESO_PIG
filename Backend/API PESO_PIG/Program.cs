@@ -1,5 +1,6 @@
-using API_PESO_PIG.Functions;
+using API_PESO_PIG.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
@@ -30,6 +31,12 @@ builder.Services.AddAuthentication(option =>
     };
 });
 
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseMySql(builder.Configuration.GetConnectionString("DefaultConnection"),
+    new MySqlServerVersion(new Version(8, 0, 23)))
+);
+
+builder.Services.AddScoped<UserServices>();
 
 var app = builder.Build();
 

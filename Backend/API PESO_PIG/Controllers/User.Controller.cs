@@ -1,7 +1,10 @@
 ﻿using API_PESO_PIG.Functions;
 using API_PESO_PIG.Models;
+using API_PESO_PIG.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
+using MySql.Data.MySqlClient;
+using System.Data.SqlClient;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -13,11 +16,13 @@ namespace API_PESO_PIG.Controllers
     public class UserController : Controller
     {
         public IConfiguration _Configuration;
+        public readonly UserServices _Services;
         public Jwt Jwt { get; set; }
         public UserFunction GeneralFunction;
-        public UserController(IConfiguration configuration)
+        public UserController(IConfiguration configuration, UserServices userservices)
         {
             _Configuration = configuration;
+            _Services = userservices;
             GeneralFunction = new UserFunction(configuration);
             Jwt = _Configuration.GetSection("Jwt").Get<Jwt>();
         }
@@ -89,6 +94,22 @@ namespace API_PESO_PIG.Controllers
 
             }
         }
-        
+
+
+        [HttpGet("ConsultAllUser")]
+        public ActionResult<IEnumerable<User>> AllUsers()
+        {
+            try
+            {
+                return Ok(_Services.GetUsers());
+            }
+            
+            catch (Exception ex)
+            {
+                GeneralFunction.Addlog(ex.ToString());
+                return StatusCode(500, ex.ToString());
+            }
+        }
     }
 }
+    

@@ -12,7 +12,9 @@
     }
     public class User
     {
-        //TODO LOS CAMPOS DE LA BASE DE DATOS
+        public int id { get; set; }
+        public string Nom_Users { get; set; }
+        public string Tip_Users { get; set; }
     }
 
     public class MessageConcat

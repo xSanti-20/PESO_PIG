@@ -1,23 +1,23 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\M&M CONSTRUCTORA\\source\\repos\\API PESO_PIG\\Backend\\API PESO_PIG\\API PESO_PIG.csproj": {}
+    "C:\\Users\\SantiagoP\\source\\repos\\API PESO_PIG\\Backend\\API PESO_PIG\\API PESO_PIG.csproj": {}
   },
   "projects": {
-    "C:\\Users\\M&M CONSTRUCTORA\\source\\repos\\API PESO_PIG\\Backend\\API PESO_PIG\\API PESO_PIG.csproj": {
+    "C:\\Users\\SantiagoP\\source\\repos\\API PESO_PIG\\Backend\\API PESO_PIG\\API PESO_PIG.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\M&M CONSTRUCTORA\\source\\repos\\API PESO_PIG\\Backend\\API PESO_PIG\\API PESO_PIG.csproj",
+        "projectUniqueName": "C:\\Users\\SantiagoP\\source\\repos\\API PESO_PIG\\Backend\\API PESO_PIG\\API PESO_PIG.csproj",
         "projectName": "API PESO_PIG",
-        "projectPath": "C:\\Users\\M&M CONSTRUCTORA\\source\\repos\\API PESO_PIG\\Backend\\API PESO_PIG\\API PESO_PIG.csproj",
-        "packagesPath": "C:\\Users\\M&M CONSTRUCTORA\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\M&M CONSTRUCTORA\\source\\repos\\API PESO_PIG\\Backend\\API PESO_PIG\\obj\\",
+        "projectPath": "C:\\Users\\SantiagoP\\source\\repos\\API PESO_PIG\\Backend\\API PESO_PIG\\API PESO_PIG.csproj",
+        "packagesPath": "C:\\Users\\SantiagoP\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\SantiagoP\\source\\repos\\API PESO_PIG\\Backend\\API PESO_PIG\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\M&M CONSTRUCTORA\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\SantiagoP\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -54,15 +54,27 @@
               "target": "Package",
               "version": "[8.0.7, )"
             },
+            "Microsoft.EntityFrameworkCore": {
+              "target": "Package",
+              "version": "[8.0.8, )"
+            },
             "Microsoft.EntityFrameworkCore.Tools": {
               "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
               "suppressParent": "All",
               "target": "Package",
               "version": "[8.0.7, )"
             },
+            "MySql.Data": {
+              "target": "Package",
+              "version": "[9.0.0, )"
+            },
             "Newtonsoft.Json": {
               "target": "Package",
               "version": "[13.0.3, )"
+            },
+            "Pomelo.EntityFrameworkCore.MySql": {
+              "target": "Package",
+              "version": "[8.0.2, )"
             },
             "Swashbuckle.AspNetCore": {
               "target": "Package",
@@ -71,6 +83,10 @@
             "Swashbuckle.AspNetCore.Swagger": {
               "target": "Package",
               "version": "[6.6.2, )"
+            },
+            "System.Data.SqlClient": {
+              "target": "Package",
+              "version": "[4.8.6, )"
             }
           },
           "imports": [
