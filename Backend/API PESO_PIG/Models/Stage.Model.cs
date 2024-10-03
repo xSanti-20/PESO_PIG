@@ -1,6 +1,4 @@
-﻿using System.Data;
-
-namespace PESOPIG.Models
+﻿namespace API_PESO_PIG.Models
 {
     public class StageModel
     {

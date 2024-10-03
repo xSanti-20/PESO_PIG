@@ -8,9 +8,11 @@ namespace API_PESO_PIG.Controllers
     [Route("api/[Controller]")]
     public class PigletController : Controller
     {
+        public IConfiguration _Configuration;
         public UserFunction GeneralFunction;
         public PigletController(IConfiguration configuration)
         {
+            _Configuration = configuration;
             GeneralFunction = new UserFunction(configuration);
         }
 

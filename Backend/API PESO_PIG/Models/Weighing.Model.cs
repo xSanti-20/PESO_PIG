@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace API_PESO_PIG.Models
+﻿namespace API_PESO_PIG.Models
 {
     public class Weighing
     {

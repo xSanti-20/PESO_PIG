@@ -1,6 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using PESO_PIG.Models;
-using System.Security.Cryptography.X509Certificates;
+﻿using API_PESO_PIG.Functions;
+using Microsoft.AspNetCore.Mvc;
+using API_PESO_PIG.Models;
 
 namespace PESO_PIG.Controllers
 {
@@ -8,6 +8,13 @@ namespace PESO_PIG.Controllers
     [Route("Api/[controller]")]
     public class FoodController : Controller
     {
+        public IConfiguration _Configuration;
+        public UserFunction GeneralFunction;
+        public FoodController(IConfiguration configuration)
+        {
+            _Configuration = configuration;
+            GeneralFunction = new UserFunction(configuration);
+        }
         [HttpPost("CreateFood")]
         public IActionResult Create(FoodModels foodModels)
         {
@@ -17,11 +24,12 @@ namespace PESO_PIG.Controllers
             }
             catch (Exception ex)
             {
+                GeneralFunction.Addlog(ex.ToString());
                 return StatusCode(500, ex.Message.ToString());
             }
         }
         [HttpGet("GetFood")]
-        public IActionResult GetFood()
+        public IActionResult GetFood(FoodModels foodModels)
         {
             try
             {
@@ -29,12 +37,13 @@ namespace PESO_PIG.Controllers
             }
             catch (Exception ex)
             {
+                GeneralFunction.Addlog(ex.ToString());
                 return StatusCode(500, ex.Message.ToString());
             }
         }
 
         [HttpGet("GetAllFood")]
-        public IActionResult GetFoods()
+        public IActionResult GetFoods(FoodModels foodModels)
         {
             try
             {
@@ -42,6 +51,7 @@ namespace PESO_PIG.Controllers
             }
             catch (Exception ex)
             {
+                GeneralFunction.Addlog(ex.ToString());
                 return StatusCode(500, ex.Message.ToString());
             }
         }
@@ -56,11 +66,12 @@ namespace PESO_PIG.Controllers
             }
             catch (Exception ex)
             {
+                GeneralFunction.Addlog(ex.ToString());
                 return StatusCode(500, ex.Message.ToString());
             }
         }
         [HttpDelete("DeleteFood")]
-        public IActionResult DeleteFood()
+        public IActionResult DeleteFood(FoodModels foodModels)
         {
             try
             {
@@ -68,6 +79,7 @@ namespace PESO_PIG.Controllers
             }
             catch (Exception ex)
             {
+                GeneralFunction.Addlog(ex.ToString());
                 return StatusCode(500, ex.Message.ToString());
             }
         }

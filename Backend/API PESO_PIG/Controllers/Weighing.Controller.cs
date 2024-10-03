@@ -8,9 +8,11 @@ namespace API_PESO_PIG.Controllers
     [Route("api/[Controller]")]
     public class WeighingController : Controller
     {
+        public IConfiguration _Configuration;
         public UserFunction GeneralFunction;
         public WeighingController(IConfiguration configuration)
         {
+            _Configuration = configuration;
             GeneralFunction = new UserFunction(configuration);
         }
 
@@ -45,7 +47,7 @@ namespace API_PESO_PIG.Controllers
         }
 
         [HttpGet("ConsultPesajes")]
-        public async Task<IActionResult> ConsultPesajes(Weighing weighing)
+        public async Task<IActionResult>ConsultPesajes(Weighing weighing)
         {
             try
             {

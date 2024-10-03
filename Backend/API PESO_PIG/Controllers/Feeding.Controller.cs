@@ -1,78 +1,91 @@
-﻿using MiApi.Models;
+﻿using API_PESO_PIG.Functions;
+using API_PESO_PIG.Models;
 using Microsoft.AspNetCore.Mvc;
 
-namespace MiApi.Controllers
+namespace API_PESO_PIG.Controllers
 {
     [ApiController]
     [Route("Api/[controller]")]
     public class FeedingController : ControllerBase
     {
+        public IConfiguration _Configuration;
+        public UserFunction GeneralFunction;
+        public FeedingController(IConfiguration configuration)
+        {
+            _Configuration = configuration;
+            GeneralFunction = new UserFunction(configuration);
+        }
         [HttpPost("CreateFeeding")]
-        public IActionResult CreateAlimentacion([FromBody] AlimentacionModel alimentacion)
+        public IActionResult CreateAlimentacion(FeedingModel feedingModel)
         {
             try
             {
                 // Lógica para crear una nueva alimentación
-                return Ok(new { message = "Alimentación creada con éxito" });
+                return Ok();
             }
             catch (Exception ex)
             {
+                GeneralFunction.Addlog(ex.ToString());
                 return StatusCode(500, ex.Message);
             }
         }
 
         [HttpGet("GetAlimentaciones")]
-        public IActionResult GetAlimentaciones()
+        public IActionResult GetAlimentaciones(FeedingModel feedingModel)
         {
             try
             {
                 // Lógica para obtener todas las alimentaciones
-                return Ok(new { message = "Lista de alimentaciones" });
+                return Ok();
             }
             catch (Exception ex)
             {
+                GeneralFunction.Addlog(ex.ToString());
                 return StatusCode(500, ex.Message);
             }
         }
 
-        [HttpGet("GetAlimentacion/{id}")]
-        public IActionResult GetAlimentacion(int id)
+        [HttpGet("GetAlimentacion")]
+        public IActionResult GetAlimentacion()
         {
             try
             {
                 // Lógica para obtener una alimentación específica
-                return Ok(new { message = $"Alimentación con ID {id} obtenida" });
+                return Ok();
             }
             catch (Exception ex)
             {
+                GeneralFunction.Addlog(ex.ToString());
                 return StatusCode(500, ex.Message);
             }
         }
 
         [HttpPut("UpdateAlimentacion")]
-        public IActionResult UpdateAlimentacion([FromBody] AlimentacionModel alimentacion)
+        public IActionResult UpdateAlimentacion(FeedingModel feedingModel)
         {
             try
             {
                 // Lógica para actualizar una alimentación existente
-                return Ok(new { message = "Alimentación actualizada con éxito" });
+                return Ok();
             }
             catch (Exception ex)
             {
+                GeneralFunction.Addlog(ex.ToString());
                 return StatusCode(500, ex.Message);
             }
         }
 
-        [HttpDelete("DeleteAlimentacion/{id}")]
-        public IActionResult DeleteAlimentacion(int id)
+        [HttpDelete("DeleteAlimentacion")]
+        public IActionResult DeleteAlimentacion(FeedingModel feedingModel)
         {
             try
             {
                 // Lógica para eliminar una alimentación
-                return Ok(new { message = $"Alimentación con ID {id} eliminada" });
+                return Ok();
             }
             catch (Exception ex)
             {
+                GeneralFunction.Addlog(ex.ToString());
                 return StatusCode(500, ex.Message);
             }
         }

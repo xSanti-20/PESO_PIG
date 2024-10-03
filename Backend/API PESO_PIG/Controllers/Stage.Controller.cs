@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using PESOPIG.Models;
+using API_PESO_PIG.Models;
+using API_PESO_PIG.Functions;
 
 namespace PESOPIG.Controllers
 {
@@ -7,9 +8,15 @@ namespace PESOPIG.Controllers
     [Route("Api/controller")]
     public class StageController : Controller
     {
+        public IConfiguration _Configuration;
+        public UserFunction GeneralFunction;
+        public StageController(IConfiguration configuration)
+        {
+            _Configuration = configuration;
+            GeneralFunction = new UserFunction(configuration);
+        }
         [HttpPost("CreateStage")]
-        public IActionResult CreateStage
-            (StageModel stage)
+        public IActionResult CreateStage(StageModel stage)
         {
             try
             {
@@ -17,11 +24,12 @@ namespace PESOPIG.Controllers
             }
             catch (Exception ex)
             {
+                GeneralFunction.Addlog(ex.ToString());
                 return StatusCode(500, ex.Message.ToString());
             }
         }
         [HttpGet("GetStages")]
-        public IActionResult GetStages()
+        public IActionResult GetStages(StageModel stageModel)
         {
             try
             {
@@ -29,11 +37,12 @@ namespace PESOPIG.Controllers
             }
             catch (Exception ex)
             {
+                GeneralFunction.Addlog(ex.ToString());
                 return StatusCode(500, ex.Message.ToString());
             }
         }
         [HttpGet("GetEtapa")]
-        public IActionResult GetStage()
+        public IActionResult GetStage(StageModel stageModel)
         {
             try
             {
@@ -41,6 +50,7 @@ namespace PESOPIG.Controllers
             }
             catch (Exception ex)
             {
+                GeneralFunction.Addlog(ex.ToString());
                 return StatusCode(500, ex.Message.ToString());
             }            
         }
@@ -53,11 +63,12 @@ namespace PESOPIG.Controllers
             }
             catch (Exception ex)
             {
+                GeneralFunction.Addlog(ex.ToString());
                 return StatusCode(500, ex.Message.ToString());
             }
         }
         [HttpDelete("DeleteStage")]
-        public IActionResult DeleteStage()
+        public IActionResult DeleteStage(StageModel stageModel)
         {
             try
             {
@@ -65,6 +76,7 @@ namespace PESOPIG.Controllers
             }
             catch (Exception ex)
             {
+                GeneralFunction.Addlog(ex.ToString());
                 return StatusCode(500, ex.Message.ToString());
 
             } 

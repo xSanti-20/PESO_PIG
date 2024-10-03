@@ -1,4 +1,4 @@
-﻿namespace PESO_PIG.Models
+﻿namespace API_PESO_PIG.Models
 {
     public class InChargeModels
     {

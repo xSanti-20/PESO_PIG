@@ -1,6 +1,6 @@
-﻿namespace MiApi.Models
+﻿namespace API_PESO_PIG.Models
 {
-    public class race
+    public class RaceModel
 
     {
         public int Id_Race { get; set; }
