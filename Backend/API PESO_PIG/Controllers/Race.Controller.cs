@@ -17,7 +17,7 @@ namespace API_PESO_PIG.Controllers
             GeneralFunction = new UserFunction(configuration);
         }
         [HttpPost("CreateRace")]
-        public IActionResult CreateRace(RaceModel raceModel)
+        public IActionResult CreateRace(Race raceModel)
         {
             try
             {
@@ -31,7 +31,7 @@ namespace API_PESO_PIG.Controllers
             }
         }
         [HttpGet("GetRace")]
-        public IActionResult GetRace(RaceModel raceModel)
+        public IActionResult GetRace(Race raceModel)
         {
             try
             {
@@ -45,7 +45,7 @@ namespace API_PESO_PIG.Controllers
         }
 
         [HttpPut("UpdateRace")]
-        public IActionResult UpdateRace(RaceModel raceModel)
+        public IActionResult UpdateRace(Race raceModel)
         {
             try
             {
@@ -59,7 +59,7 @@ namespace API_PESO_PIG.Controllers
         }
 
         [HttpDelete("DeleteRace")]
-        public IActionResult DeleteRace(RaceModel raceModel)
+        public IActionResult DeleteRace(Race raceModel)
         {
             try
             {

@@ -1,5 +1,6 @@
 ﻿using API_PESO_PIG.Functions;
 using API_PESO_PIG.Models;
+using API_PESO_PIG.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API_PESO_PIG.Controllers
@@ -9,18 +10,21 @@ namespace API_PESO_PIG.Controllers
     public class WeighingController : Controller
     {
         public IConfiguration _Configuration;
+        public readonly WeighingServices _Services;
         public UserFunction GeneralFunction;
-        public WeighingController(IConfiguration configuration)
+        public WeighingController(IConfiguration configuration, WeighingServices weighingServices)
         {
             _Configuration = configuration;
+            _Services = weighingServices;
             GeneralFunction = new UserFunction(configuration);
         }
 
         [HttpPost("CreatePesaje")]
-        public IActionResult CreatePesaje(Weighing weighing)
+        public IActionResult Add(Weighing entity)
         {
             try
             {
+                _Services.Add(entity);
                 return Ok();
             }
             catch (Exception ex)
@@ -47,11 +51,11 @@ namespace API_PESO_PIG.Controllers
         }
 
         [HttpGet("ConsultPesajes")]
-        public async Task<IActionResult>ConsultPesajes(Weighing weighing)
+        public ActionResult<IEnumerable<Piglet>> GetWeighing()
         {
             try
             {
-                return Ok();
+                return Ok(_Services.GetWeighing());
             }
             catch (Exception ex)
             {

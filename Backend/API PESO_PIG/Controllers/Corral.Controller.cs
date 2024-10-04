@@ -17,7 +17,7 @@ namespace API_PESO_PIG.Controllers
         }
 
         [HttpPost("CreateCorral")]
-        public IActionResult CreateCorral(CorralModel corralModel)
+        public IActionResult CreateCorral(Corral corralModel)
         {
             try
             {
@@ -30,7 +30,7 @@ namespace API_PESO_PIG.Controllers
             }        
         }
         [HttpGet("GetCorrales")]
-        public IActionResult GetCorrales(CorralModel corralModel)
+        public IActionResult GetCorrales(Corral corralModel)
         {
             try
             {
@@ -44,7 +44,7 @@ namespace API_PESO_PIG.Controllers
            
         }
         [HttpGet("GetCorral")]
-        public IActionResult GetCorral(CorralModel corralModel)
+        public IActionResult GetCorral(Corral corralModel)
         {
             try
             {
@@ -58,7 +58,7 @@ namespace API_PESO_PIG.Controllers
             
         }
         [HttpPut("UpdateCorral")]
-        public IActionResult UpdateEtapa(CorralModel corralModel)
+        public IActionResult UpdateEtapa(Corral corralModel)
         {
             try
             {
@@ -72,7 +72,7 @@ namespace API_PESO_PIG.Controllers
             
         }
         [HttpDelete("DeleteCorral")]
-        public IActionResult DeleteCorral(CorralModel corralModel)
+        public IActionResult DeleteCorral(Corral corralModel)
         {
             try
             {

@@ -16,7 +16,7 @@ namespace PESO_PIG.Controllers
             GeneralFunction = new UserFunction(configuration);
         }
         [HttpPost("CreateFood")]
-        public IActionResult Create(FoodModels foodModels)
+        public IActionResult Create(Food foodModels)
         {
             try
             {
@@ -29,7 +29,7 @@ namespace PESO_PIG.Controllers
             }
         }
         [HttpGet("GetFood")]
-        public IActionResult GetFood(FoodModels foodModels)
+        public IActionResult GetFood(Food foodModels)
         {
             try
             {
@@ -43,7 +43,7 @@ namespace PESO_PIG.Controllers
         }
 
         [HttpGet("GetAllFood")]
-        public IActionResult GetFoods(FoodModels foodModels)
+        public IActionResult GetFoods(Food foodModels)
         {
             try
             {
@@ -57,7 +57,7 @@ namespace PESO_PIG.Controllers
         }
         [HttpPost("UpdateFood")]
 
-        public IActionResult UpdateFood(FoodModels foodModels)
+        public IActionResult UpdateFood(Food foodModels)
         {
             try
             {
@@ -71,7 +71,7 @@ namespace PESO_PIG.Controllers
             }
         }
         [HttpDelete("DeleteFood")]
-        public IActionResult DeleteFood(FoodModels foodModels)
+        public IActionResult DeleteFood(Food foodModels)
         {
             try
             {

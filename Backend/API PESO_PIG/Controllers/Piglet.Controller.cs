@@ -1,5 +1,6 @@
 ﻿using API_PESO_PIG.Functions;
 using API_PESO_PIG.Models;
+using API_PESO_PIG.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API_PESO_PIG.Controllers
@@ -9,18 +10,21 @@ namespace API_PESO_PIG.Controllers
     public class PigletController : Controller
     {
         public IConfiguration _Configuration;
+        public readonly PigletServices _Services;
         public UserFunction GeneralFunction;
-        public PigletController(IConfiguration configuration)
+        public PigletController(IConfiguration configuration, PigletServices pigletServices)
         {
             _Configuration = configuration;
+            _Services = pigletServices;
             GeneralFunction = new UserFunction(configuration);
         }
 
-        [HttpPost("CreateLechon")]
-        public IActionResult CreateLechon(Piglet piglet)
+        [HttpPost("CreatePiglet")]
+        public IActionResult Add(Piglet entity)
         {
             try
             {
+                _Services.Add(entity);
                 return Ok();
             }
             catch (Exception ex)
@@ -31,7 +35,7 @@ namespace API_PESO_PIG.Controllers
             }
         }
 
-        [HttpGet("ConsultLechon")]
+        [HttpGet("ConsultPiglet")]
         public IActionResult ConsultLechon(Piglet piglet)
         {
             try
@@ -46,12 +50,12 @@ namespace API_PESO_PIG.Controllers
             }
         }
 
-        [HttpGet("ConsultLechones")]
-        public IActionResult ConsultLechones(Piglet piglet)
+        [HttpGet("ConsultPiglets")]
+        public ActionResult<IEnumerable<Piglet>> GetPiglets()
         {
             try
             {
-                return Ok();
+                return Ok(_Services.GetPiglets());
             }
             catch (Exception ex)
             {

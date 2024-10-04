@@ -16,7 +16,7 @@ namespace PESOPIG.Controllers
             GeneralFunction = new UserFunction(configuration);
         }
         [HttpPost("CreateStage")]
-        public IActionResult CreateStage(StageModel stage)
+        public IActionResult CreateStage(Stage stage)
         {
             try
             {
@@ -29,7 +29,7 @@ namespace PESOPIG.Controllers
             }
         }
         [HttpGet("GetStages")]
-        public IActionResult GetStages(StageModel stageModel)
+        public IActionResult GetStages(Stage stageModel)
         {
             try
             {
@@ -42,7 +42,7 @@ namespace PESOPIG.Controllers
             }
         }
         [HttpGet("GetEtapa")]
-        public IActionResult GetStage(StageModel stageModel)
+        public IActionResult GetStage(Stage stageModel)
         {
             try
             {
@@ -55,7 +55,7 @@ namespace PESOPIG.Controllers
             }            
         }
         [HttpPost("UpdateEtapa")]
-        public IActionResult UpdateStage(StageModel Stage)
+        public IActionResult UpdateStage(Stage Stage)
         {
             try
             {
@@ -68,7 +68,7 @@ namespace PESOPIG.Controllers
             }
         }
         [HttpDelete("DeleteStage")]
-        public IActionResult DeleteStage(StageModel stageModel)
+        public IActionResult DeleteStage(Stage stageModel)
         {
             try
             {

@@ -79,13 +79,15 @@ namespace API_PESO_PIG.Controllers
         }
 
         [HttpPost("CreateUser")]
-        public IActionResult CreateUser(User user)
+        public IActionResult Add(User entity)
         {
             try
             {
-                return Ok();
+                    _Services.Add(entity);
+                    return Ok();
+
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 GeneralFunction.Addlog(ex.ToString());
                 return StatusCode(500, ex.ToString());

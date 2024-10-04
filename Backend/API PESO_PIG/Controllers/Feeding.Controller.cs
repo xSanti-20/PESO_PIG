@@ -16,7 +16,7 @@ namespace API_PESO_PIG.Controllers
             GeneralFunction = new UserFunction(configuration);
         }
         [HttpPost("CreateFeeding")]
-        public IActionResult CreateAlimentacion(FeedingModel feedingModel)
+        public IActionResult CreateAlimentacion(Feeding feedingModel)
         {
             try
             {
@@ -31,7 +31,7 @@ namespace API_PESO_PIG.Controllers
         }
 
         [HttpGet("GetAlimentaciones")]
-        public IActionResult GetAlimentaciones(FeedingModel feedingModel)
+        public IActionResult GetAlimentaciones(Feeding feedingModel)
         {
             try
             {
@@ -61,7 +61,7 @@ namespace API_PESO_PIG.Controllers
         }
 
         [HttpPut("UpdateAlimentacion")]
-        public IActionResult UpdateAlimentacion(FeedingModel feedingModel)
+        public IActionResult UpdateAlimentacion(Feeding feedingModel)
         {
             try
             {
@@ -76,7 +76,7 @@ namespace API_PESO_PIG.Controllers
         }
 
         [HttpDelete("DeleteAlimentacion")]
-        public IActionResult DeleteAlimentacion(FeedingModel feedingModel)
+        public IActionResult DeleteAlimentacion(Feeding feedingModel)
         {
             try
             {
