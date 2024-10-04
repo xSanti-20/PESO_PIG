@@ -1,4 +1,6 @@
-﻿namespace API_PESO_PIG.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace API_PESO_PIG.Models
 {
     public class LoginUser
     {
@@ -12,7 +14,8 @@
     }
     public class User
     {
-        public int id { get; set; }
+        [Key]
+        public int id_Users { get; set; }
         public string Nom_Users { get; set; }
         public string Tip_Users { get; set; }
     }

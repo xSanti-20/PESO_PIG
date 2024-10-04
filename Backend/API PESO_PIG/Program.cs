@@ -37,6 +37,8 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 );
 
 builder.Services.AddScoped<UserServices>();
+builder.Services.AddScoped<PigletServices>();
+builder.Services.AddScoped<WeighingServices>();
 
 var app = builder.Build();
 

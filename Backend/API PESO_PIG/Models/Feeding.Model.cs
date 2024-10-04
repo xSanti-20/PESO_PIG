@@ -1,14 +1,15 @@
-﻿namespace API_PESO_PIG.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace API_PESO_PIG.Models
 {
-    public class FeedingModel
+    public class Feeding
     {
-        public int Id_Feeding { get; set; }
-
-        public int Id_InCharge { get; set; } 
-
-        public string Id_Food { get; set; }
-
-        public decimal Can_Alimentacion { get; set; }
+        [Key]
+        public int id_Feeding { get; set; }
+        public string Can_Feeding { get; set; }
+        public DateTime Fed_Feeding { get; set; }
+        public string Tip_Feeding { get; set; }
+        public int Con_Average { get; set; }
     }
 }
 

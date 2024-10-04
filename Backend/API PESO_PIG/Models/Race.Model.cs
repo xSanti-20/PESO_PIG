@@ -1,9 +1,11 @@
-﻿namespace API_PESO_PIG.Models
-{
-    public class RaceModel
+﻿using System.ComponentModel.DataAnnotations;
 
+namespace API_PESO_PIG.Models
+{
+    public class Race
     {
-        public int Id_Race { get; set; }
-        public string Nom_Race { get; set; }
+        [Key]
+        public int id_Race { get; set; }
+        public string Nam_Race { get; set; }
     }
 }

@@ -5,6 +5,13 @@ public class AppDbContext : DbContext
 {
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
     public DbSet<User> Users { get; set; }
+    public DbSet<Corral> Corrals { get; set; }
+    public DbSet<Feeding> Feedings { get; set; }
+    public DbSet<Food> Foods { get; set; }
+    public DbSet<Piglet> Piglets { get; set; }
+    public DbSet<Race> Races { get; set; }
+    public DbSet<Stage> Stages { get; set; }
+    public DbSet<Weighing> Weighings { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {

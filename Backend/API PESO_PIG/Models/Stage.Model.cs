@@ -1,11 +1,13 @@
-﻿namespace API_PESO_PIG.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace API_PESO_PIG.Models
 {
-    public class StageModel
+    public class Stage
     {
-        public int Id_Stage {  get; set; }
-        public string Name { get; set; }
-        public DateTime Date { get; set; }
-        public string Week {  get; set; }
-        public int Id_Corral { get; set; } 
+        [Key]
+        public int id_Stage {  get; set; }
+        public string Name_Stage { get; set; }
+        public DateTime Date_Stage { get; set; }
+        public string Week_Stage {  get; set; }
     }
 }

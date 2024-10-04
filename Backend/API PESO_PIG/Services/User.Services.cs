@@ -13,5 +13,11 @@ namespace API_PESO_PIG.Services
         {
             return _context.Users.ToList();
         }
+        public void Add(User entity)
+        {
+            _context.Users.Add(entity);
+            _context.SaveChanges();
+        }
+
     }
 }

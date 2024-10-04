@@ -1,46 +1,364 @@
 [
   {
-    "ContainingType": "API_PESO_PIG.Controllers.PigletController",
-    "Method": "ConsultLechon",
-    "RelativePath": "api/Piglet/ConsultLechon",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "piglet",
-        "Type": "API_PESO_PIG.Models.Piglet",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "API_PESO_PIG.Controllers.PigletController",
-    "Method": "ConsultLechones",
-    "RelativePath": "api/Piglet/ConsultLechones",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "piglet",
-        "Type": "API_PESO_PIG.Models.Piglet",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "API_PESO_PIG.Controllers.PigletController",
-    "Method": "CreateLechon",
-    "RelativePath": "api/Piglet/CreateLechon",
+    "ContainingType": "PESOPIG.Controllers.StageController",
+    "Method": "CreateStage",
+    "RelativePath": "Api/controller/CreateStage",
     "HttpMethod": "POST",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
+        "Name": "stage",
+        "Type": "API_PESO_PIG.Models.Stage",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "PESOPIG.Controllers.StageController",
+    "Method": "DeleteStage",
+    "RelativePath": "Api/controller/DeleteStage",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "stageModel",
+        "Type": "API_PESO_PIG.Models.Stage",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "PESOPIG.Controllers.StageController",
+    "Method": "GetStage",
+    "RelativePath": "Api/controller/GetEtapa",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "stageModel",
+        "Type": "API_PESO_PIG.Models.Stage",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "PESOPIG.Controllers.StageController",
+    "Method": "GetStages",
+    "RelativePath": "Api/controller/GetStages",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "stageModel",
+        "Type": "API_PESO_PIG.Models.Stage",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "PESOPIG.Controllers.StageController",
+    "Method": "UpdateStage",
+    "RelativePath": "Api/controller/UpdateEtapa",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "Stage",
+        "Type": "API_PESO_PIG.Models.Stage",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "API_PESO_PIG.Controllers.CorralController",
+    "Method": "CreateCorral",
+    "RelativePath": "Api/Corral/CreateCorral",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "corralModel",
+        "Type": "API_PESO_PIG.Models.Corral",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "API_PESO_PIG.Controllers.CorralController",
+    "Method": "DeleteCorral",
+    "RelativePath": "Api/Corral/DeleteCorral",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "corralModel",
+        "Type": "API_PESO_PIG.Models.Corral",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "API_PESO_PIG.Controllers.CorralController",
+    "Method": "GetCorral",
+    "RelativePath": "Api/Corral/GetCorral",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "corralModel",
+        "Type": "API_PESO_PIG.Models.Corral",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "API_PESO_PIG.Controllers.CorralController",
+    "Method": "GetCorrales",
+    "RelativePath": "Api/Corral/GetCorrales",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "corralModel",
+        "Type": "API_PESO_PIG.Models.Corral",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "API_PESO_PIG.Controllers.CorralController",
+    "Method": "UpdateEtapa",
+    "RelativePath": "Api/Corral/UpdateCorral",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "corralModel",
+        "Type": "API_PESO_PIG.Models.Corral",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "API_PESO_PIG.Controllers.FeedingController",
+    "Method": "CreateAlimentacion",
+    "RelativePath": "Api/Feeding/CreateFeeding",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "feedingModel",
+        "Type": "API_PESO_PIG.Models.Feeding",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "API_PESO_PIG.Controllers.FeedingController",
+    "Method": "DeleteAlimentacion",
+    "RelativePath": "Api/Feeding/DeleteAlimentacion",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "feedingModel",
+        "Type": "API_PESO_PIG.Models.Feeding",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "API_PESO_PIG.Controllers.FeedingController",
+    "Method": "GetAlimentacion",
+    "RelativePath": "Api/Feeding/GetAlimentacion",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "API_PESO_PIG.Controllers.FeedingController",
+    "Method": "GetAlimentaciones",
+    "RelativePath": "Api/Feeding/GetAlimentaciones",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "feedingModel",
+        "Type": "API_PESO_PIG.Models.Feeding",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "API_PESO_PIG.Controllers.FeedingController",
+    "Method": "UpdateAlimentacion",
+    "RelativePath": "Api/Feeding/UpdateAlimentacion",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "feedingModel",
+        "Type": "API_PESO_PIG.Models.Feeding",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "PESO_PIG.Controllers.FoodController",
+    "Method": "Create",
+    "RelativePath": "Api/Food/CreateFood",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "foodModels",
+        "Type": "API_PESO_PIG.Models.Food",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "PESO_PIG.Controllers.FoodController",
+    "Method": "DeleteFood",
+    "RelativePath": "Api/Food/DeleteFood",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "foodModels",
+        "Type": "API_PESO_PIG.Models.Food",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "PESO_PIG.Controllers.FoodController",
+    "Method": "GetFoods",
+    "RelativePath": "Api/Food/GetAllFood",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "foodModels",
+        "Type": "API_PESO_PIG.Models.Food",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "PESO_PIG.Controllers.FoodController",
+    "Method": "GetFood",
+    "RelativePath": "Api/Food/GetFood",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "foodModels",
+        "Type": "API_PESO_PIG.Models.Food",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "PESO_PIG.Controllers.FoodController",
+    "Method": "UpdateFood",
+    "RelativePath": "Api/Food/UpdateFood",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "foodModels",
+        "Type": "API_PESO_PIG.Models.Food",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "API_PESO_PIG.Controllers.PigletController",
+    "Method": "ConsultLechon",
+    "RelativePath": "api/Piglet/ConsultPiglet",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
         "Name": "piglet",
+        "Type": "API_PESO_PIG.Models.Piglet",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "API_PESO_PIG.Controllers.PigletController",
+    "Method": "GetPiglets",
+    "RelativePath": "api/Piglet/ConsultPiglets",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.IEnumerable\u00601[[API_PESO_PIG.Models.Piglet, API PESO_PIG, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "API_PESO_PIG.Controllers.PigletController",
+    "Method": "Add",
+    "RelativePath": "api/Piglet/CreatePiglet",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "entity",
         "Type": "API_PESO_PIG.Models.Piglet",
         "IsRequired": true
       }
@@ -80,6 +398,70 @@
     "ReturnTypes": []
   },
   {
+    "ContainingType": "API_PESO_PIG.Controllers.RaceController",
+    "Method": "CreateRace",
+    "RelativePath": "Api/Race/CreateRace",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "raceModel",
+        "Type": "API_PESO_PIG.Models.Race",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "API_PESO_PIG.Controllers.RaceController",
+    "Method": "DeleteRace",
+    "RelativePath": "Api/Race/DeleteRace",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "raceModel",
+        "Type": "API_PESO_PIG.Models.Race",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "API_PESO_PIG.Controllers.RaceController",
+    "Method": "GetRace",
+    "RelativePath": "Api/Race/GetRace",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "raceModel",
+        "Type": "API_PESO_PIG.Models.Race",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "API_PESO_PIG.Controllers.RaceController",
+    "Method": "UpdateRace",
+    "RelativePath": "Api/Race/UpdateRace",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "raceModel",
+        "Type": "API_PESO_PIG.Models.Race",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "API_PESO_PIG.Controllers.UserController",
     "Method": "AllUsers",
     "RelativePath": "api/User/ConsultAllUser",
@@ -101,14 +483,14 @@
   },
   {
     "ContainingType": "API_PESO_PIG.Controllers.UserController",
-    "Method": "CreateUser",
+    "Method": "Add",
     "RelativePath": "api/User/CreateUser",
     "HttpMethod": "POST",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
-        "Name": "user",
+        "Name": "entity",
         "Type": "API_PESO_PIG.Models.User",
         "IsRequired": true
       }
@@ -165,30 +547,34 @@
   },
   {
     "ContainingType": "API_PESO_PIG.Controllers.WeighingController",
-    "Method": "ConsultPesajes",
+    "Method": "GetWeighing",
     "RelativePath": "api/Weighing/ConsultPesajes",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
-    "Parameters": [
+    "Parameters": [],
+    "ReturnTypes": [
       {
-        "Name": "weighing",
-        "Type": "API_PESO_PIG.Models.Weighing",
-        "IsRequired": true
+        "Type": "System.Collections.Generic.IEnumerable\u00601[[API_PESO_PIG.Models.Piglet, API PESO_PIG, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
       }
-    ],
-    "ReturnTypes": []
+    ]
   },
   {
     "ContainingType": "API_PESO_PIG.Controllers.WeighingController",
-    "Method": "CreatePesaje",
+    "Method": "Add",
     "RelativePath": "api/Weighing/CreatePesaje",
     "HttpMethod": "POST",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
-        "Name": "weighing",
+        "Name": "entity",
         "Type": "API_PESO_PIG.Models.Weighing",
         "IsRequired": true
       }
