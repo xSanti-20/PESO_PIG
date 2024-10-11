@@ -62,14 +62,21 @@ namespace API_PESO_PIG.Controllers
             }
         }
         [HttpPost("ResetPassUser")]
-        public async Task<IActionResult> ResetPassword(ResetPassUser user)
+        public async Task<IActionResult> ResetPassword(User user)
         {
             try
             {
-                UserFunction funciones = new UserFunction(_Configuration);
-                var response = await funciones.SendEmail(user.Email);
-                var messageConcat = funciones.ConcatMessage(user.Email);
-                return Ok(messageConcat);
+                var userExist = await _Services.GetUserEmail(user.Email);
+                if (userExist != null) {
+
+                    UserFunction funciones = new UserFunction(_Configuration);
+                    var response = await funciones.SendEmail(user.Email);
+                    var messageConcat = funciones.ConcatMessage(user.Email);
+                    return Ok(messageConcat);
+                }
+
+                return BadRequest("El Correo no fue encontrado");
+
             }
             catch (Exception ex)
             {
@@ -108,6 +115,70 @@ namespace API_PESO_PIG.Controllers
             {
                 GeneralFunction.Addlog(ex.ToString());
                 return StatusCode(500, ex.ToString());
+            }
+        }
+        [HttpGet("GetUserId")]
+        public async Task<IActionResult> GetUserId(int id_Users)
+        {
+            try
+            {
+                var user = await _Services.GetUserId(id_Users);
+
+                if (user == null)
+                {
+                    return NotFound("Usuario no existe en la BD.");
+                }
+
+                return Ok(user);
+            }
+            catch (Exception ex)
+            {
+                GeneralFunction.Addlog(ex.ToString());
+                return StatusCode(500, ex.ToString());
+            }
+        }
+        [HttpDelete("DeleteUser")]
+        public async Task<IActionResult> DelUserS(int id_Users)
+        {
+            try
+            {
+                var result = await _Services.DelUsers(id_Users);
+                if (result)
+                {
+                    return Ok("Usuario eliminado correctamente.");
+                }
+                return NotFound("El usuario no fue encontrado.");
+            }
+
+            catch (Exception ex)
+            {
+                GeneralFunction.Addlog(ex.ToString());
+                return StatusCode(500, ex.ToString());
+            }
+        }
+        [HttpPut("UpdateUser")]
+        public async Task<IActionResult> UpdateUser(int id_Users, User updatedUser)
+        {
+            if (updatedUser == null || id_Users != updatedUser.id_Users)
+            {
+                return BadRequest("El usuario no es válido.");
+            }
+
+            try
+            {
+                var result = await _Services.UpdateUser(id_Users, updatedUser);
+
+                if (!result)
+                {
+                    return NotFound("Usuario no existe en la BD.");
+                }
+
+                return Ok("Usuario actualizado correctamente.");
+            }
+            catch (Exception ex)
+            {
+                GeneralFunction.Addlog(ex.ToString());
+                return StatusCode(500, "Ocurrió un error inesperado.");
             }
         }
     }

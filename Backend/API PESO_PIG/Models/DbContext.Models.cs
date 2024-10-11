@@ -19,7 +19,6 @@ public class AppDbContext : DbContext
         {
             optionsBuilder.UseMySql("Server=localhost;Database=peso_pig;User=root;Password=Santiago04200;",
             new MySqlServerVersion(new Version(8, 0, 23)));
-        }
-        
+        }   
     }
 }

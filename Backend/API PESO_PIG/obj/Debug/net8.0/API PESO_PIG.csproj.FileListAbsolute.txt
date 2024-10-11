@@ -116,12 +116,7 @@ C:\Users\SantiagoP\source\repos\API PESO_PIG\Backend\API PESO_PIG\bin\Debug\net8
 C:\Users\SantiagoP\source\repos\API PESO_PIG\Backend\API PESO_PIG\bin\Debug\net8.0\API PESO_PIG.runtimeconfig.json
 C:\Users\SantiagoP\source\repos\API PESO_PIG\Backend\API PESO_PIG\bin\Debug\net8.0\API PESO_PIG.dll
 C:\Users\SantiagoP\source\repos\API PESO_PIG\Backend\API PESO_PIG\bin\Debug\net8.0\API PESO_PIG.pdb
-C:\Users\SantiagoP\source\repos\API PESO_PIG\Backend\API PESO_PIG\bin\Debug\net8.0\BouncyCastle.Cryptography.dll
-C:\Users\SantiagoP\source\repos\API PESO_PIG\Backend\API PESO_PIG\bin\Debug\net8.0\Google.Protobuf.dll
 C:\Users\SantiagoP\source\repos\API PESO_PIG\Backend\API PESO_PIG\bin\Debug\net8.0\Humanizer.dll
-C:\Users\SantiagoP\source\repos\API PESO_PIG\Backend\API PESO_PIG\bin\Debug\net8.0\K4os.Compression.LZ4.dll
-C:\Users\SantiagoP\source\repos\API PESO_PIG\Backend\API PESO_PIG\bin\Debug\net8.0\K4os.Compression.LZ4.Streams.dll
-C:\Users\SantiagoP\source\repos\API PESO_PIG\Backend\API PESO_PIG\bin\Debug\net8.0\K4os.Hash.xxHash.dll
 C:\Users\SantiagoP\source\repos\API PESO_PIG\Backend\API PESO_PIG\bin\Debug\net8.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
 C:\Users\SantiagoP\source\repos\API PESO_PIG\Backend\API PESO_PIG\bin\Debug\net8.0\Microsoft.Bcl.AsyncInterfaces.dll
 C:\Users\SantiagoP\source\repos\API PESO_PIG\Backend\API PESO_PIG\bin\Debug\net8.0\Microsoft.CodeAnalysis.dll
@@ -141,7 +136,6 @@ C:\Users\SantiagoP\source\repos\API PESO_PIG\Backend\API PESO_PIG\bin\Debug\net8
 C:\Users\SantiagoP\source\repos\API PESO_PIG\Backend\API PESO_PIG\bin\Debug\net8.0\Microsoft.IdentityModel.Tokens.dll
 C:\Users\SantiagoP\source\repos\API PESO_PIG\Backend\API PESO_PIG\bin\Debug\net8.0\Microsoft.OpenApi.dll
 C:\Users\SantiagoP\source\repos\API PESO_PIG\Backend\API PESO_PIG\bin\Debug\net8.0\Mono.TextTemplating.dll
-C:\Users\SantiagoP\source\repos\API PESO_PIG\Backend\API PESO_PIG\bin\Debug\net8.0\MySql.Data.dll
 C:\Users\SantiagoP\source\repos\API PESO_PIG\Backend\API PESO_PIG\bin\Debug\net8.0\Newtonsoft.Json.dll
 C:\Users\SantiagoP\source\repos\API PESO_PIG\Backend\API PESO_PIG\bin\Debug\net8.0\Swashbuckle.AspNetCore.Swagger.dll
 C:\Users\SantiagoP\source\repos\API PESO_PIG\Backend\API PESO_PIG\bin\Debug\net8.0\Swashbuckle.AspNetCore.SwaggerGen.dll
@@ -152,12 +146,7 @@ C:\Users\SantiagoP\source\repos\API PESO_PIG\Backend\API PESO_PIG\bin\Debug\net8
 C:\Users\SantiagoP\source\repos\API PESO_PIG\Backend\API PESO_PIG\bin\Debug\net8.0\System.Composition.Hosting.dll
 C:\Users\SantiagoP\source\repos\API PESO_PIG\Backend\API PESO_PIG\bin\Debug\net8.0\System.Composition.Runtime.dll
 C:\Users\SantiagoP\source\repos\API PESO_PIG\Backend\API PESO_PIG\bin\Debug\net8.0\System.Composition.TypedParts.dll
-C:\Users\SantiagoP\source\repos\API PESO_PIG\Backend\API PESO_PIG\bin\Debug\net8.0\System.Configuration.ConfigurationManager.dll
 C:\Users\SantiagoP\source\repos\API PESO_PIG\Backend\API PESO_PIG\bin\Debug\net8.0\System.IdentityModel.Tokens.Jwt.dll
-C:\Users\SantiagoP\source\repos\API PESO_PIG\Backend\API PESO_PIG\bin\Debug\net8.0\System.Security.Cryptography.ProtectedData.dll
-C:\Users\SantiagoP\source\repos\API PESO_PIG\Backend\API PESO_PIG\bin\Debug\net8.0\System.Security.Permissions.dll
-C:\Users\SantiagoP\source\repos\API PESO_PIG\Backend\API PESO_PIG\bin\Debug\net8.0\System.Windows.Extensions.dll
-C:\Users\SantiagoP\source\repos\API PESO_PIG\Backend\API PESO_PIG\bin\Debug\net8.0\ZstdSharp.dll
 C:\Users\SantiagoP\source\repos\API PESO_PIG\Backend\API PESO_PIG\bin\Debug\net8.0\cs\Microsoft.CodeAnalysis.resources.dll
 C:\Users\SantiagoP\source\repos\API PESO_PIG\Backend\API PESO_PIG\bin\Debug\net8.0\de\Microsoft.CodeAnalysis.resources.dll
 C:\Users\SantiagoP\source\repos\API PESO_PIG\Backend\API PESO_PIG\bin\Debug\net8.0\es\Microsoft.CodeAnalysis.resources.dll
@@ -210,12 +199,6 @@ C:\Users\SantiagoP\source\repos\API PESO_PIG\Backend\API PESO_PIG\bin\Debug\net8
 C:\Users\SantiagoP\source\repos\API PESO_PIG\Backend\API PESO_PIG\bin\Debug\net8.0\tr\Microsoft.CodeAnalysis.Workspaces.resources.dll
 C:\Users\SantiagoP\source\repos\API PESO_PIG\Backend\API PESO_PIG\bin\Debug\net8.0\zh-Hans\Microsoft.CodeAnalysis.Workspaces.resources.dll
 C:\Users\SantiagoP\source\repos\API PESO_PIG\Backend\API PESO_PIG\bin\Debug\net8.0\zh-Hant\Microsoft.CodeAnalysis.Workspaces.resources.dll
-C:\Users\SantiagoP\source\repos\API PESO_PIG\Backend\API PESO_PIG\bin\Debug\net8.0\runtimes\win-x64\native\comerr64.dll
-C:\Users\SantiagoP\source\repos\API PESO_PIG\Backend\API PESO_PIG\bin\Debug\net8.0\runtimes\win-x64\native\gssapi64.dll
-C:\Users\SantiagoP\source\repos\API PESO_PIG\Backend\API PESO_PIG\bin\Debug\net8.0\runtimes\win-x64\native\k5sprt64.dll
-C:\Users\SantiagoP\source\repos\API PESO_PIG\Backend\API PESO_PIG\bin\Debug\net8.0\runtimes\win-x64\native\krb5_64.dll
-C:\Users\SantiagoP\source\repos\API PESO_PIG\Backend\API PESO_PIG\bin\Debug\net8.0\runtimes\win-x64\native\krbcc64.dll
-C:\Users\SantiagoP\source\repos\API PESO_PIG\Backend\API PESO_PIG\bin\Debug\net8.0\runtimes\win\lib\net8.0\System.Windows.Extensions.dll
 C:\Users\SantiagoP\source\repos\API PESO_PIG\Backend\API PESO_PIG\obj\Debug\net8.0\API PESO_PIG.csproj.AssemblyReference.cache
 C:\Users\SantiagoP\source\repos\API PESO_PIG\Backend\API PESO_PIG\obj\Debug\net8.0\API PESO_PIG.GeneratedMSBuildEditorConfig.editorconfig
 C:\Users\SantiagoP\source\repos\API PESO_PIG\Backend\API PESO_PIG\obj\Debug\net8.0\API PESO_PIG.AssemblyInfoInputs.cache
