@@ -67,5 +67,20 @@ namespace API_PESO_PIG.Functions
                 log.Write(bytsnewlog, 0, bytsnewlog.Length);
             }
         }
+        public string[] ValidModel(dynamic collection)
+        {
+            string[] error = new string[collection.Count];
+            int indice = 0;
+            foreach (var item in collection)
+            {
+                if (item == string.Empty)
+                {
+                    error[indice] = "El campo item es vacio";
+                }
+
+                indice++;
+            }
+            return error;
+        } 
     }
 }

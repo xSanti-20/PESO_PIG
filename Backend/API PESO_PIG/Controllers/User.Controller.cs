@@ -90,10 +90,18 @@ namespace API_PESO_PIG.Controllers
         {
             try
             {
+                var error = GeneralFunction.ValidModel(User);
+                if (error.Length == 0)
+                {
                     _Services.Add(entity);
-                    return Ok();
-
+                    return Ok("Usuario creado con exito");
+                }
+                return BadRequest(error);
             }
+
+
+
+
             catch (Exception ex)
             {
                 GeneralFunction.Addlog(ex.ToString());
@@ -137,6 +145,39 @@ namespace API_PESO_PIG.Controllers
                 return StatusCode(500, ex.ToString());
             }
         }
+        [HttpPost("ConsultRange")]
+        public ActionResult<IEnumerable<User>> GetAllRange(int start, int end)
+        {
+            try
+            {
+                if (end < 0)
+                {
+                    return BadRequest("El parámetro 'end' no puede ser negativo.");
+                }
+                if (start > end)
+                {
+                    return BadRequest("El valor de 'star' no puede ser mayor que 'end'.");
+                }
+
+                var range = _Services.GetUsers()
+                    .Skip(start - 1)
+                    .Take(end - start + 1)
+                    .ToList();
+
+                if (!range.Any())
+                {
+                    return NotFound("No se encontraron los usuarios en el rango.");
+                }
+
+                return Ok(range);
+            }
+            catch (Exception ex)
+            {
+                GeneralFunction.Addlog(ex.ToString());
+                return StatusCode(500, ex.ToString());
+            }
+        }
+
         [HttpDelete("DeleteUser")]
         public async Task<IActionResult> DelUserS(int id_Users)
         {
@@ -157,16 +198,16 @@ namespace API_PESO_PIG.Controllers
             }
         }
         [HttpPut("UpdateUser")]
-        public async Task<IActionResult> UpdateUser(int id_Users, User updatedUser)
+        public async Task<IActionResult> UpdateUser(User updatedUser)
         {
-            if (updatedUser == null || id_Users != updatedUser.id_Users)
+            if (updatedUser == null)
             {
                 return BadRequest("El usuario no es válido.");
             }
 
             try
             {
-                var result = await _Services.UpdateUser(id_Users, updatedUser);
+                var result = await _Services.UpdateUser(updatedUser.id_Users, updatedUser);
 
                 if (!result)
                 {

@@ -19,80 +19,128 @@ namespace API_PESO_PIG.Controllers
             GeneralFunction = new UserFunction(configuration);
         }
 
+        // Crear Pesaje
         [HttpPost("CreatePesaje")]
         public IActionResult Add(Weighing entity)
         {
             try
             {
                 _Services.Add(entity);
-                return Ok();
+                return Ok("Pesaje creado con éxito.");
             }
             catch (Exception ex)
             {
                 GeneralFunction.Addlog(ex.ToString());
                 return StatusCode(500, ex.ToString());
-
             }
         }
 
-        [HttpGet("ConsultPesaje")]
-        public IActionResult ConsultPesaje(Weighing weighing)
+        // Consultar todos los Pesajes
+        [HttpGet("ConsultAllPesajes")]
+        public ActionResult<IEnumerable<Weighing>> GetWeighings()
         {
             try
             {
-                return Ok();
+                return Ok(_Services.GetWeighings());
             }
             catch (Exception ex)
             {
                 GeneralFunction.Addlog(ex.ToString());
                 return StatusCode(500, ex.ToString());
-
             }
         }
 
-        [HttpGet("ConsultPesajes")]
-        public ActionResult<IEnumerable<Piglet>> GetWeighing()
+        // Consultar Pesaje por ID
+        [HttpGet("GetPesajeId")]
+        public async Task<IActionResult> GetWeighingId(int id_Weighings)
         {
             try
             {
-                return Ok(_Services.GetWeighing());
+                var weighing = await _Services.GetWeighingId(id_Weighings);
+
+                if (weighing == null)
+                {
+                    return NotFound("Pesaje no existe en la BD.");
+                }
+
+                return Ok(weighing);
             }
             catch (Exception ex)
             {
                 GeneralFunction.Addlog(ex.ToString());
                 return StatusCode(500, ex.ToString());
-
             }
         }
 
-
-        [HttpPost("UpdatePesaje")]
-        public IActionResult UpdatePesaje(Weighing weighing)
+        // Consultar rango de Pesajes
+        [HttpPost("ConsultRange")]
+        public ActionResult<IEnumerable<Weighing>> GetWeighingsRange(int start, int end)
         {
             try
             {
-                return Ok();
+                var range = _Services.GetWeighings()
+                    .Skip(start - 1)
+                    .Take(end - start + 1)
+                    .ToList();
+
+                if (!range.Any())
+                {
+                    return NotFound("No se encontraron pesajes en el rango.");
+                }
+
+                return Ok(range);
             }
             catch (Exception ex)
             {
                 GeneralFunction.Addlog(ex.ToString());
                 return StatusCode(500, ex.ToString());
-
             }
         }
 
-        [HttpDelete("DelPesaje")]
-        public IActionResult DelPesaje(Weighing weighing)
+        // Eliminar Pesaje por ID
+        [HttpDelete("DeletePesaje")]
+        public async Task<IActionResult> DelWeighing(int id_Weighings)
         {
             try
             {
-                return Ok();
+                var result = await _Services.DelWeighing(id_Weighings);
+                if (result)
+                {
+                    return Ok("Pesaje eliminado correctamente.");
+                }
+                return NotFound("El pesaje no fue encontrado.");
             }
             catch (Exception ex)
             {
                 GeneralFunction.Addlog(ex.ToString());
                 return StatusCode(500, ex.ToString());
+            }
+        }
 
+        // Actualizar Pesaje
+        [HttpPut("UpdatePesaje")]
+        public async Task<IActionResult> UpdateWeighing(Weighing updatedWeighing)
+        {
+            if (updatedWeighing == null)
+            {
+                return BadRequest("El pesaje no es válido.");
+            }
+
+            try
+            {
+                var result = await _Services.UpdateWeighing(updatedWeighing.id_Weighings, updatedWeighing);
+
+                if (!result)
+                {
+                    return NotFound("Pesaje no existe en la BD.");
+                }
+
+                return Ok("Pesaje actualizado correctamente.");
+            }
+            catch (Exception ex)
+            {
+                GeneralFunction.Addlog(ex.ToString());
+                return StatusCode(500, "Ocurrió un error inesperado.");
             }
         }
     }
