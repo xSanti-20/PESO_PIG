@@ -28,7 +28,7 @@ namespace API_PESO_PIG.Models
         [StringLength(45, ErrorMessage = "El campo {0} tiene un limite de caracteres de {1}")]
         public string Email { get; set; }
 
-        [DisplayName("Bloqueado")]
+        [DisplayName("Bloqueo")]
         public bool Blockade { get; set; }
 
         [DisplayName("Token de Usuario")]
@@ -36,7 +36,6 @@ namespace API_PESO_PIG.Models
         public string Token { get; set; }
 
         [DisplayName("Intentos")]
-        [Required(ErrorMessage = "El campo {0} es requerido")]
         [Range(0, 10, ErrorMessage = "El campo {0} debe estar entre {1} y {2}")]
         public int Attempts { get; set; }
     }

@@ -39,6 +39,11 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 builder.Services.AddScoped<UserServices>();
 builder.Services.AddScoped<PigletServices>();
 builder.Services.AddScoped<WeighingServices>();
+builder.Services.AddScoped<FoodServices>();
+builder.Services.AddScoped<CorralServices>();
+builder.Services.AddScoped<FeedingServices>();
+builder.Services.AddScoped<RaceServices>();
+builder.Services.AddScoped<StageServices>();
 
 var app = builder.Build();
 

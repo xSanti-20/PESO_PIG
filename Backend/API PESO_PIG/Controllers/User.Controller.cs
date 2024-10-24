@@ -98,10 +98,6 @@ namespace API_PESO_PIG.Controllers
                 }
                 return BadRequest(error);
             }
-
-
-
-
             catch (Exception ex)
             {
                 GeneralFunction.Addlog(ex.ToString());

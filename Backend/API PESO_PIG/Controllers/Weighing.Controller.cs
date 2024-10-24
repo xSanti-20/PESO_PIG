@@ -78,10 +78,7 @@ namespace API_PESO_PIG.Controllers
         {
             try
             {
-                var range = _Services.GetWeighings()
-                    .Skip(start - 1)
-                    .Take(end - start + 1)
-                    .ToList();
+                var range = _Services.GetWeighings().Skip(start - 1).Take(end - start + 1).ToList();
 
                 if (!range.Any())
                 {
@@ -140,7 +137,7 @@ namespace API_PESO_PIG.Controllers
             catch (Exception ex)
             {
                 GeneralFunction.Addlog(ex.ToString());
-                return StatusCode(500, "Ocurrió un error inesperado.");
+                return StatusCode(500, ex.ToString());
             }
         }
     }
