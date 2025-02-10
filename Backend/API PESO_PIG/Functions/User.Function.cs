@@ -12,12 +12,6 @@ namespace API_PESO_PIG.Functions
         {
             ConfigServer = configuration.GetSection("ConfigServerEmail").Get<ConfigServer>();
         }
-        public MessageConcat ConcatMessage(string Email)
-        {
-            MessageConcat messageConcat = new MessageConcat();
-            messageConcat.Message = "Correo enviado al Email: " + Email;
-            return messageConcat;
-        }
 
         public async Task<ResponseSend> SendEmail(string EmailDestinatation)
         {
@@ -29,7 +23,7 @@ namespace API_PESO_PIG.Functions
                 smtpClient.Port = ConfigServer.PortHost;
                 smtpClient.Credentials = new NetworkCredential(ConfigServer.Email, ConfigServer.Password);
                 smtpClient.EnableSsl = true;
-                MailAddress remitente = new MailAddress(ConfigServer.Email,"PROYECTO PESO PIG",Encoding.UTF8);
+                MailAddress remitente = new MailAddress(ConfigServer.Email,"SOFTWARE PESO PIG",Encoding.UTF8);
                 MailAddress destinatario = new MailAddress(EmailDestinatation);
                 MailMessage message = new MailMessage(remitente, destinatario);
 
@@ -38,6 +32,9 @@ namespace API_PESO_PIG.Functions
                 message.Body = "<html><body><h1>Esta Es una prueba de Envio</h1><h2>Prueba hecha por Santiago Puentes</h2></body></html>";
 
                 await smtpClient.SendMailAsync(message);
+
+                responseSend.Status = true;
+                responseSend.Message = "Correo enviado con exito";
 
 
             }
@@ -67,20 +64,5 @@ namespace API_PESO_PIG.Functions
                 log.Write(bytsnewlog, 0, bytsnewlog.Length);
             }
         }
-        public string[] ValidModel(dynamic collection)
-        {
-            string[] error = new string[collection.Count];
-            int indice = 0;
-            foreach (var item in collection)
-            {
-                if (item == string.Empty)
-                {
-                    error[indice] = "El campo item es vacio";
-                }
-
-                indice++;
-            }
-            return error;
-        } 
     }
 }

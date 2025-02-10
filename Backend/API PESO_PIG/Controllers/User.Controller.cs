@@ -1,6 +1,7 @@
 ﻿using API_PESO_PIG.Functions;
 using API_PESO_PIG.Models;
 using API_PESO_PIG.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -25,44 +26,67 @@ namespace API_PESO_PIG.Controllers
             Jwt = _Configuration.GetSection("Jwt").Get<Jwt>();
         }
 
-        //peticion para logeo
-
         [HttpPost("Login")]
-        public IActionResult Login(LoginUser login)
+        public async Task<IActionResult> Login([FromBody] LoginUser login)
         {
             try
             {
-                var key = Encoding.UTF8.GetBytes(Jwt.Key);
-
-
-                ClaimsIdentity subject = new ClaimsIdentity(new Claim[]
+                if (login == null || string.IsNullOrEmpty(login.Email) || string.IsNullOrEmpty(login.Password))
                 {
-                    new Claim("User", login.Email)
-                });
+                    return BadRequest(new { message = "Los campos Email y Password son obligatorios." });
+                }
+
+                // Obtiene el usuario por correo electrónico
+                var user = await _Services.GetUserEmail(login.Email);
+                if (user == null)
+                {
+                    return Unauthorized(new { message = "Usuario no encontrado." });
+                }
+
+                // Verifica la contraseña
+                if (!BCrypt.Net.BCrypt.Verify(login.Password + user.Salt, user.Hashed_Password))
+                {
+                    return Unauthorized(new { message = "Contraseña incorrecta." });
+                }
+
+                // Genera el token JWT
+                var key = Encoding.UTF8.GetBytes(Jwt.Key);
+                var claims = new ClaimsIdentity(new[]
+                {
+            new Claim(ClaimTypes.Email, user.Email),
+            new Claim("UserId", user.id_Users.ToString())
+        });
 
                 var tokenDescriptor = new SecurityTokenDescriptor
                 {
-                    Subject = subject,
+                    Subject = claims,
                     Expires = DateTime.UtcNow.AddMinutes(Convert.ToDouble(Jwt.JwtExpireTime)),
-                    SigningCredentials = new SigningCredentials(
-                        new SymmetricSecurityKey(key),
-                        SecurityAlgorithms.HmacSha256Signature
-                        )
+                    SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
                 };
-                var token = new JwtSecurityTokenHandler().CreateToken(tokenDescriptor);
 
+                var tokenHandler = new JwtSecurityTokenHandler();
+                var token = tokenHandler.CreateToken(tokenDescriptor);
+                var tokenString = tokenHandler.WriteToken(token);
 
-                return Ok(new JwtSecurityTokenHandler().WriteToken(token));
+                // Actualiza el token en el usuario
+                user.Token = tokenString;
+                await _Services.UpdateUser(user.id_Users, user);
 
+                // Devuelve la respuesta
+                return Ok(new { token = tokenString });
             }
             catch (Exception ex)
             {
-                GeneralFunction.Addlog(ex.ToString());
-                return StatusCode(500, ex.ToString);
+                // Loguea el error para depuración
+                GeneralFunction.Addlog($"Error en Login: {ex.Message}");
+                return StatusCode(500, new { message = "Error interno del servidor." });
             }
         }
+
+
+
         [HttpPost("ResetPassUser")]
-        public async Task<IActionResult> ResetPassword(User user)
+        public async Task<IActionResult> ResetPassword(ResetPassUser user)
         {
             try
             {
@@ -71,11 +95,10 @@ namespace API_PESO_PIG.Controllers
 
                     UserFunction funciones = new UserFunction(_Configuration);
                     var response = await funciones.SendEmail(user.Email);
-                    var messageConcat = funciones.ConcatMessage(user.Email);
-                    return Ok(messageConcat);
+                    return Ok(response);
                 }
 
-                return BadRequest("El Correo no fue encontrado");
+                return BadRequest(new { message = "El Correo no fue encontrado" });
 
             }
             catch (Exception ex)
@@ -90,24 +113,28 @@ namespace API_PESO_PIG.Controllers
         {
             try
             {
-                var error = GeneralFunction.ValidModel(User);
-                if (error.Length == 0)
-                {
-                    _Services.Add(entity);
-                    return Ok("Usuario creado con exito");
-                }
-                return BadRequest(error);
+                // Generar salt
+                string salt = BCrypt.Net.BCrypt.GenerateSalt();
+
+                // Hashear la contraseña
+                entity.Hashed_Password = BCrypt.Net.BCrypt.HashPassword(entity.Hashed_Password + salt);
+                entity.Salt = salt;
+                entity.Token = ""; // Se inicializa el token en vacío por ahora
+
+                // Agregar el usuario
+                _Services.Add(entity);
+
+                return Ok(new { message = "Usuario creado con éxito" });
             }
             catch (Exception ex)
             {
                 GeneralFunction.Addlog(ex.ToString());
                 return StatusCode(500, ex.ToString());
-
             }
         }
 
-
         [HttpGet("ConsultAllUser")]
+        [Authorize]
         public ActionResult<IEnumerable<User>> AllUsers()
         {
             try
@@ -122,6 +149,7 @@ namespace API_PESO_PIG.Controllers
             }
         }
         [HttpGet("GetUserId")]
+        [Authorize]
         public async Task<IActionResult> GetUserId(int id_Users)
         {
             try
@@ -142,6 +170,7 @@ namespace API_PESO_PIG.Controllers
             }
         }
         [HttpPost("ConsultRange")]
+        [Authorize]
         public ActionResult<IEnumerable<User>> GetAllRange(int start, int end)
         {
             try
@@ -175,6 +204,7 @@ namespace API_PESO_PIG.Controllers
         }
 
         [HttpDelete("DeleteUser")]
+        [Authorize]
         public async Task<IActionResult> DelUserS(int id_Users)
         {
             try
@@ -194,6 +224,7 @@ namespace API_PESO_PIG.Controllers
             }
         }
         [HttpPut("UpdateUser")]
+        [Authorize]
         public async Task<IActionResult> UpdateUser(User updatedUser)
         {
             if (updatedUser == null)

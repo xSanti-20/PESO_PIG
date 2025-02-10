@@ -1,6 +1,7 @@
 ﻿using API_PESO_PIG.Functions;
 using API_PESO_PIG.Models;
 using API_PESO_PIG.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API_PESO_PIG.Controllers
@@ -25,7 +26,8 @@ namespace API_PESO_PIG.Controllers
             try
             {
                 _Services.Add(entity);
-                return Ok("Piglet creado con éxito.");
+                return Ok(new { message = "Piglet creado con éxito." });
+
             }
             catch (Exception ex)
             {
@@ -36,11 +38,12 @@ namespace API_PESO_PIG.Controllers
 
         // Consultar todos los Piglets
         [HttpGet("ConsultAllPiglets")]
-        public ActionResult<IEnumerable<Piglet>> GetPiglets()
+        public IActionResult GetPiglets()
         {
             try
             {
-                return Ok(_Services.GetPiglets());
+                var piglets = _Services.GetPiglets();
+                return Ok(piglets);
             }
             catch (Exception ex)
             {

@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using API_PESO_PIG.Models;
 using API_PESO_PIG.Services;
+using Microsoft.AspNetCore.Authorization;
 
 namespace PESO_PIG.Controllers
 {
@@ -27,7 +28,8 @@ namespace PESO_PIG.Controllers
             try
             {
                 _Services.Add(entity);
-                return Ok("Food creado con éxito.");
+                return Ok(new { message = "Food creado con éxito." });
+
             }
             catch (Exception ex)
             {

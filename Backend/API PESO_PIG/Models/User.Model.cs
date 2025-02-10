@@ -8,6 +8,11 @@ namespace API_PESO_PIG.Models
         public string Email { get; set; }
         public string Password { get; set; }
     }
+
+    public class ResetPassUser
+    {
+        public string Email { get; set; }
+    }
     public class User
     {
         [Key]
@@ -21,7 +26,7 @@ namespace API_PESO_PIG.Models
         [DisplayName("Tipo Usuario")]
         [Required(ErrorMessage = "El campo {0} es requerido")]
         [StringLength(45, ErrorMessage = "El campo {0} tiene un limite de caracteres de {1}")]
-        public string Tip_Users { get; set; }
+        public string? Tip_Users { get; set; } = "Aprendiz";
 
         [DisplayName("Correo")]
         [Required(ErrorMessage = "El campo {0} es requerido")]
@@ -32,13 +37,15 @@ namespace API_PESO_PIG.Models
         public bool Blockade { get; set; }
 
         [DisplayName("Token de Usuario")]
-        [StringLength(200, ErrorMessage = "El campo {0} tiene un límite de caracteres de {1}")]
-        public string Token { get; set; }
+        [StringLength(255, ErrorMessage = "El campo {0} tiene un límite de caracteres de {1}")]
+        public string? Token { get; set; }
 
         [DisplayName("Intentos")]
-        [Range(0, 10, ErrorMessage = "El campo {0} debe estar entre {1} y {2}")]
-        public int Attempts { get; set; }
+        public int Attempts { get; set; } = 0;
+        public string Hashed_Password { get; set; }
+        public string? Salt { get; set; }
     }
+
 
     public class MessageConcat
     {

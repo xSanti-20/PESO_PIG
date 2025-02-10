@@ -1,6 +1,7 @@
 ﻿using API_PESO_PIG.Functions;
 using API_PESO_PIG.Models;
 using API_PESO_PIG.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Linq;
@@ -30,7 +31,8 @@ namespace API_PESO_PIG.Controllers
             try
             {
                 _Services.Add(entity);
-                return Ok("Etapa creada con éxito.");
+                return Ok(new { message = "Etapa creado con éxito." });
+
             }
             catch (Exception ex)
             {

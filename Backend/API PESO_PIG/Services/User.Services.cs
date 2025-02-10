@@ -63,20 +63,16 @@ namespace API_PESO_PIG.Services
         {
             try
             {
-                if (id_Users != updatedUser.id_Users)
-                {
-                    throw new ArgumentException("El ID del usuario no coincide.");
-                }
-                var existingUser = await _context.Users.AsNoTracking().FirstOrDefaultAsync(u => u.id_Users == id_Users);
+                _context.Users.Update(updatedUser);
+                _context.SaveChanges();
+
+                var existingUser = await _context.Users.FindAsync(id_Users);
                 if (existingUser == null)
                 {
                     return false;
                 }
-                _context.Users.Attach(updatedUser);
-                _context.Entry(updatedUser).State = EntityState.Modified;
-             
-                await _context.SaveChangesAsync();
-
+            
+                
                 return true;
             }
             catch (Exception ex)
