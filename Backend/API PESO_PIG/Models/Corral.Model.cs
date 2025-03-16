@@ -7,5 +7,6 @@ namespace API_PESO_PIG.Models
         [Key]
         public int id_Corral { get; set; }
         public string Des_Corral { get; set; }
+        public int Tot_Animal { get; set; }
     }
 }

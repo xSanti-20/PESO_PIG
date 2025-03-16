@@ -1,4 +1,5 @@
-﻿using API_PESO_PIG.Functions;
+﻿using API_PESO_PIG.DTOs;
+using API_PESO_PIG.Functions;
 using API_PESO_PIG.Models;
 using API_PESO_PIG.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -38,19 +39,40 @@ namespace API_PESO_PIG.Controllers
 
         // Consultar todos los Piglets
         [HttpGet("ConsultAllPiglets")]
-        public IActionResult GetPiglets()
+        //public IActionResult GetPiglets()
+        //{
+        //    try
+        //    {
+        //        var piglets = _Services.GetPiglets();
+        //        return Ok(piglets);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        GeneralFunction.Addlog(ex.ToString());
+        //        return StatusCode(500, ex.ToString());
+        //    }
+        //}
+
+        public ActionResult<IEnumerable<PigletsDTO>> GetPiglets()
         {
-            try
+            var piglets = _Services.GetPiglets().Select(p => new PigletsDTO
             {
-                var piglets = _Services.GetPiglets();
-                return Ok(piglets);
-            }
-            catch (Exception ex)
-            {
-                GeneralFunction.Addlog(ex.ToString());
-                return StatusCode(500, ex.ToString());
-            }
+                Id_Piglet = p.Id_Piglet,
+                Name_Piglet = p.Name_Piglet,
+                Acum_Weight = p.Acum_Weight,
+                Fec_Birth = p.Fec_Birth,
+                Weight_Initial = p.Weight_Initial,
+                Sex_Piglet = p.Sex_Piglet,
+                Nam_Race = p.race.Nam_Race,
+                Name_Stage = p.stage.Name_Stage,
+
+
+            }).ToList();
+
+            return Ok(piglets);
         }
+
+
 
         // Consultar Piglet por ID
         [HttpGet("GetPigletId")]

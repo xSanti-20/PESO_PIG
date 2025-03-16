@@ -4767,23 +4767,23 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\SantiagoP\\.nuget\\packages\\": {},
+    "C:\\Users\\p1lab\\.nuget\\packages\\": {},
     "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\SantiagoP\\source\\repos\\API PESO_PIG\\Backend\\API PESO_PIG\\API PESO_PIG.csproj",
+      "projectUniqueName": "C:\\Users\\p1lab\\source\\repos\\PESO_PIG\\Backend\\API PESO_PIG\\API PESO_PIG.csproj",
       "projectName": "API PESO_PIG",
-      "projectPath": "C:\\Users\\SantiagoP\\source\\repos\\API PESO_PIG\\Backend\\API PESO_PIG\\API PESO_PIG.csproj",
-      "packagesPath": "C:\\Users\\SantiagoP\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\SantiagoP\\source\\repos\\API PESO_PIG\\Backend\\API PESO_PIG\\obj\\",
+      "projectPath": "C:\\Users\\p1lab\\source\\repos\\PESO_PIG\\Backend\\API PESO_PIG\\API PESO_PIG.csproj",
+      "packagesPath": "C:\\Users\\p1lab\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\p1lab\\source\\repos\\PESO_PIG\\Backend\\API PESO_PIG\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
       ],
       "configFilePaths": [
-        "C:\\Users\\SantiagoP\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\p1lab\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
@@ -4792,7 +4792,6 @@
       ],
       "sources": {
         "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-        "C:\\Program Files\\dotnet\\library-packs": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
@@ -4810,7 +4809,8 @@
         "enableAudit": "true",
         "auditLevel": "low",
         "auditMode": "direct"
-      }
+      },
+      "SdkAnalysisLevel": "9.0.200"
     },
     "frameworks": {
       "net8.0": {
@@ -4882,7 +4882,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.400/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.200/PortableRuntimeIdentifierGraph.json"
       }
     }
   }

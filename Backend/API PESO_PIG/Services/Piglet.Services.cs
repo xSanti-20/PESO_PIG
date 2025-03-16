@@ -14,7 +14,10 @@ namespace API_PESO_PIG.Services
         // Obtener todos los piglets
         public IEnumerable<Piglet> GetPiglets()
         {
-            return _context.Piglets.ToList();
+            return _context.Piglets
+                .Include(p => p.race)
+                .Include(p => p.stage)
+                .Include(p => p.corral).ToList();
         }
 
         // Obtener piglet por ID
