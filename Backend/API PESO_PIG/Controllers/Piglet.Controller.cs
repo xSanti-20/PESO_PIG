@@ -65,8 +65,7 @@ namespace API_PESO_PIG.Controllers
                 Sex_Piglet = p.Sex_Piglet,
                 Nam_Race = p.race.Nam_Race,
                 Name_Stage = p.stage.Name_Stage,
-
-
+                Des_Corral = p.corral.Des_Corral // Añadido campo para el corral
             }).ToList();
 
             return Ok(piglets);

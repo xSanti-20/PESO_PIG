@@ -14,6 +14,7 @@ namespace API_PESO_PIG.DTOs
         public string Sex_Piglet { get; set; }
         public string Nam_Race { get; set; }
         public string Name_Stage { get; set; }
+        public string Des_Corral { get; set; }
 
     }
 }

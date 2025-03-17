@@ -1746,15 +1746,11 @@
             "type": "string",
             "nullable": true
           },
-          "dat_Entrance": {
-            "type": "string",
-            "format": "date-time"
-          },
           "des_Food": {
             "type": "string",
             "nullable": true
           },
-          "uni_Extent": {
+          "existence": {
             "type": "integer",
             "format": "int32"
           },
@@ -1762,17 +1758,17 @@
             "type": "integer",
             "format": "int32"
           },
-          "wor_Unitary": {
+          "vlr_Unit": {
             "type": "integer",
             "format": "int32"
           },
-          "wor_Total": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "dat_Maturity": {
+          "fec_Expiration": {
             "type": "string",
             "format": "date-time"
+          },
+          "und_Extent": {
+            "type": "string",
+            "nullable": true
           },
           "id_Stage": {
             "type": "integer",
@@ -1881,6 +1877,10 @@
             "nullable": true
           },
           "name_Stage": {
+            "type": "string",
+            "nullable": true
+          },
+          "des_Corral": {
             "type": "string",
             "nullable": true
           }
