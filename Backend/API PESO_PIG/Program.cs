@@ -82,6 +82,7 @@ builder.Services.AddScoped<CorralServices>();
 builder.Services.AddScoped<FeedingServices>();
 builder.Services.AddScoped<RaceServices>();
 builder.Services.AddScoped<StageServices>();
+builder.Services.AddScoped<EntriesServices>();
 
 
 
