@@ -14,7 +14,10 @@ namespace API_PESO_PIG.Services
         // Obtener todos los Feedings
         public IEnumerable<Feeding> GetFeedings()
         {
-            return _context.Feedings.ToList(); // Asegúrate de que "Feedings" sea el DbSet en tu DbContext
+            return _context.Feedings
+                .Include(p => p.user)
+                .Include(p => p.piglet)
+                .Include(p => p.food).ToList();
         }
 
         // Obtener un Feeding por ID

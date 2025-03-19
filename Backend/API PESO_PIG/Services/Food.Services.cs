@@ -14,8 +14,10 @@ namespace API_PESO_PIG.Services
         // Obtener todos los Foods
         public IEnumerable<Food> GetFoods()
         {
-            return _context.Foods.ToList(); // Asegúrate de que "Foods" sea el DbSet en tu DbContext
+            return _context.Foods
+                .Include(p => p.stage).ToList();
         }
+
 
         // Obtener un Food por ID
         public async Task<Food> GetFoodById(int id_Food)

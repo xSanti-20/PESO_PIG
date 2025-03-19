@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using API_PESO_PIG.Models;
 using API_PESO_PIG.Services;
 using Microsoft.AspNetCore.Authorization;
+using API_PESO_PIG.DTOs;
 
 namespace PESO_PIG.Controllers
 {
@@ -40,17 +41,21 @@ namespace PESO_PIG.Controllers
 
         // Consultar todos los Foods
         [HttpGet("ConsultAllFoods")]
-        public ActionResult<IEnumerable<Food>> GetFoods()
+        public ActionResult<IEnumerable<FoodDTO>> GetFoods()
         {
-            try
+            var foods = _Services.GetFoods().Select(p => new FoodDTO
             {
-                return Ok(_Services.GetFoods());
-            }
-            catch (Exception ex)
-            {
-                GeneralFunction.Addlog(ex.ToString());
-                return StatusCode(500, ex.ToString());
-            }
+                Id_Food = p.id_Food,
+                Nam_Food = p.Nam_Food,
+                Des_Food = p.Des_Food,
+                Existence = p.Existence,
+                Vlr_Unit = p.Vlr_Unit,
+                Fec_Expiration = p.Fec_Expiration,
+                Und_Extent = p.Und_Extent,
+                Name_Stage = p.stage.Name_Stage
+            }).ToList();
+
+            return Ok(foods);
         }
 
         // Consultar Food por ID
@@ -76,7 +81,7 @@ namespace PESO_PIG.Controllers
         }
 
         // Consultar rango de Foods
-        [HttpPost("ConsultRange")]
+        [HttpPost("ConsultRangeFood")]
         public ActionResult<IEnumerable<Food>> GetFoodsRange(int start, int end)
         {
             try

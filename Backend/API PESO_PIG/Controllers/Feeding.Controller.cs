@@ -1,4 +1,5 @@
-﻿using API_PESO_PIG.Functions;
+﻿using API_PESO_PIG.DTOs;
+using API_PESO_PIG.Functions;
 using API_PESO_PIG.Models;
 using API_PESO_PIG.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -43,17 +44,20 @@ namespace API_PESO_PIG.Controllers
 
         // Consultar todos los Feedings
         [HttpGet("ConsultAllFeedings")]
-        public ActionResult<IEnumerable<Feeding>> GetFeedings()
+        public ActionResult<IEnumerable<FeedingDTO>> GetFeedings()
         {
-            try
+            var feeding = _Services.GetFeedings().Select(p => new FeedingDTO
             {
-                return Ok(_Services.GetFeedings());
-            }
-            catch (Exception ex)
-            {
-                GeneralFunction.Addlog(ex.ToString());
-                return StatusCode(500, ex.ToString());
-            }
+                id_Feeding = p.id_Feeding,
+                Can_Feeding = p.Can_Feeding,
+                Des_Feeding = p.Des_Feeding,
+                Con_Average = p.Con_Average,
+                Nom_Users = p.user.Nom_Users,
+                Name_Piglet = p.piglet.Name_Piglet,
+                Nam_Food = p.food.Nam_Food
+            }).ToList();
+
+            return Ok(feeding);
         }
 
         // Consultar Feeding por ID

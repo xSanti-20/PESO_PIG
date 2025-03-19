@@ -17,9 +17,9 @@ namespace API_PESO_PIG.Models
 
 
         //foránea a la tabla Stages
-        public int Id_Stage { get; set; }
+        public int id_Stage { get; set; }
 
-        [ForeignKey("Id_Stage")]
+        [ForeignKey("id_Stage")]
         public Stage? stage { get; set; }
     }
 }

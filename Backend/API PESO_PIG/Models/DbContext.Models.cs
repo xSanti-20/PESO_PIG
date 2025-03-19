@@ -9,6 +9,7 @@ public class AppDbContext : DbContext
     public DbSet<Feeding> Feedings { get; set; }
     public DbSet<Food> Foods { get; set; }
     public DbSet<Piglet> Piglets { get; set; }
+    public DbSet<Entries> Entries { get; set; }
     public DbSet<Race> Races { get; set; }
     public DbSet<Stage> Stages { get; set; }
     public DbSet<Weighing> Weighings { get; set; }

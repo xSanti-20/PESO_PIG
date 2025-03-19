@@ -39,19 +39,6 @@ namespace API_PESO_PIG.Controllers
 
         // Consultar todos los Piglets
         [HttpGet("ConsultAllPiglets")]
-        //public IActionResult GetPiglets()
-        //{
-        //    try
-        //    {
-        //        var piglets = _Services.GetPiglets();
-        //        return Ok(piglets);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        GeneralFunction.Addlog(ex.ToString());
-        //        return StatusCode(500, ex.ToString());
-        //    }
-        //}
 
         public ActionResult<IEnumerable<PigletsDTO>> GetPiglets()
         {
@@ -70,6 +57,7 @@ namespace API_PESO_PIG.Controllers
 
             return Ok(piglets);
         }
+
 
 
 
