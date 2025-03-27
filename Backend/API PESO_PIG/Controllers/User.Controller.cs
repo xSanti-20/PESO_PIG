@@ -3,6 +3,7 @@ using API_PESO_PIG.Models;
 using API_PESO_PIG.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -18,12 +19,15 @@ namespace API_PESO_PIG.Controllers
         public readonly UserServices _Services;
         public Jwt Jwt { get; set; }
         public UserFunction GeneralFunction;
-        public UserController(IConfiguration configuration, UserServices userservices)
+        private readonly AppDbContext _context;
+
+        public UserController(IConfiguration configuration, UserServices userservices, AppDbContext context)
         {
             _Configuration = configuration;
             _Services = userservices;
             GeneralFunction = new UserFunction(configuration);
             Jwt = _Configuration.GetSection("Jwt").Get<Jwt>();
+            _context = context;
         }
 
         [HttpPost("Login")]
@@ -86,25 +90,104 @@ namespace API_PESO_PIG.Controllers
 
 
         [HttpPost("ResetPassUser")]
-        public async Task<IActionResult> ResetPassword(ResetPassUser user)
+        public async Task<IActionResult> ResetPassword([FromBody] ResetPassUser model)
         {
             try
             {
-                var userExist = await _Services.GetUserEmail(user.Email);
-                if (userExist != null) {
-
-                    UserFunction funciones = new UserFunction(_Configuration);
-                    var response = await funciones.SendEmail(user.Email);
-                    return Ok(response);
+                var user = await _Services.GetByEmailAsync(model.Email);
+                if (user == null)
+                {
+                    return NotFound(new { message = "El Correo no fue encontrado" });
                 }
 
-                return BadRequest(new { message = "El Correo no fue encontrado" });
+                var token = Convert.ToBase64String(Encoding.UTF8.GetBytes(Guid.NewGuid().ToString()));
+                user.ResetToken = token;
+                user.ResetTokenExpiration = DateTime.UtcNow.AddMinutes(30);
+                await _Services.UpdateUserAsync(user);
 
+                string resetLink = $"http://localhost:3000/user/reset_password?token={token}";
+
+                var emailuser = await GeneralFunction.SendEmail(model.Email, resetLink);
+                if (!emailuser.Status)
+                {
+                    return BadRequest(new { message = "Error al Enviar el Correo" });
+                }
+
+                return Ok(new { message = "Correo Enviado Correctamente" });
             }
             catch (Exception ex)
             {
                 GeneralFunction.Addlog(ex.ToString());
                 return StatusCode(500, ex.ToString());
+            }
+        }
+
+        [HttpPost("ResetPasswordConfirm")]
+        public async Task<IActionResult> ResetPasswordConfirm([FromBody] ResetPassUsers model)
+        {
+            try
+            {
+                // Primero, buscar al usuario por el token de restablecimiento en lugar del correo electrónico
+                var user = await _Services.GetByTokenAsync(model.Token); // Método que deberías tener en tu servicio para buscar por token.
+
+                if (user == null || user.ResetTokenExpiration < DateTime.UtcNow)
+                {
+                    return BadRequest(new { message = "Token inválido o expirado." });
+                }
+
+                // Hashear la nueva contraseña
+                string salt = BCrypt.Net.BCrypt.GenerateSalt();
+                user.Hashed_Password = BCrypt.Net.BCrypt.HashPassword(model.NewPassword + salt);
+                user.Salt = salt;
+
+                // Borrar el token usado
+                user.ResetToken = null;
+                user.ResetTokenExpiration = null;
+                await _Services.GetResponsibleByResetToken(user.ResetToken);
+
+                return Ok(new { message = "Contraseña restablecida correctamente." });
+            }
+            catch (Exception ex)
+            {
+                GeneralFunction.Addlog(ex.ToString());
+                return StatusCode(500, ex.ToString());
+            }
+        }
+
+        [HttpPost("validatepass")]
+        public async Task<IActionResult> ValidateToken([FromBody] TokenRequest model)
+        {
+            try
+            {
+                if (model == null || string.IsNullOrEmpty(model.Token))
+                {
+                    return BadRequest(new { message = "Token no proporcionado" });
+                }
+
+                // Decodificar el token desde Base64 a string
+                string decodedToken;
+                try
+                {
+                    byte[] tokenBytes = Convert.FromBase64String(model.Token);
+                    decodedToken = Encoding.UTF8.GetString(tokenBytes);
+                }
+                catch (FormatException)
+                {
+                    return Unauthorized(new { message = "Formato de token inválido" });
+                }
+
+                // Buscar el usuario con ese token
+                var user = await _Services.GetByTokenAsync(model.Token);
+                if (user == null || user.ResetTokenExpiration < DateTime.UtcNow)
+                {
+                    return Unauthorized(new { message = "Token invalido o expirado" });
+                }
+
+                return Ok(new { message = "Token valido" });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Error interno del servidor", error = ex.Message });
             }
         }
 
@@ -141,7 +224,7 @@ namespace API_PESO_PIG.Controllers
             {
                 return Ok(_Services.GetUsers());
             }
-            
+
             catch (Exception ex)
             {
                 GeneralFunction.Addlog(ex.ToString());
@@ -251,4 +334,3 @@ namespace API_PESO_PIG.Controllers
         }
     }
 }
-    

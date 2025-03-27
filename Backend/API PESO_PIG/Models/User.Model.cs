@@ -13,6 +13,18 @@ namespace API_PESO_PIG.Models
     {
         public string Email { get; set; }
     }
+
+    public class ResetPassUsers
+    {
+        public string Token { get; set; }
+        public string NewPassword { get; set; }
+    }
+
+    public class TokenRequest
+    {
+        public string Token { get; set; }
+    }
+
     public class User
     {
         [Key]
@@ -37,6 +49,8 @@ namespace API_PESO_PIG.Models
         public int Attempts { get; set; } = 0;
         public string Hashed_Password { get; set; }
         public string? Salt { get; set; }
+        public string? ResetToken {  get; set; }
+        public DateTime? ResetTokenExpiration { get; set; }
     }
 
 

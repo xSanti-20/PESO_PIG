@@ -3,6 +3,12 @@ using Microsoft.EntityFrameworkCore;
 
 public class AppDbContext : DbContext
 {
+    private readonly IConfiguration _configuration;
+
+    public AppDbContext(DbContextOptions<AppDbContext> options, IConfiguration configuration) : base(options)
+    {
+        _configuration = configuration;
+    }
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
     public DbSet<User> Users { get; set; }
     public DbSet<Corral> Corrals { get; set; }
@@ -18,8 +24,8 @@ public class AppDbContext : DbContext
     {
         if (!optionsBuilder.IsConfigured)
         {
-            optionsBuilder.UseMySql("Server=localhost;Database=peso_pig;User=root;Password=Santiago04200;",
-            new MySqlServerVersion(new Version(8, 0, 23)));
-        }   
+            var connectionString = _configuration.GetConnectionString("DefaultConnection");
+            optionsBuilder.UseMySql(connectionString, new MySqlServerVersion(new Version(8, 0, 23)));
+        }
     }
 }

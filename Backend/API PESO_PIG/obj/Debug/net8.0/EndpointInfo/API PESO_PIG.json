@@ -205,6 +205,206 @@
         }
       }
     },
+    "/api/Entries/CreateEntries": {
+      "post": {
+        "tags": [
+          "Entries"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Entries"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Entries"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/Entries"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Entries/ConsultAllEntries": {
+      "get": {
+        "tags": [
+          "Entries"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/EntriesDTO"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/EntriesDTO"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/EntriesDTO"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Entries/GetEntriesId": {
+      "get": {
+        "tags": [
+          "Entries"
+        ],
+        "parameters": [
+          {
+            "name": "id_Entries",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Entries/ConsultRangeEntries": {
+      "post": {
+        "tags": [
+          "Entries"
+        ],
+        "parameters": [
+          {
+            "name": "start",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "end",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Entries"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Entries"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Entries"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Entries/DeleteEntries": {
+      "delete": {
+        "tags": [
+          "Entries"
+        ],
+        "parameters": [
+          {
+            "name": "id_Entries",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Entries/UpdateEntries": {
+      "put": {
+        "tags": [
+          "Entries"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Entries"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Entries"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/Entries"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/api/Feeding/CreateFeeding": {
       "post": {
         "tags": [
@@ -249,7 +449,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/Feeding"
+                    "$ref": "#/components/schemas/FeedingDTO"
                   }
                 }
               },
@@ -257,7 +457,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/Feeding"
+                    "$ref": "#/components/schemas/FeedingDTO"
                   }
                 }
               },
@@ -265,7 +465,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/Feeding"
+                    "$ref": "#/components/schemas/FeedingDTO"
                   }
                 }
               }
@@ -449,7 +649,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/Food"
+                    "$ref": "#/components/schemas/FoodDTO"
                   }
                 }
               },
@@ -457,7 +657,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/Food"
+                    "$ref": "#/components/schemas/FoodDTO"
                   }
                 }
               },
@@ -465,7 +665,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/Food"
+                    "$ref": "#/components/schemas/FoodDTO"
                   }
                 }
               }
@@ -496,7 +696,7 @@
         }
       }
     },
-    "/Api/Food/ConsultRange": {
+    "/Api/Food/ConsultRangeFood": {
       "post": {
         "tags": [
           "Food"
@@ -1267,6 +1467,68 @@
         }
       }
     },
+    "/api/User/ResetPasswordConfirm": {
+      "post": {
+        "tags": [
+          "User"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ResetPassUsers"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ResetPassUsers"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ResetPassUsers"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/User/validatepass": {
+      "post": {
+        "tags": [
+          "User"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TokenRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TokenRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/TokenRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/api/User/CreateUser": {
       "post": {
         "tags": [
@@ -1688,6 +1950,69 @@
         },
         "additionalProperties": false
       },
+      "Entries": {
+        "type": "object",
+        "properties": {
+          "id_Entries": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "vlr_Entries": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "fec_Entries": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "fec_Expiration": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "can_Food": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "id_Food": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "food": {
+            "$ref": "#/components/schemas/Food"
+          }
+        },
+        "additionalProperties": false
+      },
+      "EntriesDTO": {
+        "type": "object",
+        "properties": {
+          "id_Entries": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "vlr_Entries": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "fec_Entries": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "fec_Expiration": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "can_Food": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "nam_Food": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "Feeding": {
         "type": "object",
         "properties": {
@@ -1699,11 +2024,7 @@
             "type": "integer",
             "format": "int32"
           },
-          "fed_Feeding": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "tip_Feeding": {
+          "des_Feeding": {
             "type": "string",
             "nullable": true
           },
@@ -1731,6 +2052,40 @@
           },
           "food": {
             "$ref": "#/components/schemas/Food"
+          }
+        },
+        "additionalProperties": false
+      },
+      "FeedingDTO": {
+        "type": "object",
+        "properties": {
+          "id_Feeding": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "can_Feeding": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "des_Feeding": {
+            "type": "string",
+            "nullable": true
+          },
+          "con_Average": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "nom_Users": {
+            "type": "string",
+            "nullable": true
+          },
+          "name_Piglet": {
+            "type": "string",
+            "nullable": true
+          },
+          "nam_Food": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -1776,6 +2131,44 @@
           },
           "stage": {
             "$ref": "#/components/schemas/Stage"
+          }
+        },
+        "additionalProperties": false
+      },
+      "FoodDTO": {
+        "type": "object",
+        "properties": {
+          "id_Food": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "nam_Food": {
+            "type": "string",
+            "nullable": true
+          },
+          "des_Food": {
+            "type": "string",
+            "nullable": true
+          },
+          "existence": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "vlr_Unit": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "fec_Expiration": {
+            "type": "string",
+            "format": "date"
+          },
+          "und_Extent": {
+            "type": "string",
+            "nullable": true
+          },
+          "name_Stage": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -1911,6 +2304,20 @@
         },
         "additionalProperties": false
       },
+      "ResetPassUsers": {
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string",
+            "nullable": true
+          },
+          "newPassword": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "Stage": {
         "type": "object",
         "properties": {
@@ -1933,6 +2340,16 @@
           "tot_Weeks": {
             "type": "integer",
             "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "TokenRequest": {
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -1973,6 +2390,15 @@
           },
           "salt": {
             "type": "string",
+            "nullable": true
+          },
+          "resetToken": {
+            "type": "string",
+            "nullable": true
+          },
+          "resetTokenExpiration": {
+            "type": "string",
+            "format": "date-time",
             "nullable": true
           }
         },
