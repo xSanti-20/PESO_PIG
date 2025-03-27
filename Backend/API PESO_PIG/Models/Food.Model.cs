@@ -10,7 +10,6 @@ namespace API_PESO_PIG.Models
         public string Nam_Food { get; set; }
         public string Des_Food { get; set; }
         public int Existence { get; set; }
-        public int Can_Food { get; set; }
         public int Vlr_Unit { get; set; }
         public DateTime Fec_Expiration { get; set; }
         public string Und_Extent { get; set; }

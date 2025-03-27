@@ -2109,10 +2109,6 @@
             "type": "integer",
             "format": "int32"
           },
-          "can_Food": {
-            "type": "integer",
-            "format": "int32"
-          },
           "vlr_Unit": {
             "type": "integer",
             "format": "int32"
@@ -2411,10 +2407,6 @@
             "type": "integer",
             "format": "int32"
           },
-          "weighing_Former": {
-            "type": "integer",
-            "format": "int32"
-          },
           "weighing_Current": {
             "type": "integer",
             "format": "int32"
@@ -2426,6 +2418,12 @@
           "fec_Weighing": {
             "type": "string",
             "format": "date-time"
+          },
+          "piglet": {
+            "$ref": "#/components/schemas/Piglet"
+          },
+          "user": {
+            "$ref": "#/components/schemas/User"
           }
         },
         "additionalProperties": false
