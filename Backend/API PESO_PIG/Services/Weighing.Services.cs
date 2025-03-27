@@ -14,7 +14,9 @@ namespace API_PESO_PIG.Services
         // Obtener todos los registros de Weighing
         public IEnumerable<Weighing> GetWeighings()
         {
-            return _context.Weighings.ToList();
+            return _context.Weighings
+                .Include(p => p.piglet)
+                .Include(p => p.user).ToList();
         }
 
         // Obtener Weighing por ID

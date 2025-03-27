@@ -1,4 +1,5 @@
-﻿using API_PESO_PIG.Functions;
+﻿using API_PESO_PIG.DTOs;
+using API_PESO_PIG.Functions;
 using API_PESO_PIG.Models;
 using API_PESO_PIG.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -41,15 +42,17 @@ namespace API_PESO_PIG.Controllers
         [HttpGet("ConsultAllPesajes")]
         public ActionResult<IEnumerable<Weighing>> GetWeighings()
         {
-            try
+            var weighing = _Services.GetWeighings().Select(p => new WeighingDTO
             {
-                return Ok(_Services.GetWeighings());
-            }
-            catch (Exception ex)
-            {
-                GeneralFunction.Addlog(ex.ToString());
-                return StatusCode(500, ex.ToString());
-            }
+                Id_Weighing = p.id_Weighings,
+                Weighing_Current = p.Weighing_Current,
+                Weight_Gain = p.Weight_Gain,
+                Fec_Weighing = p.Fec_Weighing,
+                Name_Piglet = p.piglet.Name_Piglet,
+                Nom_Users = p.user.Nom_Users,
+            }).ToList();
+
+            return Ok(weighing);
         }
 
         // Consultar Pesaje por ID
