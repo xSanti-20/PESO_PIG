@@ -77,7 +77,11 @@ namespace API_PESO_PIG.Controllers
                 await _Services.UpdateUser(user.id_Users, user);
 
                 // Devuelve la respuesta
-                return Ok(new { token = tokenString });
+                return Ok(new {
+                    token = tokenString,
+                    username = user.Nom_Users,
+                    email = user.Email
+                });
             }
             catch (Exception ex)
             {
@@ -217,7 +221,6 @@ namespace API_PESO_PIG.Controllers
         }
 
         [HttpGet("ConsultAllUser")]
-        [Authorize]
         public ActionResult<IEnumerable<User>> AllUsers()
         {
             try
@@ -253,7 +256,6 @@ namespace API_PESO_PIG.Controllers
             }
         }
         [HttpPost("ConsultRange")]
-        [Authorize]
         public ActionResult<IEnumerable<User>> GetAllRange(int start, int end)
         {
             try
@@ -287,7 +289,6 @@ namespace API_PESO_PIG.Controllers
         }
 
         [HttpDelete("DeleteUser")]
-        [Authorize]
         public async Task<IActionResult> DelUserS(int id_Users)
         {
             try
@@ -307,7 +308,6 @@ namespace API_PESO_PIG.Controllers
             }
         }
         [HttpPut("UpdateUser")]
-        [Authorize]
         public async Task<IActionResult> UpdateUser(User updatedUser)
         {
             if (updatedUser == null)

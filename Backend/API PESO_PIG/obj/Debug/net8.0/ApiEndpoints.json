@@ -986,7 +986,7 @@
   {
     "ContainingType": "API_PESO_PIG.Controllers.WeighingController",
     "Method": "GetWeighings",
-    "RelativePath": "api/Weighing/ConsultAllPesajes",
+    "RelativePath": "api/Weighing/ConsultAllWeighings",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
@@ -1037,7 +1037,7 @@
   {
     "ContainingType": "API_PESO_PIG.Controllers.WeighingController",
     "Method": "Add",
-    "RelativePath": "api/Weighing/CreatePesaje",
+    "RelativePath": "api/Weighing/CreateWeighing",
     "HttpMethod": "POST",
     "IsController": true,
     "Order": 0,
@@ -1053,7 +1053,7 @@
   {
     "ContainingType": "API_PESO_PIG.Controllers.WeighingController",
     "Method": "DelWeighing",
-    "RelativePath": "api/Weighing/DeletePesaje",
+    "RelativePath": "api/Weighing/DeleteWeighing",
     "HttpMethod": "DELETE",
     "IsController": true,
     "Order": 0,
@@ -1069,7 +1069,7 @@
   {
     "ContainingType": "API_PESO_PIG.Controllers.WeighingController",
     "Method": "GetWeighingId",
-    "RelativePath": "api/Weighing/GetPesajeId",
+    "RelativePath": "api/Weighing/GetWeighingId",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
@@ -1085,7 +1085,7 @@
   {
     "ContainingType": "API_PESO_PIG.Controllers.WeighingController",
     "Method": "UpdateWeighing",
-    "RelativePath": "api/Weighing/UpdatePesaje",
+    "RelativePath": "api/Weighing/UpdateWeighing",
     "HttpMethod": "PUT",
     "IsController": true,
     "Order": 0,

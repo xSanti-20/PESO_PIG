@@ -9,7 +9,6 @@ namespace API_PESO_PIG.Controllers
 {
     [ApiController]
     [Route("api/[Controller]")]
-    [Authorize]
     public class WeighingController : Controller
     {
         public IConfiguration _Configuration;
@@ -23,7 +22,7 @@ namespace API_PESO_PIG.Controllers
         }
 
         // Crear Pesaje
-        [HttpPost("CreatePesaje")]
+        [HttpPost("CreateWeighing")]
         public IActionResult Add(Weighing entity)
         {
             try
@@ -39,15 +38,15 @@ namespace API_PESO_PIG.Controllers
         }
 
         // Consultar todos los Pesajes
-        [HttpGet("ConsultAllPesajes")]
+        [HttpGet("ConsultAllWeighings")]
         public ActionResult<IEnumerable<Weighing>> GetWeighings()
         {
             var weighing = _Services.GetWeighings().Select(p => new WeighingDTO
             {
                 Id_Weighing = p.id_Weighings,
-                Weighing_Current = p.Weighing_Current,
+                Weight_Current = p.Weight_Current,
                 Weight_Gain = p.Weight_Gain,
-                Fec_Weighing = p.Fec_Weighing,
+                Fec_Weight = p.Fec_Weight,
                 Name_Piglet = p.piglet.Name_Piglet,
                 Nom_Users = p.user.Nom_Users,
             }).ToList();
@@ -56,7 +55,7 @@ namespace API_PESO_PIG.Controllers
         }
 
         // Consultar Pesaje por ID
-        [HttpGet("GetPesajeId")]
+        [HttpGet("GetWeighingId")]
         public async Task<IActionResult> GetWeighingId(int id_Weighings)
         {
             try
@@ -100,7 +99,7 @@ namespace API_PESO_PIG.Controllers
         }
 
         // Eliminar Pesaje por ID
-        [HttpDelete("DeletePesaje")]
+        [HttpDelete("DeleteWeighing")]
         public async Task<IActionResult> DelWeighing(int id_Weighings)
         {
             try
@@ -120,7 +119,7 @@ namespace API_PESO_PIG.Controllers
         }
 
         // Actualizar Pesaje
-        [HttpPut("UpdatePesaje")]
+        [HttpPut("UpdateWeighing")]
         public async Task<IActionResult> UpdateWeighing(Weighing updatedWeighing)
         {
             if (updatedWeighing == null)

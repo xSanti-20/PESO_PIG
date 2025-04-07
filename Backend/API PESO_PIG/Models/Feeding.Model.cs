@@ -14,7 +14,7 @@ namespace API_PESO_PIG.Models
         //foránea a la tabla Users
         public int id_Users { get; set; }
 
-        [ForeignKey("Id_User")]
+        [ForeignKey("id_Users")]
         public User? user { get; set; }
 
         //foránea a la tabla Piglets

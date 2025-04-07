@@ -1729,7 +1729,7 @@
         }
       }
     },
-    "/api/Weighing/CreatePesaje": {
+    "/api/Weighing/CreateWeighing": {
       "post": {
         "tags": [
           "Weighing"
@@ -1760,7 +1760,7 @@
         }
       }
     },
-    "/api/Weighing/ConsultAllPesajes": {
+    "/api/Weighing/ConsultAllWeighings": {
       "get": {
         "tags": [
           "Weighing"
@@ -1798,7 +1798,7 @@
         }
       }
     },
-    "/api/Weighing/GetPesajeId": {
+    "/api/Weighing/GetWeighingId": {
       "get": {
         "tags": [
           "Weighing"
@@ -1876,7 +1876,7 @@
         }
       }
     },
-    "/api/Weighing/DeletePesaje": {
+    "/api/Weighing/DeleteWeighing": {
       "delete": {
         "tags": [
           "Weighing"
@@ -1898,7 +1898,7 @@
         }
       }
     },
-    "/api/Weighing/UpdatePesaje": {
+    "/api/Weighing/UpdateWeighing": {
       "put": {
         "tags": [
           "Weighing"
@@ -2407,7 +2407,7 @@
             "type": "integer",
             "format": "int32"
           },
-          "weighing_Current": {
+          "weight_Current": {
             "type": "integer",
             "format": "int32"
           },
@@ -2415,12 +2415,20 @@
             "type": "integer",
             "format": "int32"
           },
-          "fec_Weighing": {
+          "fec_Weight": {
             "type": "string",
             "format": "date-time"
           },
+          "id_Piglet": {
+            "type": "integer",
+            "format": "int32"
+          },
           "piglet": {
             "$ref": "#/components/schemas/Piglet"
+          },
+          "id_Users": {
+            "type": "integer",
+            "format": "int32"
           },
           "user": {
             "$ref": "#/components/schemas/User"
