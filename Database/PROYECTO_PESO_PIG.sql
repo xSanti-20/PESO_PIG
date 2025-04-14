@@ -36,7 +36,6 @@ CREATE TABLE `corrals` (
 
 LOCK TABLES `corrals` WRITE;
 /*!40000 ALTER TABLE `corrals` DISABLE KEYS */;
-INSERT INTO `corrals` VALUES (1,'corral 2',7);
 /*!40000 ALTER TABLE `corrals` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -49,15 +48,16 @@ DROP TABLE IF EXISTS `entries`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `entries` (
   `id_Entries` int NOT NULL AUTO_INCREMENT,
-  `vlr_Entries` int NOT NULL,
+  `vlr_Unitary` int NOT NULL,
   `Fec_Entries` datetime NOT NULL,
   `Fec_Expiration` datetime NOT NULL,
   `Can_Food` int NOT NULL,
   `id_Food` int NOT NULL,
+  `vlr_Total` int NOT NULL,
   PRIMARY KEY (`id_Entries`),
   KEY `fk_entries_foods_idx` (`id_Food`),
   CONSTRAINT `fk_entries_foods` FOREIGN KEY (`id_Food`) REFERENCES `foods` (`id_Food`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4006 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -66,6 +66,7 @@ CREATE TABLE `entries` (
 
 LOCK TABLES `entries` WRITE;
 /*!40000 ALTER TABLE `entries` DISABLE KEYS */;
+INSERT INTO `entries` VALUES (4005,5000,'2025-04-14 16:53:07','2025-04-14 16:53:07',2,19,10000);
 /*!40000 ALTER TABLE `entries` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -78,12 +79,13 @@ DROP TABLE IF EXISTS `feedings`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `feedings` (
   `id_Feeding` int NOT NULL AUTO_INCREMENT,
-  `Des_Feeding` varchar(200) NOT NULL,
-  `Can_Feeding` int NOT NULL,
-  `Con_Average` int NOT NULL,
+  `Obc_Feeding` varchar(200) NOT NULL,
+  `Can_Food` int NOT NULL,
+  `Sum_Food` int NOT NULL,
   `id_Users` int NOT NULL,
   `id_Piglet` int NOT NULL,
   `id_Food` int NOT NULL,
+  `Dat_Feeding` datetime NOT NULL,
   PRIMARY KEY (`id_Feeding`),
   KEY `fk_feedingd_users_idx` (`id_Users`),
   KEY `fk_feedings_piglet_idx` (`id_Piglet`),
@@ -91,7 +93,7 @@ CREATE TABLE `feedings` (
   CONSTRAINT `fk_feedings_foods` FOREIGN KEY (`id_Food`) REFERENCES `foods` (`id_Food`),
   CONSTRAINT `fk_feedings_piglet` FOREIGN KEY (`id_Piglet`) REFERENCES `piglets` (`id_Piglet`),
   CONSTRAINT `fk_feedings_users` FOREIGN KEY (`id_Users`) REFERENCES `users` (`id_Users`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -113,16 +115,15 @@ DROP TABLE IF EXISTS `foods`;
 CREATE TABLE `foods` (
   `id_Food` int NOT NULL AUTO_INCREMENT,
   `Nam_Food` varchar(255) NOT NULL,
-  `Des_Food` varchar(255) NOT NULL,
   `Existence` int NOT NULL,
   `Vlr_Unit` int NOT NULL,
-  `Fec_Expiration` date DEFAULT NULL,
-  `Und_Extent` varchar(45) NOT NULL,
+  `Und_Extent` varchar(5) NOT NULL,
   `id_Stage` int NOT NULL,
+  `Rat_Food` int NOT NULL,
   PRIMARY KEY (`id_Food`),
   KEY `fk_food_stages_idx` (`id_Stage`),
   CONSTRAINT `fk_foods_stages` FOREIGN KEY (`id_Stage`) REFERENCES `stages` (`id_Stage`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -131,7 +132,7 @@ CREATE TABLE `foods` (
 
 LOCK TABLES `foods` WRITE;
 /*!40000 ALTER TABLE `foods` DISABLE KEYS */;
-INSERT INTO `foods` VALUES (1,'concentrado','nose',10,15000,'2026-04-20','10',1);
+INSERT INTO `foods` VALUES (19,'Comiditas',10,5000,'KG',2,3);
 /*!40000 ALTER TABLE `foods` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -152,6 +153,7 @@ CREATE TABLE `piglets` (
   `id_Stage` int NOT NULL,
   `id_Race` int NOT NULL,
   `id_Corral` int NOT NULL,
+  `Placa_Sena` int NOT NULL,
   PRIMARY KEY (`id_Piglet`),
   KEY `fk_piglets_stages_idx` (`id_Stage`),
   KEY `fk_piglets_races_idx` (`id_Race`),
@@ -159,7 +161,7 @@ CREATE TABLE `piglets` (
   CONSTRAINT `fk_piglets_corrals` FOREIGN KEY (`id_Corral`) REFERENCES `corrals` (`id_Corral`),
   CONSTRAINT `fk_piglets_races` FOREIGN KEY (`id_Race`) REFERENCES `races` (`id_Race`),
   CONSTRAINT `fk_piglets_stages` FOREIGN KEY (`id_Stage`) REFERENCES `stages` (`id_Stage`)
-) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -168,7 +170,6 @@ CREATE TABLE `piglets` (
 
 LOCK TABLES `piglets` WRITE;
 /*!40000 ALTER TABLE `piglets` DISABLE KEYS */;
-INSERT INTO `piglets` VALUES (15,'Paco','2025-03-16',15,15,'Macho',1,1,1),(16,'lula','2025-03-19',10,10,'Hembra',1,1,1);
 /*!40000 ALTER TABLE `piglets` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -192,7 +193,6 @@ CREATE TABLE `races` (
 
 LOCK TABLES `races` WRITE;
 /*!40000 ALTER TABLE `races` DISABLE KEYS */;
-INSERT INTO `races` VALUES (1,'triple jamon');
 /*!40000 ALTER TABLE `races` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -210,7 +210,7 @@ CREATE TABLE `stages` (
   `Weight_Upto` int NOT NULL,
   `Tot_Weeks` int NOT NULL,
   PRIMARY KEY (`id_Stage`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -219,7 +219,7 @@ CREATE TABLE `stages` (
 
 LOCK TABLES `stages` WRITE;
 /*!40000 ALTER TABLE `stages` DISABLE KEYS */;
-INSERT INTO `stages` VALUES (1,'Precebo',5,10,20);
+INSERT INTO `stages` VALUES (2,'Precebo',12,20,2);
 /*!40000 ALTER TABLE `stages` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -243,7 +243,7 @@ CREATE TABLE `users` (
   `ResetToken` varchar(250) DEFAULT NULL,
   `ResetTokenExpiration` datetime DEFAULT NULL,
   PRIMARY KEY (`id_Users`)
-) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -252,7 +252,7 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES (14,'santiago','Aprendiz','santiago@gmail.com',0,0,'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InNhbnRpYWdvQGdtYWlsLmNvbSIsIlVzZXJJZCI6IjE0IiwibmJmIjoxNzQyMDU0NjQ0LCJleHAiOjE3NDIwNTgyNDQsImlhdCI6MTc0MjA1NDY0NH0.avKWslMVhYbS860EM5CGjQcAXF8Yo9G9ZpYI0uoTnRA','$2a$11$50CKm5WfkqfsYkf7sU89We3qtmBQTvWf4.CjizP.lvm3996XpKhoK','$2a$11$YPZsrVEbnFUs0/ZR7zeeG.',NULL,NULL),(15,'santiago','Aprendiz','puentessantiago2003@gmail.com',0,0,'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InB1ZW50ZXNzYW50aWFnbzIwMDNAZ21haWwuY29tIiwiVXNlcklkIjoiMTUiLCJuYmYiOjE3NDMwMjY3MDYsImV4cCI6MTc0MzAzMDMwNiwiaWF0IjoxNzQzMDI2NzA2fQ.P5NBML0bfIh18KtiZWKCiaPQjJCc__n3t-S3DPa-S9k','$2a$11$CwHsCYOTQlsPDihAbEhUK.2xVf6yQwqlqnUA4Yew4rRztFMVdlYOG','$2a$11$CBOhaeKD/deq5pRWAX9qmO','ZmQ2OGY2MWQtMzRkZi00ZWQ2LWE1NzctMTU0MDBmYWM2YjAw','2025-03-26 22:31:06');
+INSERT INTO `users` VALUES (15,'santiago','Aprendiz','puentessantiago2003@gmail.com',0,0,'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InB1ZW50ZXNzYW50aWFnbzIwMDNAZ21haWwuY29tIiwiVXNlcklkIjoiMTUiLCJuYmYiOjE3NDMwMjY3MDYsImV4cCI6MTc0MzAzMDMwNiwiaWF0IjoxNzQzMDI2NzA2fQ.P5NBML0bfIh18KtiZWKCiaPQjJCc__n3t-S3DPa-S9k','$2a$11$CwHsCYOTQlsPDihAbEhUK.2xVf6yQwqlqnUA4Yew4rRztFMVdlYOG','$2a$11$CBOhaeKD/deq5pRWAX9qmO','ZmQ2OGY2MWQtMzRkZi00ZWQ2LWE1NzctMTU0MDBmYWM2YjAw','2025-03-26 22:31:06'),(16,'danna','Aprendiz','dannamarcela89@gmail.com',0,0,'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImRhbm5hbWFyY2VsYTg5QGdtYWlsLmNvbSIsIlVzZXJJZCI6IjE2IiwibmJmIjoxNzQ0MTQxNTM0LCJleHAiOjE3NDQxNDUxMzQsImlhdCI6MTc0NDE0MTUzNH0.mNPojiCfen6VxZd7AEv_KU00iXuMH9BqjNMSvyxDS2I','$2a$11$9WN29.yMndLRBuddsrn1u.txjQSYBni6XO8r6KrvkpjH1xk1kqfQ6','$2a$11$lIzf.zs7h5CONpgzE7E1gu',NULL,NULL);
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -296,4 +296,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-03-27 11:00:16
+-- Dump completed on 2025-04-14 12:06:12
