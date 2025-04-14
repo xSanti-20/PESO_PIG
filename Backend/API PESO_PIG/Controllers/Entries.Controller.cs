@@ -46,7 +46,8 @@ namespace API_PESO_PIG.Controllers
             var entries = _Services.GetEntries().Select(p => new EntriesDTO
             {
                 id_Entries = p.id_Entries,
-                Vlr_Entries = p.Vlr_Entries,
+                Vlr_Total = p.Vlr_Total,
+                Vlr_Unit = p.vlr_Unitary,
                 Fec_Entries = p.Fec_Entries,
                 Fec_Expiration = p.Fec_Expiration,
                 Can_Food = p.Can_Food,
@@ -79,12 +80,19 @@ namespace API_PESO_PIG.Controllers
         }
 
         // Consultar rango de Entradas
-        [HttpPost("ConsultRangeEntries")]
-        public ActionResult<IEnumerable<Entries>> GetEntriesRange(int start, int end)
+        [HttpGet("ConsultRangeEntries")]
+        public ActionResult<IEnumerable<Entries>> GetEntriesRange(string start, string end)
         {
             try
             {
-                var range = _Services.GetEntries().Skip(start - 1).Take(end - start + 1).ToList();
+                if (!DateTime.TryParse(start, out DateTime startDate) || !DateTime.TryParse(end, out DateTime endDate))
+                {
+                    return BadRequest("Formato de fecha inválido. Usa el formato correcto (yyyy-MM-dd).");
+                }
+
+                var range = _Services.GetEntries()
+                    .Where(e => e.Fec_Entries >= startDate && e.Fec_Entries <= endDate)
+                    .ToList();
 
                 if (!range.Any())
                 {
@@ -99,6 +107,7 @@ namespace API_PESO_PIG.Controllers
                 return StatusCode(500, ex.ToString());
             }
         }
+
 
         // Eliminar Entrada por ID
         [HttpDelete("DeleteEntries")]

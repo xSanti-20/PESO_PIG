@@ -8,7 +8,7 @@ using API_PESO_PIG.DTOs;
 namespace PESO_PIG.Controllers
 {
     [ApiController]
-    [Route("Api/[controller]")]
+    [Route("api/[controller]")]
     public class FoodController : Controller
     {
         public IConfiguration _Configuration;
@@ -47,11 +47,10 @@ namespace PESO_PIG.Controllers
             {
                 Id_Food = p.id_Food,
                 Nam_Food = p.Nam_Food,
-                Des_Food = p.Des_Food,
                 Existence = p.Existence,
                 Vlr_Unit = p.Vlr_Unit,
-                Fec_Expiration = p.Fec_Expiration,
                 Und_Extent = p.Und_Extent,
+                Rat_Food = p.Rat_Food,
                 Name_Stage = p.stage.Name_Stage
             }).ToList();
 
@@ -81,19 +80,18 @@ namespace PESO_PIG.Controllers
         }
 
         // Consultar rango de Foods
-        [HttpPost("ConsultRangeFood")]
+        [HttpGet("ConsultRangeFood")]
         public ActionResult<IEnumerable<Food>> GetFoodsRange(int start, int end)
         {
             try
             {
                 var range = _Services.GetFoods()
-                    .Skip(start - 1)
-                    .Take(end - start + 1)
+                    .Where(f => f.id_Food >= start && f.id_Food <= end)
                     .ToList();
 
                 if (!range.Any())
                 {
-                    return NotFound("No se encontraron Foods en el rango.");
+                    return NotFound("No se encontraron Foods en el rango especificado.");
                 }
 
                 return Ok(range);
@@ -104,6 +102,7 @@ namespace PESO_PIG.Controllers
                 return StatusCode(500, ex.ToString());
             }
         }
+
 
         // Eliminar Food por ID
         [HttpDelete("DeleteFood")]

@@ -1,0 +1,127 @@
+/* Definición de colores */
+:root {
+    --bg-color-primary: #000000;  /* Fondo negro */
+    --bg-color-rosado: #E57B76;   /* Rosado */
+    --bg-color-blanco: #ffffff;   /* Blanco */
+    --bg-color-negro: #000000;    /* Negro */
+    --bg-color-nav: #ffffff68;    /* Blanco semitransparente para el nav */
+}
+
+/* Contenedor principal */
+.wrapper {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: bold;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 75vh;
+}
+
+/* Estilos del formulario */
+.form_box {
+    box-sizing: border-box;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 350px;
+    background: #ffffff; /* Fondo blanco */
+    border-radius: 5px;
+    padding: 25px;
+}
+
+/* Título del formulario */
+.title {
+    font-size: 30px;
+    text-align: center;
+    font-weight: bold;
+    color: #000000;  /* Texto negro */
+    margin-bottom: 15px;
+}
+
+/* Caja de inputs */
+.input_box {
+    position: relative;
+    width: 100%;
+    margin: 15px 0;
+}
+
+/* Estilos de los inputs */
+.input_box input {
+    width: 100%;
+    height: 45px;
+    background: transparent;
+    border: 1px solid #000000; /* Borde negro */
+    border-radius: 40px;
+    color: #000000; /* Texto negro */
+    padding: 10px 20px;
+    font-size: 15px;
+    transition: border 0.3s ease-in-out;
+}
+
+.input_box input:focus {
+    border: 2px solid #000000; /* Borde negro al hacer focus */
+    outline: none;
+}
+
+/* Placeholder */
+.input_box input::placeholder {
+    color: #000000;  /* Texto negro para el placeholder */
+    opacity: 0.7;
+}
+
+/* Botón de submit */
+.enviar {
+    width: 100%;
+    height: 45px;
+    background: #1B8FB0; /* Fondo negro */
+    border-radius: 40px;
+    color: #ffffff; /* Texto blanco */
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    margin-top: 15px;
+}
+
+.enviar:hover {
+    background: #333333; /* Oscurecer el fondo al pasar el mouse */
+}
+
+/* Mensaje de error */
+.error {
+    color: #E57B76; /* Color rosado para el mensaje de error */
+    font-size: 14px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+/* Estilo para los iconos dentro de los inputs */
+.input_box .icon {
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #000000; /* Icono negro */
+    font-size: 20px;
+    transition: opacity 0.3s ease-in-out;
+}
+
+/* Responsividad para dispositivos pequeños */
+@media (max-width: 480px) {
+    .form_box {
+        width: 90%; /* Ajuste el ancho en dispositivos pequeños */
+        padding: 20px;
+    }
+
+    .title {
+        font-size: 28px;
+    }
+
+    input, button {
+        font-size: 14px;
+    }
+}

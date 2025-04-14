@@ -297,7 +297,7 @@
       }
     },
     "/api/Entries/ConsultRangeEntries": {
-      "post": {
+      "get": {
         "tags": [
           "Entries"
         ],
@@ -306,16 +306,14 @@
             "name": "start",
             "in": "query",
             "schema": {
-              "type": "integer",
-              "format": "int32"
+              "type": "string"
             }
           },
           {
             "name": "end",
             "in": "query",
             "schema": {
-              "type": "integer",
-              "format": "int32"
+              "type": "string"
             }
           }
         ],
@@ -605,7 +603,7 @@
         }
       }
     },
-    "/Api/Food/CreateFood": {
+    "/api/Food/CreateFood": {
       "post": {
         "tags": [
           "Food"
@@ -636,7 +634,7 @@
         }
       }
     },
-    "/Api/Food/ConsultAllFoods": {
+    "/api/Food/ConsultAllFoods": {
       "get": {
         "tags": [
           "Food"
@@ -674,7 +672,7 @@
         }
       }
     },
-    "/Api/Food/GetFoodId": {
+    "/api/Food/GetFoodId": {
       "get": {
         "tags": [
           "Food"
@@ -696,8 +694,8 @@
         }
       }
     },
-    "/Api/Food/ConsultRangeFood": {
-      "post": {
+    "/api/Food/ConsultRangeFood": {
+      "get": {
         "tags": [
           "Food"
         ],
@@ -752,7 +750,7 @@
         }
       }
     },
-    "/Api/Food/DeleteFood": {
+    "/api/Food/DeleteFood": {
       "delete": {
         "tags": [
           "Food"
@@ -774,7 +772,7 @@
         }
       }
     },
-    "/Api/Food/UpdateFood": {
+    "/api/Food/UpdateFood": {
       "put": {
         "tags": [
           "Food"
@@ -1957,7 +1955,11 @@
             "type": "integer",
             "format": "int32"
           },
-          "vlr_Entries": {
+          "vlr_Unitary": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "vlr_Total": {
             "type": "integer",
             "format": "int32"
           },
@@ -1990,7 +1992,7 @@
             "type": "integer",
             "format": "int32"
           },
-          "vlr_Entries": {
+          "id_Food": {
             "type": "integer",
             "format": "int32"
           },
@@ -2003,6 +2005,14 @@
             "format": "date-time"
           },
           "can_Food": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "vlr_Unit": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "vlr_Total": {
             "type": "integer",
             "format": "int32"
           },
@@ -2101,10 +2111,6 @@
             "type": "string",
             "nullable": true
           },
-          "des_Food": {
-            "type": "string",
-            "nullable": true
-          },
           "existence": {
             "type": "integer",
             "format": "int32"
@@ -2113,13 +2119,13 @@
             "type": "integer",
             "format": "int32"
           },
-          "fec_Expiration": {
-            "type": "string",
-            "format": "date-time"
-          },
           "und_Extent": {
             "type": "string",
             "nullable": true
+          },
+          "rat_Food": {
+            "type": "integer",
+            "format": "int32"
           },
           "id_Stage": {
             "type": "integer",
@@ -2142,10 +2148,6 @@
             "type": "string",
             "nullable": true
           },
-          "des_Food": {
-            "type": "string",
-            "nullable": true
-          },
           "existence": {
             "type": "integer",
             "format": "int32"
@@ -2154,9 +2156,9 @@
             "type": "integer",
             "format": "int32"
           },
-          "fec_Expiration": {
-            "type": "string",
-            "format": "date"
+          "rat_Food": {
+            "type": "integer",
+            "format": "int32"
           },
           "und_Extent": {
             "type": "string",

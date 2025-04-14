@@ -99,6 +99,33 @@ namespace API_PESO_PIG.Services
             }
         }
 
+        public async Task<bool> UpdateUserPassword(User updatedUser)
+        {
+            try
+            {
+                var existingUser = await _context.Users.FindAsync(updatedUser.id_Users);
+
+                if (existingUser == null)
+                {
+                    return false;
+                }
+
+                // Actualizar solo los campos necesarios
+                existingUser.Hashed_Password = updatedUser.Hashed_Password;
+                existingUser.Salt = updatedUser.Salt;
+                existingUser.ResetToken = null;
+                existingUser.ResetTokenExpiration = null;
+
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+
         public async Task UpdateUserAsync(User user)
         {
             if (user == null)

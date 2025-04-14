@@ -138,18 +138,18 @@
     "ContainingType": "API_PESO_PIG.Controllers.EntriesController",
     "Method": "GetEntriesRange",
     "RelativePath": "api/Entries/ConsultRangeEntries",
-    "HttpMethod": "POST",
+    "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
         "Name": "start",
-        "Type": "System.Int32",
+        "Type": "System.String",
         "IsRequired": false
       },
       {
         "Name": "end",
-        "Type": "System.Int32",
+        "Type": "System.String",
         "IsRequired": false
       }
     ],
@@ -347,7 +347,7 @@
   {
     "ContainingType": "PESO_PIG.Controllers.FoodController",
     "Method": "GetFoods",
-    "RelativePath": "Api/Food/ConsultAllFoods",
+    "RelativePath": "api/Food/ConsultAllFoods",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
@@ -367,8 +367,8 @@
   {
     "ContainingType": "PESO_PIG.Controllers.FoodController",
     "Method": "GetFoodsRange",
-    "RelativePath": "Api/Food/ConsultRangeFood",
-    "HttpMethod": "POST",
+    "RelativePath": "api/Food/ConsultRangeFood",
+    "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
     "Parameters": [
@@ -398,7 +398,7 @@
   {
     "ContainingType": "PESO_PIG.Controllers.FoodController",
     "Method": "Add",
-    "RelativePath": "Api/Food/CreateFood",
+    "RelativePath": "api/Food/CreateFood",
     "HttpMethod": "POST",
     "IsController": true,
     "Order": 0,
@@ -414,7 +414,7 @@
   {
     "ContainingType": "PESO_PIG.Controllers.FoodController",
     "Method": "DelFood",
-    "RelativePath": "Api/Food/DeleteFood",
+    "RelativePath": "api/Food/DeleteFood",
     "HttpMethod": "DELETE",
     "IsController": true,
     "Order": 0,
@@ -430,7 +430,7 @@
   {
     "ContainingType": "PESO_PIG.Controllers.FoodController",
     "Method": "GetFoodById",
-    "RelativePath": "Api/Food/GetFoodId",
+    "RelativePath": "api/Food/GetFoodId",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
@@ -446,7 +446,7 @@
   {
     "ContainingType": "PESO_PIG.Controllers.FoodController",
     "Method": "UpdateFood",
-    "RelativePath": "Api/Food/UpdateFood",
+    "RelativePath": "api/Food/UpdateFood",
     "HttpMethod": "PUT",
     "IsController": true,
     "Order": 0,

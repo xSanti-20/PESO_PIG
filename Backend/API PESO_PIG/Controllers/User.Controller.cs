@@ -131,32 +131,40 @@ namespace API_PESO_PIG.Controllers
         {
             try
             {
-                // Primero, buscar al usuario por el token de restablecimiento en lugar del correo electrónico
-                var user = await _Services.GetByTokenAsync(model.Token); // Método que deberías tener en tu servicio para buscar por token.
+                // Buscar el usuario por token
+                var user = await _Services.GetByTokenAsync(model.Token);
 
                 if (user == null || user.ResetTokenExpiration < DateTime.UtcNow)
                 {
                     return BadRequest(new { message = "Token inválido o expirado." });
                 }
 
-                // Hashear la nueva contraseña
+                // Hashear la nueva contraseña con sal
                 string salt = BCrypt.Net.BCrypt.GenerateSalt();
                 user.Hashed_Password = BCrypt.Net.BCrypt.HashPassword(model.NewPassword + salt);
                 user.Salt = salt;
 
-                // Borrar el token usado
+                // Limpiar el token
                 user.ResetToken = null;
                 user.ResetTokenExpiration = null;
-                await _Services.GetResponsibleByResetToken(user.ResetToken);
+
+                // Guardar cambios en la base de datos
+                var updated = await _Services.UpdateUserPassword(user);
+
+                if (!updated)
+                {
+                    return StatusCode(500, new { message = "No se pudo actualizar el usuario." });
+                }
 
                 return Ok(new { message = "Contraseña restablecida correctamente." });
             }
             catch (Exception ex)
             {
                 GeneralFunction.Addlog(ex.ToString());
-                return StatusCode(500, ex.ToString());
+                return StatusCode(500, new { message = "Error interno del servidor." });
             }
         }
+
 
         [HttpPost("validatepass")]
         public async Task<IActionResult> ValidateToken([FromBody] TokenRequest model)
