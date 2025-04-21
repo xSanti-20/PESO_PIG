@@ -27,7 +27,7 @@ CREATE TABLE `corrals` (
   `Des_Corral` varchar(200) NOT NULL,
   `Tot_Animal` int NOT NULL,
   PRIMARY KEY (`id_Corral`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -36,6 +36,7 @@ CREATE TABLE `corrals` (
 
 LOCK TABLES `corrals` WRITE;
 /*!40000 ALTER TABLE `corrals` DISABLE KEYS */;
+INSERT INTO `corrals` VALUES (2,'Corral Precebo',1);
 /*!40000 ALTER TABLE `corrals` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -54,10 +55,11 @@ CREATE TABLE `entries` (
   `Can_Food` int NOT NULL,
   `id_Food` int NOT NULL,
   `vlr_Total` int NOT NULL,
+  `Vlr_Promedio` int NOT NULL,
   PRIMARY KEY (`id_Entries`),
   KEY `fk_entries_foods_idx` (`id_Food`),
   CONSTRAINT `fk_entries_foods` FOREIGN KEY (`id_Food`) REFERENCES `foods` (`id_Food`)
-) ENGINE=InnoDB AUTO_INCREMENT=4006 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -66,7 +68,7 @@ CREATE TABLE `entries` (
 
 LOCK TABLES `entries` WRITE;
 /*!40000 ALTER TABLE `entries` DISABLE KEYS */;
-INSERT INTO `entries` VALUES (4005,5000,'2025-04-14 16:53:07','2025-04-14 16:53:07',2,19,10000);
+INSERT INTO `entries` VALUES (2,2000,'2025-04-18 23:36:23','2025-04-18 23:36:23',12,19,5000,3000);
 /*!40000 ALTER TABLE `entries` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -132,7 +134,7 @@ CREATE TABLE `foods` (
 
 LOCK TABLES `foods` WRITE;
 /*!40000 ALTER TABLE `foods` DISABLE KEYS */;
-INSERT INTO `foods` VALUES (19,'Comiditas',10,5000,'KG',2,3);
+INSERT INTO `foods` VALUES (19,'Comiditas',39,5000,'KG',2,3);
 /*!40000 ALTER TABLE `foods` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -161,7 +163,7 @@ CREATE TABLE `piglets` (
   CONSTRAINT `fk_piglets_corrals` FOREIGN KEY (`id_Corral`) REFERENCES `corrals` (`id_Corral`),
   CONSTRAINT `fk_piglets_races` FOREIGN KEY (`id_Race`) REFERENCES `races` (`id_Race`),
   CONSTRAINT `fk_piglets_stages` FOREIGN KEY (`id_Stage`) REFERENCES `stages` (`id_Stage`)
-) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -170,6 +172,7 @@ CREATE TABLE `piglets` (
 
 LOCK TABLES `piglets` WRITE;
 /*!40000 ALTER TABLE `piglets` DISABLE KEYS */;
+INSERT INTO `piglets` VALUES (20,'pepe','2025-04-11',10,15,'Macho',2,2,2,9);
 /*!40000 ALTER TABLE `piglets` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -184,7 +187,7 @@ CREATE TABLE `races` (
   `id_Race` int NOT NULL AUTO_INCREMENT,
   `Nam_Race` varchar(40) NOT NULL,
   PRIMARY KEY (`id_Race`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -193,6 +196,7 @@ CREATE TABLE `races` (
 
 LOCK TABLES `races` WRITE;
 /*!40000 ALTER TABLE `races` DISABLE KEYS */;
+INSERT INTO `races` VALUES (2,'beanli');
 /*!40000 ALTER TABLE `races` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -252,7 +256,7 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES (15,'santiago','Aprendiz','puentessantiago2003@gmail.com',0,0,'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InB1ZW50ZXNzYW50aWFnbzIwMDNAZ21haWwuY29tIiwiVXNlcklkIjoiMTUiLCJuYmYiOjE3NDMwMjY3MDYsImV4cCI6MTc0MzAzMDMwNiwiaWF0IjoxNzQzMDI2NzA2fQ.P5NBML0bfIh18KtiZWKCiaPQjJCc__n3t-S3DPa-S9k','$2a$11$CwHsCYOTQlsPDihAbEhUK.2xVf6yQwqlqnUA4Yew4rRztFMVdlYOG','$2a$11$CBOhaeKD/deq5pRWAX9qmO','ZmQ2OGY2MWQtMzRkZi00ZWQ2LWE1NzctMTU0MDBmYWM2YjAw','2025-03-26 22:31:06'),(16,'danna','Aprendiz','dannamarcela89@gmail.com',0,0,'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImRhbm5hbWFyY2VsYTg5QGdtYWlsLmNvbSIsIlVzZXJJZCI6IjE2IiwibmJmIjoxNzQ0MTQxNTM0LCJleHAiOjE3NDQxNDUxMzQsImlhdCI6MTc0NDE0MTUzNH0.mNPojiCfen6VxZd7AEv_KU00iXuMH9BqjNMSvyxDS2I','$2a$11$9WN29.yMndLRBuddsrn1u.txjQSYBni6XO8r6KrvkpjH1xk1kqfQ6','$2a$11$lIzf.zs7h5CONpgzE7E1gu',NULL,NULL);
+INSERT INTO `users` VALUES (15,'santiago','Aprendiz','puentessantiago2003@gmail.com',0,0,'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InB1ZW50ZXNzYW50aWFnbzIwMDNAZ21haWwuY29tIiwiVXNlcklkIjoiMTUiLCJuYmYiOjE3NDUwODQ5OTMsImV4cCI6MTc0NTA4ODU5MywiaWF0IjoxNzQ1MDg0OTkzfQ.0S-IFAWaM7mpZ8soqrUX08ugyIN1ZvF0slJlOyQPCnw','$2a$11$pQgWyRsADUiGi/C8qAinmuuzVOdCaZo.S/9fhQk85k07lYPGzhHfm','$2a$11$YJT1aejO1WYfw2Omht6w2O',NULL,NULL),(16,'danna','Aprendiz','dannamarcela89@gmail.com',0,0,'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImRhbm5hbWFyY2VsYTg5QGdtYWlsLmNvbSIsIlVzZXJJZCI6IjE2IiwibmJmIjoxNzQ0MTQxNTM0LCJleHAiOjE3NDQxNDUxMzQsImlhdCI6MTc0NDE0MTUzNH0.mNPojiCfen6VxZd7AEv_KU00iXuMH9BqjNMSvyxDS2I','$2a$11$9WN29.yMndLRBuddsrn1u.txjQSYBni6XO8r6KrvkpjH1xk1kqfQ6','$2a$11$lIzf.zs7h5CONpgzE7E1gu',NULL,NULL);
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -275,7 +279,7 @@ CREATE TABLE `weighings` (
   KEY `fk_weighings_piglet_idx` (`id_Piglet`),
   CONSTRAINT `fk_weighings_piglet` FOREIGN KEY (`id_Piglet`) REFERENCES `piglets` (`id_Piglet`),
   CONSTRAINT `fk_weighings_users` FOREIGN KEY (`id_Users`) REFERENCES `users` (`id_Users`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -284,6 +288,7 @@ CREATE TABLE `weighings` (
 
 LOCK TABLES `weighings` WRITE;
 /*!40000 ALTER TABLE `weighings` DISABLE KEYS */;
+INSERT INTO `weighings` VALUES (8,15,5,'2025-04-14',15,20);
 /*!40000 ALTER TABLE `weighings` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -296,4 +301,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-04-14 12:06:12
+-- Dump completed on 2025-04-21  7:52:51
