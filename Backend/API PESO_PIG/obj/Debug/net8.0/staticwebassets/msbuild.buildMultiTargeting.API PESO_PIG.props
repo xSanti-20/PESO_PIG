@@ -1,3 +1,0 @@
-﻿<Project>
-  <Import Project="..\build\API PESO_PIG.props" />
-</Project>
