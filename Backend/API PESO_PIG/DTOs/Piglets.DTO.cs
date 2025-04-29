@@ -12,6 +12,7 @@ namespace API_PESO_PIG.DTOs
         public DateTime Fec_Birth { get; set; }
         public int Weight_Initial { get; set; }
         public string Sex_Piglet { get; set; }
+        public int Placa_Sena { get; set; }
         public string Nam_Race { get; set; }
         public string Name_Stage { get; set; }
         public string Des_Corral { get; set; }

@@ -56,7 +56,7 @@ const ContactPage = () => {
               />
               WhatsApp
             </a>
-            <a href="https://instagram.com" className="social-link flex items-center">
+            <a href="https://www.instagram.com/uniporcinosespinal?igsh=MW43aXNmcm5mNmo4dw==." className="social-link flex items-center">
               <img
                 src="/assets/icons/instagram.png"
                 alt="Instagram"

@@ -1,54 +1,96 @@
-"use client";
+"use client"
 
-import { useState, useEffect } from "react";
-import PrivateNav from "@/components/nav/PrivateNav";
-import ContentPage from "@/components/utils/ContentPage";
-import axiosInstance from "@/lib/axiosInstance";
-import RegisterRace from "./formrace";
+import { useState, useEffect } from "react"
+import PrivateNav from "@/components/nav/PrivateNav"
+import ContentPage from "@/components/utils/ContentPage"
+import axiosInstance from "@/lib/axiosInstance"
+import RegisterRace from "./formrace"
+import AlertModal from "@/components/AlertModal"
 
-function Race() {
-  const TitlePage = "Raza";
-  const [raceData, setRaceData] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
+function RacePage() {
+  const TitlePage = "Raza"
+  const [raceData, setRaceData] = useState([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState(null)
+  const [editingRace, setEditingRace] = useState(null)
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [alertInfo, setAlertInfo] = useState({
+    isOpen: false,
+    message: "",
+    type: "success",
+    redirectUrl: null,
+  })
 
-  const titlesRace = [
-    "ID",
-    "Nombre",
-  ];
+  const titlesRace = ["ID", "Nombre"]
 
-  async function fetchRace() {
+  const closeAlert = () => {
+    setAlertInfo({
+      ...alertInfo,
+      isOpen: false,
+    })
+  }
+
+  async function fetchRaces() {
     try {
-      setIsLoading(true);
-      const response = await axiosInstance.get("/api/Race/ConsultAllRaces");
+      setIsLoading(true)
+      const response = await axiosInstance.get("/api/Race/ConsultAllRaces")
 
       if (response.status === 200) {
         const data = response.data.map((race) => ({
           id: race.id_Race,
-          nam_Race: race.nam_Race, // Corregido aquí
-        }));
-        setRaceData(data);
+          nombre: race.nam_Race,
+          original: race,
+        }))
+        setRaceData(data)
       }
     } catch (error) {
-      setError("No se pudieron cargar los datos de la Raza.");
+      setError("No se pudieron cargar los datos de la raza.")
+      setAlertInfo({
+        isOpen: true,
+        message: "No se pudieron cargar los datos de la raza.",
+        type: "error",
+      })
     } finally {
-      setIsLoading(false);
+      setIsLoading(false)
     }
   }
 
   useEffect(() => {
-    fetchRace();
-  }, []);
- 
+    fetchRaces()
+  }, [])
+
   const handleDelete = async (id) => {
     try {
-      const numericId = Number.parseInt(id, 10);
-      await axiosInstance.delete(`/api/Race/DeleteRace?id_Race=${numericId}`);
-      fetchRace();
+      const numericId = Number.parseInt(id, 10)
+      await axiosInstance.delete(`/api/Race/DeleteRace?id_Race=${numericId}`)
+      fetchRaces()
+      setAlertInfo({
+        isOpen: true,
+        message: "Raza eliminada correctamente",
+        type: "success",
+      })
     } catch (error) {
-      console.error("Error detallado al eliminar:", error);
+      console.error("Error detallado al eliminar:", error)
+      setAlertInfo({
+        isOpen: true,
+        message: "Error al eliminar la raza",
+        type: "error",
+      })
     }
-  };
+  }
+
+  const handleUpdate = (row) => {
+    console.log("Raza a editar:", row.original)
+    setEditingRace(row.original)
+    setIsModalOpen(true)
+  }
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false)
+    setTimeout(() => {
+      setEditingRace(null)
+    }, 300)
+  }
 
   return (
     <PrivateNav>
@@ -66,15 +108,43 @@ function Race() {
           TitlePage={TitlePage}
           Data={raceData}
           TitlesTable={titlesRace}
-          FormPage={() => <RegisterRace refreshData={fetchRace} />}
+          FormPage={() => (
+            <RegisterRace
+              refreshData={fetchRaces}
+              raceToEdit={editingRace}
+              onCancelEdit={handleCloseModal}
+              closeModal={handleCloseModal}
+              showAlert={(message, type, redirectUrl = null) => {
+                setAlertInfo({
+                  isOpen: true,
+                  message,
+                  type,
+                  redirectUrl,
+                })
+              }}
+            />
+          )}
           onDelete={handleDelete}
+          onUpdate={handleUpdate}
           endpoint="/api/Race/DeleteRace"
+          isModalOpen={isModalOpen}
+          setIsModalOpen={setIsModalOpen}
+          refreshData={fetchRaces}
         />
       )}
 
-      {error && <div className="text-red-600">{error}</div>}
+      {error && <div className="text-red-600 text-center mt-4">{error}</div>}
+
+      {/* Alerta personalizada */}
+      <AlertModal
+        isOpen={alertInfo.isOpen}
+        message={alertInfo.message}
+        type={alertInfo.type}
+        onClose={closeAlert}
+        redirectUrl={alertInfo.redirectUrl}
+      />
     </PrivateNav>
-  );
+  )
 }
 
-export default Race;
+export default RacePage

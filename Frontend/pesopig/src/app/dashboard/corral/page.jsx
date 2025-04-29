@@ -11,6 +11,8 @@ function Corral() {
   const [corralData, setCorralData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [editingCorral, setEditingCorral] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const titlesCorral = [
     "ID",
@@ -28,10 +30,10 @@ function Corral() {
           id: corral.id_Corral,
           des_corral: corral.des_Corral,
           tot_animales: corral.tot_Animal,
+          original: corral,
         }));
 
-        console.log("Datos cargados del backend:", data); // <-- Para verificar en consola
-
+        console.log("Datos cargados del backend:", data);
         setCorralData(data);
       }
     } catch (error) {
@@ -56,6 +58,19 @@ function Corral() {
     }
   };
 
+  const handleUpdate = (row) => {
+    console.log("Corral a editar:", row.original);
+    setEditingCorral(row.original);
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setTimeout(() => {
+      setEditingCorral(null);
+    }, 300);
+  };
+
   return (
     <PrivateNav>
       {/* Pantalla de carga */}
@@ -74,13 +89,24 @@ function Corral() {
           TitlePage={TitlePage}
           Data={corralData}
           TitlesTable={titlesCorral}
-          FormPage={() => <RegisterCorral refreshData={fetchCorral} />}
+          FormPage={() => (
+            <RegisterCorral
+              refreshData={fetchCorral}
+              corralToEdit={editingCorral}
+              onCancelEdit={handleCloseModal}
+              closeModal={handleCloseModal}
+            />
+          )}
           onDelete={handleDelete}
+          onUpdate={handleUpdate}
           endpoint="/api/Corral/DeleteCorral"
+          isModalOpen={isModalOpen}
+          setIsModalOpen={setIsModalOpen}
+          refreshData={fetchCorral}
         />
       )}
 
-      {error && <div className="text-red-600">{error}</div>}
+      {error && <div className="text-red-600 text-center mt-4">{error}</div>}
     </PrivateNav>
   );
 }

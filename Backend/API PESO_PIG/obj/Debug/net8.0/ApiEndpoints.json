@@ -1084,6 +1084,43 @@
   },
   {
     "ContainingType": "API_PESO_PIG.Controllers.WeighingController",
+    "Method": "GetWeighingsByPiglet",
+    "RelativePath": "api/Weighing/GetWeighingsByPiglet",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id_Piglet",
+        "Type": "System.Int32",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "API_PESO_PIG.Controllers.WeighingController",
+    "Method": "RecalculatePigletWeight",
+    "RelativePath": "api/Weighing/RecalculatePigletWeight",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id_Piglet",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "newInitialWeight",
+        "Type": "System.Int32",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "API_PESO_PIG.Controllers.WeighingController",
     "Method": "UpdateWeighing",
     "RelativePath": "api/Weighing/UpdateWeighing",
     "HttpMethod": "PUT",

@@ -1,51 +1,36 @@
-"use client";
+"use client"
 
-import React, { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Search, Edit, ChevronLeft, ChevronRight } from "lucide-react";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { Input } from "@/components/ui/input";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  CardFooter,
-} from "@/components/ui/card";
-import DeleteRecord from "./Delete";
+import { useState } from "react"
+import { Button } from "@/components/ui/button"
+import { Search, Edit, ChevronLeft, ChevronRight } from "lucide-react"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { Input } from "@/components/ui/input"
+import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card"
+import DeleteRecord from "./Delete"
 
-function DataTable({ Data, TitlesTable, onDelete, endpoint, refreshData }) {
-  const [searchTerm, setSearchTerm] = useState("");
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 3; // Mostrar solo 3 por página
+function DataTable({ Data, TitlesTable, onDelete, onUpdate, endpoint, refreshData }) {
+  const [searchTerm, setSearchTerm] = useState("")
+  const [currentPage, setCurrentPage] = useState(1)
+  const itemsPerPage = 3 // Mostrar solo 3 por página
 
   const filteredData = Data.filter((row) =>
-    Object.values(row).some((cell) =>
-      cell.toString().toLowerCase().includes(searchTerm.toLowerCase())
-    )
-  );
+    Object.values(row).some((cell) => cell.toString().toLowerCase().includes(searchTerm.toLowerCase())),
+  )
 
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = filteredData.slice(indexOfFirstItem, indexOfLastItem);
+  const indexOfLastItem = currentPage * itemsPerPage
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage
+  const currentItems = filteredData.slice(indexOfFirstItem, indexOfLastItem)
 
   const handleSearchChange = (e) => {
-    setSearchTerm(e.target.value);
-    setCurrentPage(1);
-  };
+    setSearchTerm(e.target.value)
+    setCurrentPage(1)
+  }
 
   const handlePageChange = (pageNumber) => {
-    setCurrentPage(pageNumber);
-  };
+    setCurrentPage(pageNumber)
+  }
 
-  const totalPages = Math.ceil(filteredData.length / itemsPerPage);
+  const totalPages = Math.ceil(filteredData.length / itemsPerPage)
 
   return (
     <Card className="w-full">
@@ -83,24 +68,22 @@ function DataTable({ Data, TitlesTable, onDelete, endpoint, refreshData }) {
                 {currentItems.map((row, rowIndex) => (
                   <TableRow key={row.id || `${rowIndex}-${Math.random()}`}>
                     {TitlesTable.map((title, cellIndex) => {
-                      const key = Object.keys(row)[cellIndex];
-                      return (
-                        <TableCell key={`${row.id}-${cellIndex}`}>
-                          {row[key] ?? "N/A"}
-                        </TableCell>
-                      );
+                      const key = Object.keys(row)[cellIndex]
+                      return <TableCell key={`${row.id}-${cellIndex}`}>{row[key] ?? "N/A"}</TableCell>
                     })}
                     <TableCell>
                       <div className="flex space-x-2">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => onUpdate(row)}
-                          className="text-blue-600 hover:text-blue-800"
-                        >
-                          <Edit className="w-4 h-4 mr-1" />
-                          Editar
-                        </Button>
+                        {onUpdate && (
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => onUpdate(row)}
+                            className="text-blue-600 hover:text-blue-800"
+                          >
+                            <Edit className="w-4 h-4 mr-1" />
+                            Editar
+                          </Button>
+                        )}
                         <DeleteRecord
                           endpoint={endpoint}
                           id={row.id}
@@ -149,12 +132,13 @@ function DataTable({ Data, TitlesTable, onDelete, endpoint, refreshData }) {
             </Button>
           </div>
           <div className="text-sm text-gray-600">
-            Mostrando {indexOfFirstItem + 1} - {Math.min(indexOfLastItem, filteredData.length)} de {filteredData.length} resultados
+            Mostrando {indexOfFirstItem + 1} - {Math.min(indexOfLastItem, filteredData.length)} de {filteredData.length}{" "}
+            resultados
           </div>
         </CardFooter>
       )}
     </Card>
-  );
+  )
 }
 
-export default DataTable;
+export default DataTable

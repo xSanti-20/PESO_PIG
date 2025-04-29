@@ -1,86 +1,139 @@
-"use client";
-import React, { useState } from "react";
-import styles from "./page.module.css";
-import axiosInstance from "@/lib/axiosInstance";
-import { FaWarehouse, FaListOl } from "react-icons/fa";
+"use client"
+import { useState, useEffect } from "react"
+import styles from "./page.module.css"
+import axiosInstance from "@/lib/axiosInstance"
+import { FaWarehouse, FaIdCard } from "react-icons/fa"
+import { Button } from "@/components/ui/button"
 
 // Función para enviar datos al backend
-async function SendData(body) {
-    const response = await axiosInstance.post("api/Corral/CreateCorral", body);
-    return response;
+async function SendData(body, isEditing = false) {
+  if (isEditing) {
+    const response = await axiosInstance.put("/api/Corral/UpdateCorral", body)
+    return response
+  } else {
+    const response = await axiosInstance.post("/api/Corral/CreateCorral", body)
+    return response
+  }
 }
 
+function RegisterCorralPage({ refreshData, corralToEdit, onCancelEdit, closeModal }) {
+  const [formData, setFormData] = useState({
+    Des_Corral: "",
+    Tot_Animales: "",
+  })
 
-function RegisterCorral({ refreshData }) {  // ✅ Recibir refreshData como prop
-    const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false)
+  const isEditing = !!corralToEdit
 
-    // Manejador del envío del formulario
-    async function handlerSubmit(event) {
-        event.preventDefault();
+  useEffect(() => {
+    if (isEditing) {
+      setFormData({
+        Des_Corral: corralToEdit.des_Corral || "",
+        Tot_Animales: corralToEdit.tot_Animal?.toString() || "",
+      })
+    } else {
+      setFormData({
+        Des_Corral: "",
+        Tot_Animales: "",
+      })
+    }
+  }, [corralToEdit])
 
-        const form = new FormData(event.currentTarget);
-        const Des_Corral = form.get("Des_Corral").trim();
-        const Tot_Animal = parseInt(form.get("Tot_Animal"));
+  const handleChange = (e) => {
+    const { name, value } = e.target
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }))
+  }
 
-        // Validación de campos vacíos
-        if (!Des_Corral || isNaN(Tot_Animal) || Tot_Animal < 0) {
-            alert("Todos los campos son requeridos y el total de animales debe ser un número válido.");
-            return;
-        }
+  async function handlerSubmit(event) {
+    event.preventDefault()
+    const Des_Corral = formData.Des_Corral.trim()
+    const Tot_Animales = formData.Tot_Animales.trim()
 
-        // Crear el objeto con los nombres exactos que espera el backend
-        const body = {
-            Des_Corral,
-            Tot_Animal
-        };
-
-        try {
-            setLoading(true);
-            const response = await SendData(body);
-            alert(response.data.message || "Registro exitoso");
-            event.target.reset(); // Limpiar el formulario
-
-            // ✅ Llamar a refreshData() si está disponible para actualizar la tabla
-            if (typeof refreshData === "function") {
-                refreshData();
-            } else {
-                console.warn("⚠ refreshData no está definido o no es una función.");
-            }
-        } catch (error) {
-            console.error("Error completo:", error);
-            const errorMessage = error.response?.data || "Error desconocido";
-            alert("Ocurrió un error al registrar el corral: " + JSON.stringify(errorMessage));
-        } finally {
-            setLoading(false);
-        }
+    if (!Des_Corral || !Tot_Animales) {
+      alert("Todos los campos son requeridos.")
+      return
     }
 
-    return (
-        <div className={styles.container}>
-            <div className={`col-md-6 ${styles.form_box} d-flex align-items-center justify-content-center`}>
-                <form className={styles.form} onSubmit={handlerSubmit}>
-                    <h1 className={styles.title}>Registrar Corral</h1>
+    const body = {
+      Des_Corral,
+      Tot_Animal: parseInt(Tot_Animales, 10),
+    }
 
-                    {/* Descripción del corral */}
-                    <div className={styles.input_box}>
-                        <input type="text" id="Des_Corral" name="Des_Corral" placeholder="Descripción del corral" />
-                        <FaWarehouse className={styles.icon} />
-                    </div>
+    if (isEditing) {
+      body.Id_Corral = corralToEdit.id_Corral
+    }
 
-                    {/* Total de animales */}
-                    <div className={styles.input_box}>
-                        <input type="number" id="Tot_Animal" name="Tot_Animal" placeholder="Total de animales" min="0" />
-                        <FaListOl className={styles.icon} />
-                    </div>
+    try {
+      setLoading(true)
+      const response = await SendData(body, isEditing)
+      alert(response.data.message || (isEditing ? "Corral actualizado con éxito." : "Corral registrado con éxito."))
 
-                    {/* Botón de enviar */}
-                    <button type="submit" className={styles.button} disabled={loading}>
-                        {loading ? "Registrando..." : "Registrar"}
-                    </button>
-                </form>
-            </div>
-        </div>
-    );
+      setFormData({ Des_Corral: "", Tot_Animales: "" })
+
+      if (closeModal) closeModal()
+      if (typeof refreshData === "function") refreshData()
+    } catch (error) {
+      console.error("Error completo:", error)
+      const errorMessage = error.response?.data || "Error desconocido"
+      alert(`Ocurrió un error al ${isEditing ? "actualizar" : "registrar"} el corral: ` + JSON.stringify(errorMessage))
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  return (
+    <div className={styles.container}>
+      <div className={`col-md-6 ${styles.form_box} d-flex align-items-center justify-content-center`}>
+        <form className={styles.form} onSubmit={handlerSubmit}>
+          <h1 className={styles.title}>{isEditing ? "Actualizar Corral" : "Registrar Corral"}</h1>
+
+          <div className={styles.input_box}>
+            <input
+              type="text"
+              id="Des_Corral"
+              name="Des_Corral"
+              placeholder="Descripción del Corral"
+              value={formData.Des_Corral}
+              onChange={handleChange}
+            />
+            <FaWarehouse className={styles.icon} />
+          </div>
+
+          <div className={styles.input_box}>
+            <input
+              type="number"
+              id="Tot_Animales"
+              name="Tot_Animales"
+              placeholder="Total de Animales"
+              value={formData.Tot_Animales}
+              onChange={handleChange}
+            />
+            <FaIdCard className={styles.icon} />
+          </div>
+
+          <div className={styles.button_box}>
+            <Button type="submit" disabled={loading}>
+              {loading
+                ? isEditing
+                  ? "Actualizando..."
+                  : "Registrando..."
+                : isEditing
+                ? "Actualizar"
+                : "Registrar"}
+            </Button>
+            {isEditing && (
+              <Button variant="secondary" type="button" onClick={onCancelEdit}>
+                Cancelar
+              </Button>
+            )}
+          </div>
+        </form>
+      </div>
+    </div>
+  )
 }
 
-export default RegisterCorral;
+export default RegisterCorralPage

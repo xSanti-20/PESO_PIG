@@ -76,6 +76,26 @@ namespace API_PESO_PIG.Controllers
             }
         }
 
+        // Nuevo endpoint para obtener pesajes por ID de cerdo
+        [HttpGet("GetWeighingsByPiglet")]
+        public async Task<IActionResult> GetWeighingsByPiglet(int id_Piglet)
+        {
+            try
+            {
+                var weighings = await _Services.GetWeighingsByPigletId(id_Piglet);
+                if (weighings == null || !weighings.Any())
+                {
+                    return NotFound("No se encontraron pesajes para este cerdo.");
+                }
+                return Ok(weighings);
+            }
+            catch (Exception ex)
+            {
+                GeneralFunction.Addlog(ex.ToString());
+                return StatusCode(500, ex.ToString());
+            }
+        }
+
         // Consultar rango de Pesajes
         [HttpPost("ConsultRange")]
         public ActionResult<IEnumerable<Weighing>> GetWeighingsRange(int start, int end)
@@ -137,6 +157,22 @@ namespace API_PESO_PIG.Controllers
                 }
 
                 return Ok("Pesaje actualizado correctamente.");
+            }
+            catch (Exception ex)
+            {
+                GeneralFunction.Addlog(ex.ToString());
+                return StatusCode(500, ex.ToString());
+            }
+        }
+
+        // Nuevo endpoint para recalcular el peso acumulado de un cerdo
+        [HttpPost("RecalculatePigletWeight")]
+        public IActionResult RecalculatePigletWeight(int id_Piglet, int newInitialWeight)
+        {
+            try
+            {
+                _Services.RecalculatePigletAccumulatedWeight(id_Piglet, newInitialWeight);
+                return Ok("Peso del cerdo recalculado correctamente.");
             }
             catch (Exception ex)
             {

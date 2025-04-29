@@ -1,22 +1,30 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "C:\\Users\\Santiago Puentes\\source\\repos\\PESO_PIG\\Backend\\",
+  "WorkspaceRootPath": "C:\\PROYECTOPESOPIG2.0\\PESO_PIG\\Backend\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{45618DAC-2E38-484E-AA70-1D3487BAA3D1}|API PESO_PIG\\API PESO_PIG.csproj|c:\\users\\santiago puentes\\source\\repos\\peso_pig\\backend\\api peso_pig\\controllers\\food.controller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{45618DAC-2E38-484E-AA70-1D3487BAA3D1}|API PESO_PIG\\API PESO_PIG.csproj|solutionrelative:api peso_pig\\controllers\\food.controller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{45618DAC-2E38-484E-AA70-1D3487BAA3D1}|API PESO_PIG\\API PESO_PIG.csproj|c:\\proyectopesopig2.0\\peso_pig\\backend\\api peso_pig\\services\\piglet.services.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{45618DAC-2E38-484E-AA70-1D3487BAA3D1}|API PESO_PIG\\API PESO_PIG.csproj|solutionrelative:api peso_pig\\services\\piglet.services.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{45618DAC-2E38-484E-AA70-1D3487BAA3D1}|API PESO_PIG\\API PESO_PIG.csproj|c:\\users\\santiago puentes\\source\\repos\\peso_pig\\backend\\api peso_pig\\models\\food.model.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{45618DAC-2E38-484E-AA70-1D3487BAA3D1}|API PESO_PIG\\API PESO_PIG.csproj|solutionrelative:api peso_pig\\models\\food.model.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{45618DAC-2E38-484E-AA70-1D3487BAA3D1}|API PESO_PIG\\API PESO_PIG.csproj|c:\\proyectopesopig2.0\\peso_pig\\backend\\api peso_pig\\models\\corral.model.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{45618DAC-2E38-484E-AA70-1D3487BAA3D1}|API PESO_PIG\\API PESO_PIG.csproj|solutionrelative:api peso_pig\\models\\corral.model.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{45618DAC-2E38-484E-AA70-1D3487BAA3D1}|API PESO_PIG\\API PESO_PIG.csproj|c:\\users\\santiago puentes\\source\\repos\\peso_pig\\backend\\api peso_pig\\controllers\\entries.controller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{45618DAC-2E38-484E-AA70-1D3487BAA3D1}|API PESO_PIG\\API PESO_PIG.csproj|c:\\proyectopesopig2.0\\peso_pig\\backend\\api peso_pig\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{45618DAC-2E38-484E-AA70-1D3487BAA3D1}|API PESO_PIG\\API PESO_PIG.csproj|solutionrelative:api peso_pig\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{45618DAC-2E38-484E-AA70-1D3487BAA3D1}|API PESO_PIG\\API PESO_PIG.csproj|c:\\proyectopesopig2.0\\peso_pig\\backend\\api peso_pig\\models\\stage.model.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{45618DAC-2E38-484E-AA70-1D3487BAA3D1}|API PESO_PIG\\API PESO_PIG.csproj|solutionrelative:api peso_pig\\models\\stage.model.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{45618DAC-2E38-484E-AA70-1D3487BAA3D1}|API PESO_PIG\\API PESO_PIG.csproj|c:\\proyectopesopig2.0\\peso_pig\\backend\\api peso_pig\\controllers\\entries.controller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{45618DAC-2E38-484E-AA70-1D3487BAA3D1}|API PESO_PIG\\API PESO_PIG.csproj|solutionrelative:api peso_pig\\controllers\\entries.controller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{45618DAC-2E38-484E-AA70-1D3487BAA3D1}|API PESO_PIG\\API PESO_PIG.csproj|c:\\users\\santiago puentes\\source\\repos\\peso_pig\\backend\\api peso_pig\\models\\entries.model.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{45618DAC-2E38-484E-AA70-1D3487BAA3D1}|API PESO_PIG\\API PESO_PIG.csproj|solutionrelative:api peso_pig\\models\\entries.model.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{45618DAC-2E38-484E-AA70-1D3487BAA3D1}|API PESO_PIG\\API PESO_PIG.csproj|c:\\proyectopesopig2.0\\peso_pig\\backend\\api peso_pig\\dtos\\entries.dto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{45618DAC-2E38-484E-AA70-1D3487BAA3D1}|API PESO_PIG\\API PESO_PIG.csproj|solutionrelative:api peso_pig\\dtos\\entries.dto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -26,59 +34,80 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 1,
+          "SelectedChildIndex": 2,
           "Children": [
             {
               "$type": "Document",
               "DocumentIndex": 1,
-              "Title": "Food.Model.cs",
-              "DocumentMoniker": "C:\\Users\\Santiago Puentes\\source\\repos\\PESO_PIG\\Backend\\API PESO_PIG\\Models\\Food.Model.cs",
-              "RelativeDocumentMoniker": "API PESO_PIG\\Models\\Food.Model.cs",
-              "ToolTip": "C:\\Users\\Santiago Puentes\\source\\repos\\PESO_PIG\\Backend\\API PESO_PIG\\Models\\Food.Model.cs",
-              "RelativeToolTip": "API PESO_PIG\\Models\\Food.Model.cs",
-              "ViewState": "AgIAAAkAAAAAAAAAAAA1wA4AAAASAAAAAAAAAA==",
+              "Title": "Corral.Model.cs",
+              "DocumentMoniker": "C:\\PROYECTOPESOPIG2.0\\PESO_PIG\\Backend\\API PESO_PIG\\Models\\Corral.Model.cs",
+              "RelativeDocumentMoniker": "API PESO_PIG\\Models\\Corral.Model.cs",
+              "ToolTip": "C:\\PROYECTOPESOPIG2.0\\PESO_PIG\\Backend\\API PESO_PIG\\Models\\Corral.Model.cs",
+              "RelativeToolTip": "API PESO_PIG\\Models\\Corral.Model.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAQAAAAXAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-14T16:51:13.081Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-04-21T19:50:38.285Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "Stage.Model.cs",
+              "DocumentMoniker": "C:\\PROYECTOPESOPIG2.0\\PESO_PIG\\Backend\\API PESO_PIG\\Models\\Stage.Model.cs",
+              "RelativeDocumentMoniker": "API PESO_PIG\\Models\\Stage.Model.cs",
+              "ToolTip": "C:\\PROYECTOPESOPIG2.0\\PESO_PIG\\Backend\\API PESO_PIG\\Models\\Stage.Model.cs",
+              "RelativeToolTip": "API PESO_PIG\\Models\\Stage.Model.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAA4AAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-21T19:41:40.658Z"
             },
             {
               "$type": "Document",
               "DocumentIndex": 0,
-              "Title": "Food.Controller.cs",
-              "DocumentMoniker": "C:\\Users\\Santiago Puentes\\source\\repos\\PESO_PIG\\Backend\\API PESO_PIG\\Controllers\\Food.Controller.cs",
-              "RelativeDocumentMoniker": "API PESO_PIG\\Controllers\\Food.Controller.cs",
-              "ToolTip": "C:\\Users\\Santiago Puentes\\source\\repos\\PESO_PIG\\Backend\\API PESO_PIG\\Controllers\\Food.Controller.cs",
-              "RelativeToolTip": "API PESO_PIG\\Controllers\\Food.Controller.cs",
-              "ViewState": "AgIAACkAAAAAAAAAAAAswDQAAAAbAAAAAAAAAA==",
+              "Title": "Piglet.Services.cs",
+              "DocumentMoniker": "C:\\PROYECTOPESOPIG2.0\\PESO_PIG\\Backend\\API PESO_PIG\\Services\\Piglet.Services.cs",
+              "RelativeDocumentMoniker": "API PESO_PIG\\Services\\Piglet.Services.cs",
+              "ToolTip": "C:\\PROYECTOPESOPIG2.0\\PESO_PIG\\Backend\\API PESO_PIG\\Services\\Piglet.Services.cs",
+              "RelativeToolTip": "API PESO_PIG\\Services\\Piglet.Services.cs",
+              "ViewState": "AQIAAI8AAAAAAAAAAAAcwK8AAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-14T16:50:56.822Z",
+              "WhenOpened": "2025-04-21T19:32:01.983Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 2,
-              "Title": "Entries.Controller.cs",
-              "DocumentMoniker": "C:\\Users\\Santiago Puentes\\source\\repos\\PESO_PIG\\Backend\\API PESO_PIG\\Controllers\\Entries.Controller.cs",
-              "RelativeDocumentMoniker": "API PESO_PIG\\Controllers\\Entries.Controller.cs",
-              "ToolTip": "C:\\Users\\Santiago Puentes\\source\\repos\\PESO_PIG\\Backend\\API PESO_PIG\\Controllers\\Entries.Controller.cs",
-              "RelativeToolTip": "API PESO_PIG\\Controllers\\Entries.Controller.cs",
-              "ViewState": "AgIAACUAAAAAAAAAAAArwDAAAAAcAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-14T16:50:23.892Z",
-              "EditorCaption": ""
+              "Title": "appsettings.json",
+              "DocumentMoniker": "C:\\PROYECTOPESOPIG2.0\\PESO_PIG\\Backend\\API PESO_PIG\\appsettings.json",
+              "RelativeDocumentMoniker": "API PESO_PIG\\appsettings.json",
+              "ToolTip": "C:\\PROYECTOPESOPIG2.0\\PESO_PIG\\Backend\\API PESO_PIG\\appsettings.json",
+              "RelativeToolTip": "API PESO_PIG\\appsettings.json",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAABYAAABhAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2025-04-21T16:31:36.672Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "Entries.Model.cs",
-              "DocumentMoniker": "C:\\Users\\Santiago Puentes\\source\\repos\\PESO_PIG\\Backend\\API PESO_PIG\\Models\\Entries.Model.cs",
-              "RelativeDocumentMoniker": "API PESO_PIG\\Models\\Entries.Model.cs",
-              "ToolTip": "C:\\Users\\Santiago Puentes\\source\\repos\\PESO_PIG\\Backend\\API PESO_PIG\\Models\\Entries.Model.cs",
-              "RelativeToolTip": "API PESO_PIG\\Models\\Entries.Model.cs",
-              "ViewState": "AgIAAAMAAAAAAAAAAAAAAAwAAAAAAAAAAAAAAA==",
+              "DocumentIndex": 5,
+              "Title": "Entries.DTO.cs",
+              "DocumentMoniker": "C:\\PROYECTOPESOPIG2.0\\PESO_PIG\\Backend\\API PESO_PIG\\DTOs\\Entries.DTO.cs",
+              "RelativeDocumentMoniker": "API PESO_PIG\\DTOs\\Entries.DTO.cs",
+              "ToolTip": "C:\\PROYECTOPESOPIG2.0\\PESO_PIG\\Backend\\API PESO_PIG\\DTOs\\Entries.DTO.cs",
+              "RelativeToolTip": "API PESO_PIG\\DTOs\\Entries.DTO.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-14T16:50:40.942Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-04-18T23:33:23.165Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "Entries.Controller.cs",
+              "DocumentMoniker": "C:\\PROYECTOPESOPIG2.0\\PESO_PIG\\Backend\\API PESO_PIG\\Controllers\\Entries.Controller.cs",
+              "RelativeDocumentMoniker": "API PESO_PIG\\Controllers\\Entries.Controller.cs",
+              "ToolTip": "C:\\PROYECTOPESOPIG2.0\\PESO_PIG\\Backend\\API PESO_PIG\\Controllers\\Entries.Controller.cs",
+              "RelativeToolTip": "API PESO_PIG\\Controllers\\Entries.Controller.cs",
+              "ViewState": "AQIAACQAAAAAAAAAAAAowAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-18T23:33:06.84Z"
             }
           ]
         }

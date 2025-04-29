@@ -46,12 +46,14 @@ namespace API_PESO_PIG.Controllers
             var entries = _Services.GetEntries().Select(p => new EntriesDTO
             {
                 id_Entries = p.id_Entries,
-                Vlr_Total = p.Vlr_Total,
-                Vlr_Unit = p.vlr_Unitary,
+                vlr_Total = p.vlr_Total,
+                vlr_Unitary = p.vlr_Unitary,
                 Fec_Entries = p.Fec_Entries,
                 Fec_Expiration = p.Fec_Expiration,
                 Can_Food = p.Can_Food,
-                Nam_Food = p.food.Nam_Food
+                Vlr_Promedio = p.Vlr_Promedio,
+                Nam_Food = p.food.Nam_Food,
+                
             }).ToList();
 
             return Ok(entries);

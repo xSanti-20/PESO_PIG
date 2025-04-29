@@ -6,6 +6,7 @@ namespace API_PESO_PIG.Services
     public class EntriesServices
     {
         private readonly AppDbContext _context;
+
         public EntriesServices(AppDbContext context)
         {
             _context = context;
@@ -31,10 +32,24 @@ namespace API_PESO_PIG.Services
             }
         }
 
-        // Agregar una nueva entrada
+        // Agregar una nueva entrada y actualizar existencia del alimento
         public void Add(Entries entity)
         {
+            // Agrega la entrada
             _context.Entries.Add(entity);
+
+            // Buscar el alimento relacionado
+            var food = _context.Foods.FirstOrDefault(f => f.id_Food == entity.id_Food);
+            if (food != null)
+            {
+                // Sumar la cantidad de la entrada a la existencia del alimento
+                food.Existence += entity.Can_Food;
+
+                // Marcar como modificado
+                _context.Foods.Update(food);
+            }
+
+            // Guardar cambios
             _context.SaveChanges();
         }
 
@@ -58,7 +73,7 @@ namespace API_PESO_PIG.Services
             }
         }
 
-        // Actualizar una entrada existente por ID
+        // Actualizar una entrada existente por ID y ajustar la existencia del alimento
         public async Task<bool> UpdateEntries(int id_Entries, Entries updatedEntries)
         {
             try
@@ -67,14 +82,34 @@ namespace API_PESO_PIG.Services
                 {
                     throw new ArgumentException("El ID de la entrada no coincide.");
                 }
-                var existingEntries = await _context.Entries.AsNoTracking().FirstOrDefaultAsync(c => c.id_Entries == id_Entries);
+
+                var existingEntries = await _context.Entries.AsNoTracking()
+                    .FirstOrDefaultAsync(c => c.id_Entries == id_Entries);
+
                 if (existingEntries == null)
                 {
                     return false;
                 }
-                _context.Entries.Attach(updatedEntries);
-                _context.Entry(updatedEntries).State = EntityState.Modified;
 
+                // Obtenemos el alimento original y el alimento actualizado
+                var foodBefore = await _context.Foods.FirstOrDefaultAsync(f => f.id_Food == existingEntries.id_Food);
+                var foodAfter = await _context.Foods.FirstOrDefaultAsync(f => f.id_Food == updatedEntries.id_Food);
+
+                if (foodBefore != null && foodAfter != null)
+                {
+                    // Restamos la cantidad original del alimento
+                    foodBefore.Existence -= existingEntries.Can_Food;
+
+                    // Sumamos la nueva cantidad de la entrada
+                    foodAfter.Existence += updatedEntries.Can_Food;
+
+                    // Actualizamos las existencias de ambos alimentos
+                    _context.Foods.Update(foodBefore);
+                    _context.Foods.Update(foodAfter);
+                }
+
+                // Actualizar la entrada con los nuevos datos
+                _context.Entries.Update(updatedEntries);
                 await _context.SaveChangesAsync();
 
                 return true;

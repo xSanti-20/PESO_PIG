@@ -73,7 +73,7 @@ function HomePage() {
                             {
                                 img: "/assets/img/training.jpeg",
                                 title: "Formación Técnica",
-                                description: "Instrucción técnica de alta calidad a cargo del experto Juan Kamilo Morales."
+                                description: "Instrucción técnica de alta calidad a cargo de Gestores y Pasantes de la unidad de Porcinos."
                             }
                         ].map((feature, index) => (
                             <div

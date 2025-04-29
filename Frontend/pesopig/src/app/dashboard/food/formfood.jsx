@@ -1,20 +1,35 @@
 "use client"
+
 import { useState, useEffect } from "react"
 import styles from "./page.module.css"
 import axiosInstance from "@/lib/axiosInstance"
-import { FaUtensils, FaCalendarAlt, FaWarehouse, FaWeightHanging, FaPiggyBank } from "react-icons/fa"
+import { FaUtensils, FaWarehouse, FaWeightHanging, FaPiggyBank, FaCalculator } from "react-icons/fa"
+import { Button } from "@/components/ui/button"
 
 // Función para enviar datos al backend
-async function SendData(body) {
-  console.log("Enviando datos al backend:", body)
-  const response = await axiosInstance.post("/api/Food/CreateFood", body)
-  return response
+async function SendData(body, isEditing = false) {
+  if (isEditing) {
+    const response = await axiosInstance.put("/api/Food/UpdateFood", body)
+    return response
+  } else {
+    const response = await axiosInstance.post("/api/Food/CreateFood", body)
+    return response
+  }
 }
 
-function RegisterFoodPage({ refreshData }) {
+function RegisterFoodPage({ refreshData, foodToEdit, onCancelEdit, closeModal, showAlert }) {
   const [loading, setLoading] = useState(false)
   const [stages, setStages] = useState([])
-  const [error, setError] = useState("")
+  const [formData, setFormData] = useState({
+    nam_Food: "",
+    und_Extent: "",
+    vlr_Unit: "",
+    id_Stage: "",
+    rat_Food: "",
+    existence: "",
+  })
+
+  const isEditing = !!foodToEdit
 
   useEffect(() => {
     async function fetchData() {
@@ -22,74 +37,107 @@ function RegisterFoodPage({ refreshData }) {
         const stagesResponse = await axiosInstance.get("/api/Stage/ConsultAllStages")
         setStages(stagesResponse.data)
       } catch (error) {
-        console.error("Error al obtener datos:", error)
-        alert("No se pudieron cargar las opciones necesarias.")
+        console.error("Error al obtener etapas:", error)
+        if (showAlert) {
+          showAlert("No se pudieron cargar las etapas.", "error")
+        } else {
+          alert("No se pudieron cargar las etapas.")
+        }
       }
     }
 
     fetchData()
-  }, [])
+  }, [showAlert])
+
+  useEffect(() => {
+    if (isEditing && foodToEdit) {
+      setFormData({
+        nam_Food: foodToEdit.nam_Food || "",
+        und_Extent: foodToEdit.und_Extent || "",
+        vlr_Unit: foodToEdit.vlr_Unit?.toString() || "",
+        id_Stage: foodToEdit.id_Stage?.toString() || "",
+        rat_Food: foodToEdit.rat_Food?.toString() || "",
+        existence: foodToEdit.existence?.toString() || "",
+      })
+    } else {
+      setFormData({
+        nam_Food: "",
+        und_Extent: "",
+        vlr_Unit: "",
+        id_Stage: "",
+        rat_Food: "",
+        existence: "",
+      })
+    }
+  }, [foodToEdit])
+
+  const handleChange = (e) => {
+    const { name, value } = e.target
+    setFormData((prev) => ({ ...prev, [name]: value }))
+  }
 
   async function handlerSubmit(event) {
     event.preventDefault()
-    setError("")
 
-    const form = new FormData(event.currentTarget)
+    const { nam_Food, und_Extent, vlr_Unit, id_Stage, rat_Food, existence } = formData
 
-    const nam_Food = form.get("nam_Food")?.trim() || ""
-    const des_Food = form.get("des_Food")?.trim() || ""
-    const existence = form.get("existence") || ""
-    const vlr_Unit = form.get("vlr_Unit") || ""
-    const fec_Expiration = form.get("fec_Expiration") || ""
-    const und_Extent = form.get("und_Extent")?.trim() || ""
-    const id_Stage = form.get("id_Stage") || ""
-
-    if (!nam_Food || !des_Food || !existence || !vlr_Unit || !fec_Expiration || !und_Extent || !id_Stage) {
-      setError("Todos los campos son requeridos.")
-      alert("Todos los campos son requeridos.")
+    if (!nam_Food || !und_Extent || !vlr_Unit || !id_Stage || !rat_Food || !existence) {
+      if (showAlert) {
+        showAlert("Todos los campos son requeridos.", "error")
+      } else {
+        alert("Todos los campos son requeridos.")
+      }
       return
     }
 
     const body = {
       nam_Food,
-      des_Food,
-      existence: Number.parseInt(existence),
-      vlr_Unit: Number.parseInt(vlr_Unit),
-      fec_Expiration,
       und_Extent,
+      vlr_Unit: Number.parseInt(vlr_Unit),
       id_Stage: Number.parseInt(id_Stage),
+      rat_Food: Number.parseInt(rat_Food),
+      existence: Number.parseInt(existence),
+    }
+
+    if (isEditing && foodToEdit?.id_Food) {
+      body.id_Food = foodToEdit.id_Food
     }
 
     try {
       setLoading(true)
-      const response = await SendData(body)
-      alert(response.data.message || "Registro exitoso")
-      event.target.reset()
+      const response = await SendData(body, isEditing)
 
-      if (typeof refreshData === "function") {
-        refreshData()
+      const successMessage =
+        response.data.message || (isEditing ? "Alimento actualizado con éxito." : "Alimento registrado con éxito.")
+
+      if (showAlert) {
+        showAlert(successMessage, "success")
+      } else {
+        alert(successMessage)
       }
+
+      setFormData({
+        nam_Food: "",
+        und_Extent: "",
+        vlr_Unit: "",
+        id_Stage: "",
+        rat_Food: "",
+        existence: "",
+      })
+
+      if (closeModal) closeModal()
+      if (typeof refreshData === "function") refreshData()
     } catch (error) {
       console.error("Error completo:", error)
+      const errorMessage = error.response?.data || "Error desconocido"
 
-      if (error.response) {
-        console.log("Datos de respuesta:", error.response.data)
-        console.log("Estado HTTP:", error.response.status)
-        console.log("Cabeceras:", error.response.headers)
-
-        const errorMessage =
-          typeof error.response.data === "object" ? JSON.stringify(error.response.data, null, 2) : error.response.data
-
-        setError(`Error ${error.response.status}: ${errorMessage}`)
-        alert(`Ocurrió un error al registrar el alimento: ${errorMessage}`)
-      } else if (error.request) {
-        console.log("Solicitud sin respuesta:", error.request)
-        setError("No se recibió respuesta del servidor")
-        alert("No se recibió respuesta del servidor")
+      if (showAlert) {
+        showAlert(
+          `Error al ${isEditing ? "actualizar" : "registrar"} el alimento: ${JSON.stringify(errorMessage)}`,
+          "error",
+        )
       } else {
-        console.log("Error:", error.message)
-        setError(`Error: ${error.message}`)
-        alert(`Error: ${error.message}`)
+        alert(`Error al ${isEditing ? "actualizar" : "registrar"} el alimento: ${JSON.stringify(errorMessage)}`)
       }
     } finally {
       setLoading(false)
@@ -100,49 +148,48 @@ function RegisterFoodPage({ refreshData }) {
     <div className={styles.container}>
       <div className={`col-md-6 ${styles.form_box} d-flex align-items-center justify-content-center`}>
         <form className={styles.form} onSubmit={handlerSubmit}>
-          <h1 className={styles.title}>Registrar Alimento</h1>
+          <h1 className={styles.title}>{isEditing ? "Actualizar Alimento" : "Registrar Alimento"}</h1>
 
-          {error && <div className={`${styles.error_message} col-span-2`}>{error}</div>}
-
-          {/* Nombre del alimento */}
+          {/* Nombre */}
           <div className={styles.input_box}>
-            <input type="text" id="nam_Food" name="nam_Food" placeholder="Nombre del Alimento" />
+            <input
+              type="text"
+              name="nam_Food"
+              placeholder="Nombre del Alimento"
+              value={formData.nam_Food}
+              onChange={handleChange}
+            />
             <FaUtensils className={styles.icon} />
           </div>
 
-          {/* Descripción del alimento */}
+          {/* Unidad Existente */}
           <div className={styles.input_box}>
-            <input type="text" id="des_Food" name="des_Food" placeholder="Descripción del Alimento" />
-            <FaPiggyBank className={styles.icon} />
-          </div>
-
-          {/* Existencia */}
-          <div className={styles.input_box}>
-            <input type="number" id="existence" name="existence" placeholder="Existencia" step="1" />
-            <FaWarehouse className={styles.icon} />
-          </div>
-
-          {/* Valor unitario */}
-          <div className={styles.input_box}>
-            <input type="number" id="vlr_Unit" name="vlr_Unit" placeholder="Valor Unitario" step="1" />
-            <FaUtensils className={styles.icon} />
-          </div>
-
-          {/* Fecha de vencimiento */}
-          <div className={styles.input_box}>
-            <input type="date" id="fec_Expiration" name="fec_Expiration" placeholder="Fecha de Vencimiento" />
-            <FaCalendarAlt className={styles.icon} />
-          </div>
-
-          {/* Unidad de medida */}
-          <div className={styles.input_box}>
-            <input type="text" id="und_Extent" name="und_Extent" placeholder="Unidad de Medida" />
+            <input
+              type="text"
+              name="und_Extent"
+              placeholder="Unidad de Medida"
+              value={formData.und_Extent}
+              onChange={handleChange}
+            />
             <FaWeightHanging className={styles.icon} />
           </div>
 
-          {/* Selección de Etapa */}
+          {/* Valor Unitario */}
           <div className={styles.input_box}>
-            <select id="id_Stage" name="id_Stage" className={styles.select}>
+            <input
+              type="number"
+              name="vlr_Unit"
+              placeholder="Valor Unitario"
+              value={formData.vlr_Unit}
+              onChange={handleChange}
+              step="1"
+            />
+            <FaCalculator className={styles.icon} />
+          </div>
+
+          {/* Etapa */}
+          <div className={styles.input_box}>
+            <select name="id_Stage" className={styles.select} value={formData.id_Stage} onChange={handleChange}>
               <option value="">Selecciona una etapa</option>
               {stages.map((stage) => (
                 <option key={stage.id_Stage} value={stage.id_Stage}>
@@ -153,10 +200,36 @@ function RegisterFoodPage({ refreshData }) {
             <FaWarehouse className={styles.icon} />
           </div>
 
-          {/* Botón de enviar */}
-          <button type="submit" className={styles.button} disabled={loading}>
-            {loading ? "Registrando..." : "Registrar"}
-          </button>
+          {/* Ración del Alimento */}
+          <div className={styles.input_box}>
+            <input
+              type="number"
+              name="rat_Food"
+              placeholder="Ración del Alimento"
+              value={formData.rat_Food}
+              onChange={handleChange}
+              step="1"
+            />
+            <FaPiggyBank className={styles.icon} />
+          </div>
+
+          {/* Existencia */}
+          <div className={styles.input_box}>
+            <input
+              type="number"
+              name="existence"
+              placeholder="Existencia"
+              value={formData.existence}
+              onChange={handleChange}
+              step="1"
+            />
+            <FaWarehouse className={styles.icon} />
+          </div>
+
+          {/* Botón */}
+          <Button type="submit" disabled={loading} className={styles.button}>
+            {loading ? (isEditing ? "Actualizando..." : "Registrando...") : isEditing ? "Actualizar" : "Registrar"}
+          </Button>
         </form>
       </div>
     </div>

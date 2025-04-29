@@ -1,68 +1,123 @@
-"use client";
-import React, { useState } from "react";
-import axiosInstance from "@/lib/axiosInstance";
-import styles from "./Stage.Module.css";
-import { FaFileAlt, FaCalendarAlt, FaRegClock } from "react-icons/fa";
+"use client"
+import { useState, useEffect } from "react"
+import "./Stage.Module.css"
+import axiosInstance from "@/lib/axiosInstance"
+import { FaFileAlt, FaRegClock } from "react-icons/fa"
+import { LiaMicroscopeSolid } from "react-icons/lia"
+import { Button } from "@/components/ui/button"
 
-async function sendData(body) {
-  return await axiosInstance.post("api/Stage/CreateStage", body);
+// Función para enviar datos al backend
+async function sendData(body, isEditing = false) {
+  if (isEditing) {
+    const response = await axiosInstance.put("api/Stage/UpdateStage", body)
+    return response
+  } else {
+    const response = await axiosInstance.post("api/Stage/CreateStage", body)
+    return response
+  }
 }
 
-function StageForm() {
+function StageForm({ refreshData, stageToEdit, onCancelEdit, closeModal, showAlert }) {
   const [formData, setFormData] = useState({
     Name_Stage: "",
     Weight_From: "",
     Weight_Upto: "",
     Tot_Weeks: "",
-  });
+  })
 
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
+  const [loading, setLoading] = useState(false)
+  const isEditing = !!stageToEdit
+
+  useEffect(() => {
+    if (isEditing) {
+      setFormData({
+        Name_Stage: stageToEdit.name_Stage || "",
+        Weight_From: stageToEdit.weight_From || "",
+        Weight_Upto: stageToEdit.weight_Upto || "",
+        Tot_Weeks: stageToEdit.tot_Weeks || "",
+      })
+    } else {
+      setFormData({
+        Name_Stage: "",
+        Weight_From: "",
+        Weight_Upto: "",
+        Tot_Weeks: "",
+      })
+    }
+  }, [stageToEdit])
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
+    const { name, value } = e.target
+    setFormData((prev) => ({
+      ...prev,
       [name]: value,
-    }));
-  };
+    }))
+  }
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const { Name_Stage, Weight_From, Weight_Upto, Tot_Weeks } = formData;
+  async function handleSubmit(event) {
+    event.preventDefault()
+    const { Name_Stage, Weight_From, Weight_Upto, Tot_Weeks } = formData
 
-    if (!Name_Stage || !Weight_From || !Weight_Upto|| !Tot_Weeks ) {
-      setErrorMessage("Todos los campos son requeridos.");
-      return;
+    if (!Name_Stage || !Weight_From || !Weight_Upto || !Tot_Weeks) {
+      if (showAlert) {
+        showAlert("Todos los campos son requeridos.", "error")
+      } else {
+        alert("Todos los campos son requeridos.")
+      }
+      return
     }
 
-    setIsSubmitting(true);
-    setErrorMessage("");
+    const body = { Name_Stage, Weight_From, Weight_Upto, Tot_Weeks }
+
+    if (isEditing) {
+      body.Id_Stage = stageToEdit.id_Stage
+    }
 
     try {
-      const response = await sendData({ Name_Stage, Weight_From, Weight_Upto, Tot_Weeks, });
-      alert(response.data.message);
-      setFormData({ Name_Stage: "", Weight_From: "", Weight_Upto: "", Tot_Weeks: "", });
-    } catch (error) {
-      const { errors, status } = error.response?.data || {};
-      if (status === 400) {
-        setErrorMessage("Error de validación: " + JSON.stringify(errors));
+      setLoading(true)
+      const response = await sendData(body, isEditing)
+
+      const successMessage =
+        response.data.message || (isEditing ? "Etapa actualizada con éxito." : "Etapa registrada con éxito.")
+
+      if (showAlert) {
+        showAlert(successMessage, "success")
       } else {
-        setErrorMessage("Ocurrió un error al registrar la etapa.");
+        alert(successMessage)
+      }
+
+      setFormData({
+        Name_Stage: "",
+        Weight_From: "",
+        Weight_Upto: "",
+        Tot_Weeks: "",
+      })
+
+      if (closeModal) closeModal()
+      if (typeof refreshData === "function") refreshData()
+    } catch (error) {
+      console.error("Error completo:", error)
+      const errorMessage = error.response?.data || "Error desconocido"
+
+      if (showAlert) {
+        showAlert(
+          `Ocurrió un error al ${isEditing ? "actualizar" : "registrar"} la etapa: ` + JSON.stringify(errorMessage),
+          "error",
+        )
+      } else {
+        alert(`Ocurrió un error al ${isEditing ? "actualizar" : "registrar"} la etapa: ` + JSON.stringify(errorMessage))
       }
     } finally {
-      setIsSubmitting(false);
+      setLoading(false)
     }
-  };
+  }
 
   return (
-    <>
     <div className="wrapper">
       <div className="form_box">
-        <h2 className="title">Registrar Etapa</h2>
-        {errorMessage && <div className="error">{errorMessage}</div>}
         <form onSubmit={handleSubmit}>
-          
+          <h2 className="title">{isEditing ? "Actualizar Etapa" : "Registrar Etapa"}</h2>
+
           {/* Nombre Etapa */}
           <div className="input_box">
             <input
@@ -72,10 +127,10 @@ function StageForm() {
               value={formData.Name_Stage}
               onChange={handleChange}
             />
-            <FaFileAlt className="icon" /> {/* Icono para el nombre */}
+            <FaFileAlt className="icon" />
           </div>
 
-          {/* Peso del Lechon Desde */}
+          {/* Peso Desde */}
           <div className="input_box">
             <input
               type="number"
@@ -84,10 +139,10 @@ function StageForm() {
               value={formData.Weight_From}
               onChange={handleChange}
             />
-            <FaCalendarAlt className="icon" /> {/* Icono para la fecha */}
+            <LiaMicroscopeSolid className="icon" />
           </div>
 
-          {/* Peso del Lechon Hasta */}
+          {/* Peso Hasta */}
           <div className="input_box">
             <input
               type="number"
@@ -96,29 +151,28 @@ function StageForm() {
               value={formData.Weight_Upto}
               onChange={handleChange}
             />
-            <FaCalendarAlt className="icon" /> {/* Icono para la fecha */}
+            <LiaMicroscopeSolid className="icon" />
           </div>
 
-          {/* Total de semanas de la Etapa */}
+          {/* Total de semanas */}
           <div className="input_box">
             <input
               type="number"
               name="Tot_Weeks"
-              placeholder="Semanas"
-              value={formData.Week_Stage}
+              placeholder="Dias"
+              value={formData.Tot_Weeks}
               onChange={handleChange}
             />
-            <FaRegClock className="icon" /> {/* Icono para la semana */}
+            <FaRegClock className="icon" />
           </div>
 
-          <button className="enviar" type="submit" disabled={isSubmitting}>
-            {isSubmitting ? "Enviando..." : "Enviar"}
-          </button>
+          <Button type="submit" disabled={loading} className="enviar">
+            {loading ? (isEditing ? "Actualizando..." : "Registrando...") : isEditing ? "Actualizar" : "Registrar"}
+          </Button>
         </form>
       </div>
     </div>
-    </>
-  );
+  )
 }
 
-export default StageForm;
+export default StageForm

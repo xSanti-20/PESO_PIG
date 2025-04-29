@@ -1,30 +1,39 @@
-"use client";
+"use client"
 
-import { useState, useEffect } from "react";
-import PrivateNav from "@/components/nav/PrivateNav";
-import ContentPage from "@/components/utils/ContentPage";
-import axiosInstance from "@/lib/axiosInstance";
-import RegisterStage from "./formstage";
+import { useState, useEffect } from "react"
+import PrivateNav from "@/components/nav/PrivateNav"
+import ContentPage from "@/components/utils/ContentPage"
+import axiosInstance from "@/lib/axiosInstance"
+import RegisterStage from "./formstage"
+import AlertModal from "@/components/AlertModal"
 
 function Stage() {
-  const TitlePage = "Etapa";
-  const [stageData, setstageData] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const TitlePage = "Etapa"
+  const [stageData, setStageData] = useState([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState(null)
+  const [editingStage, setEditingStage] = useState(null)
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [alertInfo, setAlertInfo] = useState({
+    isOpen: false,
+    message: "",
+    type: "success",
+    redirectUrl: null,
+  })
 
-  const titlesStage = [
-    "ID",
-    "Nombre",
-    "Peso Desde",
-    "Peso Hasta",
-    "Total Semanas"
-    
-  ];
+  const titlesStage = ["ID", "Nombre", "Peso Desde", "Peso Hasta", "Total Semanas"]
+
+  const closeAlert = () => {
+    setAlertInfo({
+      ...alertInfo,
+      isOpen: false,
+    })
+  }
 
   async function fetchStage() {
     try {
-      setIsLoading(true);
-      const response = await axiosInstance.get("/api/Stage/ConsultAllStages");
+      setIsLoading(true)
+      const response = await axiosInstance.get("/api/Stage/ConsultAllStages")
 
       if (response.status === 200) {
         const data = response.data.map((stage) => ({
@@ -33,33 +42,61 @@ function Stage() {
           weight_From: stage.weight_From,
           weight_Upto: stage.weight_Upto,
           tot_Weeks: stage.tot_Weeks,
-        }));
-        setstageData(data);
+          original: stage,
+        }))
+        setStageData(data)
       }
     } catch (error) {
-      setError("No se pudieron cargar los datos de la Etapa .");
+      setError("No se pudieron cargar los datos de la Etapa.")
+      setAlertInfo({
+        isOpen: true,
+        message: "No se pudieron cargar los datos de la Etapa.",
+        type: "error",
+      })
     } finally {
-      setIsLoading(false);
+      setIsLoading(false)
     }
   }
 
   useEffect(() => {
-    fetchStage();
-  }, []);
- 
+    fetchStage()
+  }, [])
+
   const handleDelete = async (id) => {
     try {
-      const numericId = Number.parseInt(id, 10);
-      await axiosInstance.delete(`/api/Stage/DeleteStage?id_Stage=${numericId}`);
-      fetchStage();
+      const numericId = Number.parseInt(id, 10)
+      await axiosInstance.delete(`/api/Stage/DeleteStage?id_Stage=${numericId}`)
+      fetchStage()
+      setAlertInfo({
+        isOpen: true,
+        message: "Etapa eliminada correctamente",
+        type: "success",
+      })
     } catch (error) {
-      console.error("Error detallado al eliminar:", error);
+      console.error("Error detallado al eliminar:", error)
+      setAlertInfo({
+        isOpen: true,
+        message: "Error al eliminar la etapa",
+        type: "error",
+      })
     }
-  };
+  }
+
+  const handleUpdate = (row) => {
+    console.log("Etapa a editar:", row.original)
+    setEditingStage(row.original)
+    setIsModalOpen(true)
+  }
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false)
+    setTimeout(() => {
+      setEditingStage(null)
+    }, 300)
+  }
 
   return (
     <PrivateNav>
-      {/* Pantalla de carga */}
       {isLoading && (
         <div className="fixed inset-0 flex items-center justify-center bg-white bg-opacity-80 z-50">
           <div className="flex flex-col items-center">
@@ -69,21 +106,48 @@ function Stage() {
         </div>
       )}
 
-      {/* Contenido principal */}
       {!isLoading && (
         <ContentPage
           TitlePage={TitlePage}
           Data={stageData}
           TitlesTable={titlesStage}
-          FormPage={() => <RegisterStage refreshData={fetchStage} />}
+          FormPage={() => (
+            <RegisterStage
+              refreshData={fetchStage}
+              stageToEdit={editingStage}
+              onCancelEdit={handleCloseModal}
+              closeModal={handleCloseModal}
+              showAlert={(message, type, redirectUrl = null) => {
+                setAlertInfo({
+                  isOpen: true,
+                  message,
+                  type,
+                  redirectUrl,
+                })
+              }}
+            />
+          )}
           onDelete={handleDelete}
+          onUpdate={handleUpdate}
           endpoint="/api/Stage/DeleteStage"
+          isModalOpen={isModalOpen}
+          setIsModalOpen={setIsModalOpen}
+          refreshData={fetchStage}
         />
       )}
 
-      {error && <div className="text-red-600">{error}</div>}
+      {error && <div className="text-red-600 text-center mt-4">{error}</div>}
+
+      {/* Alerta personalizada */}
+      <AlertModal
+        isOpen={alertInfo.isOpen}
+        message={alertInfo.message}
+        type={alertInfo.type}
+        onClose={closeAlert}
+        redirectUrl={alertInfo.redirectUrl}
+      />
     </PrivateNav>
-  );
+  )
 }
 
-export default Stage;
+export default Stage

@@ -24,6 +24,9 @@ namespace API_PESO_PIG.Models
         [DisplayName("Sexo Lechon")]
         public string Sex_Piglet { get; set; }
 
+        [DisplayName("Placa Sena")]
+        public int Placa_Sena { get; set; }
+
         //foránea a la tabla Races
         public int Id_Race { get; set; }
 

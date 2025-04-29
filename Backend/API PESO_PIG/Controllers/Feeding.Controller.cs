@@ -46,15 +46,16 @@ namespace API_PESO_PIG.Controllers
         [HttpGet("ConsultAllFeedings")]
         public ActionResult<IEnumerable<FeedingDTO>> GetFeedings()
         {
-            var feeding = _Services.GetFeedings().Select(p => new FeedingDTO
+            var feeding = _Services.GetFeedings().Select(static p => new FeedingDTO
             {
                 id_Feeding = p.id_Feeding,
-                Can_Feeding = p.Can_Feeding,
-                Des_Feeding = p.Des_Feeding,
-                Con_Average = p.Con_Average,
-                Nom_Users = p.user.Nom_Users,
                 Name_Piglet = p.piglet.Name_Piglet,
-                Nam_Food = p.food.Nam_Food
+                Obc_Feeding = p.Obc_Feeding,
+                Can_Food = p.Can_Food,
+                Sum_Food = p.Sum_Food,
+                Nom_Users = p.user.Nom_Users,
+                Nam_Food = p.food.Nam_Food,
+                Dat_Feeding = p.Dat_Feeding
             }).ToList();
 
             return Ok(feeding);

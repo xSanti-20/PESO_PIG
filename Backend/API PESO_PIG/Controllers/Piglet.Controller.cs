@@ -50,6 +50,7 @@ namespace API_PESO_PIG.Controllers
                 Fec_Birth = p.Fec_Birth,
                 Weight_Initial = p.Weight_Initial,
                 Sex_Piglet = p.Sex_Piglet,
+                Placa_Sena = p.Placa_Sena,
                 Nam_Race = p.race.Nam_Race,
                 Name_Stage = p.stage.Name_Stage,
                 Des_Corral = p.corral.Des_Corral 

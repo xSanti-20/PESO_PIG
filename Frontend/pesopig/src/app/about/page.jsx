@@ -25,7 +25,7 @@ export default function QuienesSomos() {
     {
       name: "Sofia Guzman",
       role: "Subgerente de Proyecto",
-      image: "/assets/img/sofi.jpg",
+      image: "/assets/img/sofi.jpeg",
       phone: "+57 314 526 7223",
       description:
         "Especialista en gestión ágil, Sofia se asegura de que cada proyecto cumpla con los objetivos del cliente y sea entregado dentro del plazo acordado, fomentando siempre el trabajo en equipo y la excelencia.",

@@ -1,87 +1,177 @@
-"use client";
+"use client"
 
-import { useState, useEffect } from "react";
-import styles from "./page.module.css"; // Usamos tu nuevo archivo de estilos
-import axiosInstance from "@/lib/axiosInstance";
-import { FaUtensils, FaCalendarAlt, FaWarehouse, FaMoneyBillWave } from "react-icons/fa";
+import { useState, useEffect } from "react"
+import styles from "./page.module.css"
+import axiosInstance from "@/lib/axiosInstance"
+import { FaUtensils, FaCalendarAlt, FaWarehouse, FaMoneyBillWave, FaCalculator, FaTag } from "react-icons/fa"
+import { Button } from "@/components/ui/button"
 
-async function SendData(body) {
-  console.log("Enviando datos al backend:", body);
-  const response = await axiosInstance.post("/api/Entries/CreateEntries", body);
-  return response;
+async function SendData(body, isEditing = false) {
+  if (isEditing) {
+    const response = await axiosInstance.put("/api/Entries/UpdateEntries", body)
+    return response
+  } else {
+    const response = await axiosInstance.post("/api/Entries/CreateEntries", body)
+    return response
+  }
 }
 
-function RegisterEntryPage({ refreshData }) {
-  const [loading, setLoading] = useState(false);
-  const [foods, setFoods] = useState([]);
-  const [error, setError] = useState("");
+function RegisterEntryPage({ refreshData, entryToEdit, onCancelEdit, closeModal, refreshFoods, showAlert }) {
+  const [loading, setLoading] = useState(false)
+  const [foods, setFoods] = useState([])
+  const [previousPrice, setPreviousPrice] = useState("")
+
+  const [formData, setFormData] = useState({
+    id_Food: "",
+    Fec_Entries: "",
+    Fec_Expiration: "",
+    Can_Food: "",
+    vlr_Unitary: "",
+    vlr_Total: 0,
+    Nam_Food: "",
+  })
+
+  const isEditing = !!entryToEdit
 
   useEffect(() => {
     async function fetchFoods() {
       try {
-        const response = await axiosInstance.get("/api/Food/ConsultAllFoods");
-        setFoods(response.data);
+        const response = await axiosInstance.get("/api/Food/ConsultAllFoods")
+        setFoods(response.data)
       } catch (error) {
-        console.error("Error al obtener alimentos:", error);
-        alert("No se pudieron cargar los alimentos.");
+        console.error("Error al obtener alimentos:", error)
+        if (showAlert) {
+          showAlert("No se pudieron cargar los alimentos.", "error")
+        } else {
+          alert("No se pudieron cargar los alimentos.")
+        }
       }
     }
 
-    fetchFoods();
-  }, []);
+    fetchFoods()
+  }, [showAlert])
+
+  useEffect(() => {
+    if (isEditing && entryToEdit) {
+      setFormData({
+        id_Food: entryToEdit.id_Food?.toString() || "",
+        Fec_Entries: entryToEdit.Fec_Entries || "",
+        Fec_Expiration: entryToEdit.Fec_Expiration || "",
+        Can_Food: entryToEdit.Can_Food?.toString() || "",
+        vlr_Unitary: entryToEdit.vlr_Unitary?.toString() || "",
+        vlr_Total: entryToEdit.vlr_Total || 0,
+        Nam_Food: entryToEdit.nam_Food || "",
+      })
+
+      const selectedFood = foods.find((food) => food.id_Food === entryToEdit.id_Food)
+      if (selectedFood) setPreviousPrice(selectedFood.vlr_Unit.toString())
+    } else {
+      setFormData({
+        id_Food: "",
+        Fec_Entries: "",
+        Fec_Expiration: "",
+        Can_Food: "",
+        vlr_Unitary: "",
+        vlr_Total: 0,
+        Nam_Food: "",
+      })
+      setPreviousPrice("")
+    }
+  }, [entryToEdit, foods])
+
+  useEffect(() => {
+    const quantity = Number(formData.Can_Food)
+    const unitary = Number(formData.vlr_Unitary)
+    if (!isNaN(quantity) && !isNaN(unitary)) {
+      const total = quantity * unitary
+      setFormData((prev) => ({ ...prev, vlr_Total: total }))
+    }
+  }, [formData.Can_Food, formData.vlr_Unitary])
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target
+    setFormData((prev) => ({ ...prev, [name]: value }))
+
+    if (name === "id_Food" && value) {
+      const selectedFood = foods.find((food) => food.id_Food === Number(value))
+      if (selectedFood) {
+        setFormData((prev) => ({ ...prev, Nam_Food: selectedFood.nam_Food }))
+        setPreviousPrice(selectedFood.vlr_Unit.toString())
+      } else {
+        setPreviousPrice("")
+      }
+    }
+  }
 
   async function handlerSubmit(event) {
-    event.preventDefault();
-    setError("");
+    event.preventDefault()
 
-    const form = new FormData(event.currentTarget);
-    const Vlr_Entries = form.get("Vlr_Entries");
-    const Fec_Entries = form.get("Fec_Entries");
-    const Fec_Expiration = form.get("Fec_Expiration");
-    const Can_Food = form.get("Can_Food");
-    const Id_Food = form.get("Id_Food");
+    const { id_Food, Fec_Entries, Fec_Expiration, Can_Food, vlr_Unitary, vlr_Total, Nam_Food } = formData
 
-    if (!Vlr_Entries || !Fec_Entries || !Fec_Expiration || !Can_Food || !Id_Food) {
-      setError("Todos los campos son requeridos.");
-      alert("Todos los campos son requeridos.");
-      return;
+    if (!id_Food || !Fec_Entries || !Fec_Expiration || !Can_Food || !vlr_Unitary) {
+      if (showAlert) {
+        showAlert("Todos los campos son requeridos.", "error")
+      } else {
+        alert("Todos los campos son requeridos.")
+      }
+      return
     }
 
     const body = {
-      Vlr_Entries: parseInt(Vlr_Entries),
+      id_Food: Number.parseInt(id_Food),
       Fec_Entries,
       Fec_Expiration,
-      Can_Food: parseInt(Can_Food),
-      Id_Food: parseInt(Id_Food),
-    };
+      Can_Food: Number.parseInt(Can_Food),
+      vlr_Unitary: Number.parseInt(vlr_Unitary),
+      vlr_Total,
+      Nam_Food,
+    }
+
+    if (isEditing && entryToEdit?.id_Entries) {
+      body.id_Entries = entryToEdit.id_Entries
+    }
 
     try {
-      setLoading(true);
-      const response = await SendData(body);
-      alert(response.data.message || "Entrada registrada exitosamente");
-      event.target.reset();
+      setLoading(true)
+      const response = await SendData(body, isEditing)
 
-      if (typeof refreshData === "function") {
-        refreshData();
-      }
-    } catch (error) {
-      console.error("Error completo:", error);
-      if (error.response) {
-        const errorMessage =
-          typeof error.response.data === "object"
-            ? JSON.stringify(error.response.data, null, 2)
-            : error.response.data;
-        setError(`Error ${error.response.status}: ${errorMessage}`);
-        alert(`Error: ${errorMessage}`);
-      } else if (error.request) {
-        setError("No se recibió respuesta del servidor");
-        alert("No se recibió respuesta del servidor");
+      const successMessage = response.data.message || (isEditing ? "Entrada actualizada." : "Entrada registrada.")
+
+      if (showAlert) {
+        showAlert(successMessage, "success")
       } else {
-        setError(`Error: ${error.message}`);
-        alert(`Error: ${error.message}`);
+        alert(successMessage)
+      }
+
+      setFormData({
+        id_Food: "",
+        Fec_Entries: "",
+        Fec_Expiration: "",
+        Can_Food: "",
+        vlr_Unitary: "",
+        vlr_Total: 0,
+        Nam_Food: "",
+      })
+
+      setPreviousPrice("")
+
+      if (closeModal) closeModal()
+      if (typeof refreshData === "function") refreshData()
+      if (typeof refreshFoods === "function") refreshFoods()
+    } catch (error) {
+      console.error("Error completo:", error)
+      const errorMessage = error.response?.data || "Error desconocido"
+
+      if (showAlert) {
+        showAlert(
+          `Error al ${isEditing ? "actualizar" : "registrar"} la entrada: ${JSON.stringify(errorMessage)}`,
+          "error",
+        )
+      } else {
+        alert(`Error al ${isEditing ? "actualizar" : "registrar"} la entrada: ${JSON.stringify(errorMessage)}`)
       }
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
   }
 
@@ -89,32 +179,11 @@ function RegisterEntryPage({ refreshData }) {
     <div className={styles.container}>
       <div className={styles.form_box}>
         <form className={styles.form} onSubmit={handlerSubmit}>
-          <h1 className={styles.title}>Registrar Entrada</h1>
+          <h1 className={styles.title}>{isEditing ? "Actualizar Entrada" : "Registrar Entrada"}</h1>
 
-          {error && <div className={styles.error_message}>{error}</div>}
-
+          {/* Alimento */}
           <div className={styles.input_box}>
-            <input type="number" id="Vlr_Entries" name="Vlr_Entries" placeholder="Valor de la Entrada" step="1" />
-            <FaMoneyBillWave className={styles.icon} />
-          </div>
-
-          <div className={styles.input_box}>
-            <input type="date" id="Fec_Entries" name="Fec_Entries" placeholder="Fecha de Entradad" />
-            <FaCalendarAlt className={styles.icon} />
-          </div>
-
-          <div className={styles.input_box}>
-            <input type="date" id="Fec_Expiration" name="Fec_Expiration" placeholder="Fecha de Vencimiento" />
-            <FaCalendarAlt className={styles.icon} />
-          </div>
-
-          <div className={styles.input_box}>
-            <input type="number" id="Can_Food" name="Can_Food" placeholder="Cantidad de Alimento" step="1" />
-            <FaWarehouse className={styles.icon} />
-          </div>
-
-          <div className={styles.input_box}>
-            <select id="Id_Food" name="Id_Food">
+            <select id="id_Food" name="id_Food" value={formData.id_Food} onChange={handleInputChange}>
               <option value="">Selecciona un alimento</option>
               {foods.map((food) => (
                 <option key={food.id_Food} value={food.id_Food}>
@@ -125,13 +194,107 @@ function RegisterEntryPage({ refreshData }) {
             <FaUtensils className={styles.icon} />
           </div>
 
-          <button type="submit" className={styles.button} disabled={loading}>
-            {loading ? "Registrando..." : "Registrar Entrada"}
-          </button>
+          {/* Precio anterior */}
+          <div className={styles.input_box}>
+            <input
+              type="text"
+              name="previousPrice"
+              placeholder="Precio Anterior del Alimento"
+              value={previousPrice ? `$${previousPrice}` : ""}
+              disabled
+            />
+            <FaTag className={styles.icon} />
+          </div>
+
+          {/* Fecha de Entrada */}
+          <div className={styles.input_box}>
+            <input
+              type={formData.Fec_Entries ? "date" : "text"}
+              name="Fec_Entries"
+              placeholder="Fecha de Entrada"
+              value={formData.Fec_Entries}
+              onFocus={(e) => {
+                e.target.type = "date"
+                e.target.showPicker?.()
+              }}
+              onBlur={(e) => {
+                if (!e.target.value) e.target.type = "text"
+              }}
+              onChange={handleInputChange}
+            />
+            <FaCalendarAlt className={styles.icon} />
+          </div>
+
+          {/* Fecha de Vencimiento */}
+          <div className={styles.input_box}>
+            <input
+              type={formData.Fec_Expiration ? "date" : "text"}
+              name="Fec_Expiration"
+              placeholder="Fecha de Vencimiento"
+              value={formData.Fec_Expiration}
+              onFocus={(e) => {
+                e.target.type = "date"
+                e.target.showPicker?.()
+              }}
+              onBlur={(e) => {
+                if (!e.target.value) e.target.type = "text"
+              }}
+              onChange={handleInputChange}
+            />
+            <FaCalendarAlt className={styles.icon} />
+          </div>
+
+          {/* Cantidad */}
+          <div className={styles.input_box}>
+            <input
+              type="number"
+              name="Can_Food"
+              placeholder="Cantidad de Alimento"
+              step="1"
+              value={formData.Can_Food}
+              onChange={handleInputChange}
+            />
+            <FaWarehouse className={styles.icon} />
+          </div>
+
+          {/* Valor Unitario */}
+          <div className={styles.input_box}>
+            <input
+              type="number"
+              name="vlr_Unitary"
+              placeholder="Valor Unitario"
+              value={formData.vlr_Unitary}
+              onChange={handleInputChange}
+            />
+            <FaMoneyBillWave className={styles.icon} />
+          </div>
+
+          {/* Valor Total */}
+          <div className={styles.input_box}>
+            <input
+              type="number"
+              name="vlr_Total"
+              placeholder="Valor Total"
+              value={formData.vlr_Total}
+              readOnly
+              disabled
+            />
+            <FaCalculator className={styles.icon} />
+          </div>
+
+          <Button type="submit" className={styles.button} disabled={loading}>
+            {loading
+              ? isEditing
+                ? "Actualizando..."
+                : "Registrando..."
+              : isEditing
+                ? "Actualizar"
+                : "Registrar Entrada"}
+          </Button>
         </form>
       </div>
     </div>
-  );
+  )
 }
 
-export default RegisterEntryPage;
+export default RegisterEntryPage

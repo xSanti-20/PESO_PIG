@@ -1,12 +1,11 @@
 {
   "Version": 1,
-  "Hash": "yvkj4yocJeZj+TYTrqcUEX7sLEyOfJPCDm4VnzfozRw=",
+  "Hash": "MCivW6ePdvQDzzUPHALJwzo1JY7ccD7jn6l3Z6VpN74=",
   "Source": "API PESO_PIG",
   "BasePath": "_content/API PESO_PIG",
   "Mode": "Default",
   "ManifestType": "Build",
   "ReferencedProjectsConfiguration": [],
   "DiscoveryPatterns": [],
-  "Assets": [],
-  "Endpoints": []
+  "Assets": []
 }
