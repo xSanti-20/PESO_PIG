@@ -125,11 +125,6 @@ function RegisterCorralPage({ refreshData, corralToEdit, onCancelEdit, closeModa
             <Button type="submit" disabled={loading}>
               {loading ? (isEditing ? "Actualizando..." : "Registrando...") : isEditing ? "Actualizar" : "Registrar"}
             </Button>
-            {isEditing && (
-              <Button variant="secondary" type="button" onClick={onCancelEdit}>
-                Cancelar
-              </Button>
-            )}
           </div>
         </form>
       </div>
