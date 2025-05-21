@@ -89,7 +89,7 @@ namespace API_PESO_PIG.Services
             }
         }
 
-        // Actualizar un registro de Weighing
+        // Modificar el método UpdateWeighing para recalcular correctamente la ganancia de peso
         public async Task<bool> UpdateWeighing(int id_Weighings, Weighing updatedWeighing)
         {
             try
@@ -110,6 +110,14 @@ namespace API_PESO_PIG.Services
 
                 // Guardar la ganancia de peso anterior
                 int oldWeightGain = originalWeighing.Weight_Gain;
+
+                // Obtener el lechón para calcular correctamente la ganancia de peso
+                var piglet = await _context.Piglets.FirstOrDefaultAsync(p => p.Id_Piglet == updatedWeighing.Id_Piglet);
+                if (piglet != null)
+                {
+                    // Recalcular la ganancia de peso basada en el peso inicial del lechón
+                    updatedWeighing.Weight_Gain = updatedWeighing.Weight_Current - piglet.Weight_Initial;
+                }
 
                 // Actualizar el registro
                 _context.Weighings.Attach(updatedWeighing);

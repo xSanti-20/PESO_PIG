@@ -44,5 +44,8 @@ namespace API_PESO_PIG.Models
 
         [ForeignKey("Id_Corral")]
         public Corral? corral { get; set; }
+
+        [DisplayName("Fecha inico de etapa")]
+        public DateTime? Sta_Date { get; set; }
     }
 }

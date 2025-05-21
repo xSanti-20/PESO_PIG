@@ -53,7 +53,8 @@ namespace API_PESO_PIG.Controllers
                 Placa_Sena = p.Placa_Sena,
                 Nam_Race = p.race.Nam_Race,
                 Name_Stage = p.stage.Name_Stage,
-                Des_Corral = p.corral.Des_Corral 
+                Des_Corral = p.corral.Des_Corral ,
+                Sta_Date = (DateTime)p.Sta_Date
             }).ToList();
 
             return Ok(piglets);

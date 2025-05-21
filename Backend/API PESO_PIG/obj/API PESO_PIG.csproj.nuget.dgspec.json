@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\PROYECTOPESOPIG2.0\\PESO_PIG\\Backend\\API PESO_PIG\\API PESO_PIG.csproj": {}
+    "C:\\Users\\SENA\\source\\repos\\PESO PIG\\PESO_PIG\\Backend\\API PESO_PIG\\API PESO_PIG.csproj": {}
   },
   "projects": {
-    "C:\\PROYECTOPESOPIG2.0\\PESO_PIG\\Backend\\API PESO_PIG\\API PESO_PIG.csproj": {
+    "C:\\Users\\SENA\\source\\repos\\PESO PIG\\PESO_PIG\\Backend\\API PESO_PIG\\API PESO_PIG.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\PROYECTOPESOPIG2.0\\PESO_PIG\\Backend\\API PESO_PIG\\API PESO_PIG.csproj",
+        "projectUniqueName": "C:\\Users\\SENA\\source\\repos\\PESO PIG\\PESO_PIG\\Backend\\API PESO_PIG\\API PESO_PIG.csproj",
         "projectName": "API PESO_PIG",
-        "projectPath": "C:\\PROYECTOPESOPIG2.0\\PESO_PIG\\Backend\\API PESO_PIG\\API PESO_PIG.csproj",
+        "projectPath": "C:\\Users\\SENA\\source\\repos\\PESO PIG\\PESO_PIG\\Backend\\API PESO_PIG\\API PESO_PIG.csproj",
         "packagesPath": "C:\\Users\\SENA\\.nuget\\packages\\",
-        "outputPath": "C:\\PROYECTOPESOPIG2.0\\PESO_PIG\\Backend\\API PESO_PIG\\obj\\",
+        "outputPath": "C:\\Users\\SENA\\source\\repos\\PESO PIG\\PESO_PIG\\Backend\\API PESO_PIG\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

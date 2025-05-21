@@ -34,7 +34,7 @@ namespace API_PESO_PIG.Models
         public string Nom_Users { get; set; }
 
         [DisplayName("Tipo Usuario")]
-        public string? Tip_Users { get; set; } = "Aprendiz";
+        public string? Tip_Users { get; set; }
 
         [DisplayName("Correo")]
         public string Email { get; set; }

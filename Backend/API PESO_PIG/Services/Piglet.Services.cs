@@ -12,63 +12,53 @@ namespace API_PESO_PIG.Services
             _context = context;
         }
 
-        // Obtener todos los piglets
         public IEnumerable<Piglet> GetPiglets()
         {
             return _context.Piglets
                 .Include(p => p.race)
                 .Include(p => p.stage)
-                .Include(p => p.corral).ToList();
+                .Include(p => p.corral)
+                .ToList();
         }
 
-        // Obtener piglet por ID
         public async Task<Piglet> GetPigletId(int id_Piglet)
         {
-            try
-            {
-                return await _context.Piglets
-                    .Include(p => p.race)
-                    .Include(p => p.stage)
-                    .Include(p => p.corral)
-                    .FirstOrDefaultAsync(x => x.Id_Piglet == id_Piglet);
-            }
-            catch (Exception ex)
-            {
-                throw;
-            }
+            return await _context.Piglets
+                .Include(p => p.race)
+                .Include(p => p.stage)
+                .Include(p => p.corral)
+                .FirstOrDefaultAsync(x => x.Id_Piglet == id_Piglet);
         }
 
-        // Agregar nuevo piglet
         public void Add(Piglet entity)
         {
             try
             {
-                // Asegurarse de que el peso acumulado inicial sea igual al peso inicial
                 if (entity.Acum_Weight <= 0)
-                {
                     entity.Acum_Weight = entity.Weight_Initial;
-                }
 
-                // Sumar 1 al total de animales en el corral
                 var corral = _context.Corrals.FirstOrDefault(c => c.id_Corral == entity.Id_Corral);
                 if (corral != null)
                 {
-                    corral.Tot_Animal += 1;  // Aumenta el contador de animales
-                    _context.Corrals.Update(corral);  // Actualiza el corral en la base de datos
+                    corral.Tot_Animal += 1;
+                    corral.Tot_Pesaje += entity.Acum_Weight;
+
+                    // Cambiar el estado del corral a "ocupado" cuando se agrega un lechón
+                    corral.Est_Corral = "ocupado";
+
+                    _context.Corrals.Update(corral);
                 }
 
-                _context.Piglets.Add(entity);  // Agrega el nuevo lechón
-                _context.SaveChanges();  // Guarda los cambios en la base de datos
+                _context.Piglets.Add(entity);
+                _context.SaveChanges();
             }
             catch (Exception ex)
             {
-                // Manejo de errores
                 Console.WriteLine($"Error al agregar piglet: {ex.Message}");
                 throw;
             }
         }
 
-        // Eliminar piglet por ID
         public async Task<bool> DelPiglet(int id_Piglet)
         {
             try
@@ -76,16 +66,23 @@ namespace API_PESO_PIG.Services
                 var piglet = await _context.Piglets.FindAsync(id_Piglet);
                 if (piglet != null)
                 {
-                    // Restar 1 al total de animales del corral cuando se elimina el piglet
                     var corral = await _context.Corrals.FindAsync(piglet.Id_Corral);
-                    if (corral != null && corral.Tot_Animal > 0)
+                    if (corral != null)
                     {
-                        corral.Tot_Animal -= 1;  // Restamos el contador de animales
-                        _context.Corrals.Update(corral);  // Actualiza el corral
+                        corral.Tot_Animal = Math.Max(0, corral.Tot_Animal - 1);
+                        corral.Tot_Pesaje = Math.Max(0, corral.Tot_Pesaje - piglet.Acum_Weight);
+
+                        // Si ya no hay animales en el corral, cambiar estado a "libre"
+                        if (corral.Tot_Animal == 0)
+                        {
+                            corral.Est_Corral = "libre";
+                        }
+
+                        _context.Corrals.Update(corral);
                     }
 
-                    _context.Piglets.Remove(piglet);  // Elimina el lechón
-                    await _context.SaveChangesAsync();  // Guarda los cambios
+                    _context.Piglets.Remove(piglet);
+                    await _context.SaveChangesAsync();
                     return true;
                 }
                 return false;
@@ -96,52 +93,62 @@ namespace API_PESO_PIG.Services
             }
         }
 
-        // Actualizar piglet
         public async Task<bool> UpdatePiglet(int id_Piglet, Piglet updatedPiglet)
         {
             try
             {
                 if (id_Piglet != updatedPiglet.Id_Piglet)
-                {
                     throw new ArgumentException("El ID del piglet no coincide.");
-                }
 
-                var existingPiglet = await _context.Piglets.AsNoTracking().FirstOrDefaultAsync(u => u.Id_Piglet == id_Piglet);
-                if (existingPiglet == null)
-                {
+                var existing = await _context.Piglets.AsNoTracking().FirstOrDefaultAsync(p => p.Id_Piglet == id_Piglet);
+                if (existing == null)
                     return false;
-                }
 
-                // Si el corral cambió, actualizar Tot_Animal en ambos corrales
-                if (existingPiglet.Id_Corral != updatedPiglet.Id_Corral)
+                var oldWeight = existing.Acum_Weight;
+                var newWeight = updatedPiglet.Acum_Weight;
+
+                if (existing.Id_Corral != updatedPiglet.Id_Corral)
                 {
-                    var oldCorral = await _context.Corrals.FindAsync(existingPiglet.Id_Corral);
+                    var oldCorral = await _context.Corrals.FindAsync(existing.Id_Corral);
                     var newCorral = await _context.Corrals.FindAsync(updatedPiglet.Id_Corral);
 
-                    if (oldCorral != null && oldCorral.Tot_Animal > 0)
+                    if (oldCorral != null)
                     {
-                        oldCorral.Tot_Animal -= 1;
+                        oldCorral.Tot_Animal = Math.Max(0, oldCorral.Tot_Animal - 1);
+                        oldCorral.Tot_Pesaje = Math.Max(0, oldCorral.Tot_Pesaje - oldWeight);
+
+                        // Si ya no hay animales en el corral antiguo, cambiar estado a "libre"
+                        if (oldCorral.Tot_Animal == 0)
+                        {
+                            oldCorral.Est_Corral = "libre";
+                        }
+
                         _context.Corrals.Update(oldCorral);
                     }
 
                     if (newCorral != null)
                     {
                         newCorral.Tot_Animal += 1;
+                        newCorral.Tot_Pesaje += newWeight;
+
+                        // Cambiar el estado del nuevo corral a "ocupado"
+                        newCorral.Est_Corral = "ocupado";
+
                         _context.Corrals.Update(newCorral);
                     }
                 }
-
-                bool initialWeightChanged = existingPiglet.Weight_Initial != updatedPiglet.Weight_Initial;
-
-                _context.Piglets.Attach(updatedPiglet);
-                _context.Entry(updatedPiglet).State = EntityState.Modified;
-
-                await _context.SaveChangesAsync();
-
-                if (initialWeightChanged)
+                else if (oldWeight != newWeight)
                 {
-                    // Si el peso inicial cambió, realizar recalculo (si aplica)
+                    var corral = await _context.Corrals.FindAsync(existing.Id_Corral);
+                    if (corral != null)
+                    {
+                        corral.Tot_Pesaje += (newWeight - oldWeight);
+                        _context.Corrals.Update(corral);
+                    }
                 }
+
+                _context.Piglets.Update(updatedPiglet);
+                await _context.SaveChangesAsync();
 
                 return true;
             }
@@ -151,18 +158,50 @@ namespace API_PESO_PIG.Services
             }
         }
 
-        // Método para actualizar directamente el peso acumulado de un cerdo
         public async Task<bool> UpdatePigletAccumulatedWeight(int id_Piglet, int newAccumulatedWeight)
         {
             try
             {
                 var piglet = await _context.Piglets.FindAsync(id_Piglet);
-                if (piglet == null)
+                if (piglet == null) return false;
+
+                int difference = newAccumulatedWeight - piglet.Acum_Weight;
+                piglet.Acum_Weight = newAccumulatedWeight;
+
+                var corral = await _context.Corrals.FindAsync(piglet.Id_Corral);
+                if (corral != null)
                 {
-                    return false;
+                    corral.Tot_Pesaje += difference;
+                    _context.Corrals.Update(corral);
                 }
 
-                piglet.Acum_Weight = newAccumulatedWeight;
+                // Verificar cambio de etapa
+                var currentStage = await _context.Stages.FirstOrDefaultAsync(s => s.id_Stage == piglet.Id_Stage);
+                if (currentStage != null && piglet.Sta_Date.HasValue)
+                {
+                    var daysInStage = (DateTime.Now
+                        - piglet.Sta_Date.Value).TotalDays;
+
+                    var nextStage = await _context.Stages
+                        .Where(s => s.Weight_From > currentStage.Weight_From)
+                        .OrderBy(s => s.Weight_From)
+                        .FirstOrDefaultAsync();
+
+                    if (nextStage != null)
+                    {
+                        if (piglet.Acum_Weight >= nextStage.Weight_From)
+                        {
+                            piglet.Id_Stage = nextStage.id_Stage;
+                            piglet.Sta_Date = DateTime.Now;
+                            Console.WriteLine($"🐖 Cerdo {piglet.Id_Piglet} ha pasado automáticamente a la etapa {nextStage.Name_Stage}.");
+                        }
+                        else if (daysInStage >= currentStage.Dur_Stage)
+                        {
+                            Console.WriteLine($"⚠️ Alerta: El cerdo {piglet.Id_Piglet} no ha alcanzado el peso mínimo después de {currentStage.Dur_Stage} días en la etapa {currentStage.Name_Stage}.");
+                        }
+                    }
+                }
+
                 await _context.SaveChangesAsync();
                 return true;
             }

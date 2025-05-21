@@ -49,7 +49,7 @@ namespace API_PESO_PIG.Controllers
             var feeding = _Services.GetFeedings().Select(static p => new FeedingDTO
             {
                 id_Feeding = p.id_Feeding,
-                Name_Piglet = p.piglet.Name_Piglet,
+                Nam_Corral = p.Corral.Des_Corral,
                 Obc_Feeding = p.Obc_Feeding,
                 Can_Food = p.Can_Food,
                 Sum_Food = p.Sum_Food,

@@ -59,17 +59,24 @@ function RegisterCorralPage({ refreshData, corralToEdit, onCancelEdit, closeModa
 
     const body = {
       Des_Corral,
-      Tot_Animal: parseInt(Tot_Animales, 10),
+      Tot_Animal: Number.parseInt(Tot_Animales, 10),
+      Tot_Pesaje: 0, // Inicializar en 0
+      // No incluimos Est_Corral ya que se establecerá automáticamente en el backend
     }
 
     if (isEditing) {
-      body.Id_Corral = corralToEdit.id_Corral
+      body.id_Corral = corralToEdit.id_Corral
+      body.Est_Corral = corralToEdit.est_Corral // Mantener el estado actual si estamos editando
+      body.Tot_Pesaje = corralToEdit.tot_Pesaje // Mantener el pesaje actual
     }
 
     try {
       setLoading(true)
       const response = await SendData(body, isEditing)
-      alert(response.data.message || (isEditing ? "Corral actualizado con éxito." : "Corral registrado con éxito."))
+      alert(
+        response.data.message ||
+        (isEditing ? "Corral actualizado con éxito." : "Corral registrado con éxito. Estado: libre"),
+      )
 
       setFormData({ Des_Corral: "", Tot_Animales: "" })
 
@@ -116,13 +123,7 @@ function RegisterCorralPage({ refreshData, corralToEdit, onCancelEdit, closeModa
 
           <div className={styles.button_box}>
             <Button type="submit" disabled={loading}>
-              {loading
-                ? isEditing
-                  ? "Actualizando..."
-                  : "Registrando..."
-                : isEditing
-                ? "Actualizar"
-                : "Registrar"}
+              {loading ? (isEditing ? "Actualizando..." : "Registrando...") : isEditing ? "Actualizar" : "Registrar"}
             </Button>
             {isEditing && (
               <Button variant="secondary" type="button" onClick={onCancelEdit}>

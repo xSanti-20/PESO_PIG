@@ -16,7 +16,7 @@ namespace API_PESO_PIG.Services
         {
             return _context.Feedings
                 .Include(p => p.user)
-                .Include(p => p.piglet)
+                .Include(p => p.Corral)
                 .Include(p => p.food).ToList();
         }
 

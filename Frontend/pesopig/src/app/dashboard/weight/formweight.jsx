@@ -259,12 +259,16 @@ function RegisterWeighingPage({ refreshData, weighingToEdit, onCancelEdit, close
 
                     {/* Mostrar información del lechón seleccionado */}
                     {selectedPiglet && (
-                        <div className={styles.piglet_info || "mb-4 p-2 bg-gray-50 rounded text-sm"}>
+                        <div className={styles.piglet_info || "mb-4 p-2 bg-gray-50 rounded text-sm border border-gray-200"}>
                             <p>
                                 <strong>Peso inicial:</strong> {selectedPiglet.weight_Initial} kg
                             </p>
                             <p>
                                 <strong>Peso acumulado actual:</strong> {selectedPiglet.acum_Weight} kg
+                            </p>
+                            <p className="text-xs text-blue-600 mt-1">
+                                <strong>Nota:</strong> La ganancia de peso se calcula como la diferencia entre el peso actual y el peso
+                                inicial del lechón.
                             </p>
                         </div>
                     )}

@@ -22,7 +22,7 @@ function StageForm({ refreshData, stageToEdit, onCancelEdit, closeModal, showAle
     Name_Stage: "",
     Weight_From: "",
     Weight_Upto: "",
-    Tot_Weeks: "",
+    Dur_Stage: "",
   })
 
   const [loading, setLoading] = useState(false)
@@ -34,14 +34,14 @@ function StageForm({ refreshData, stageToEdit, onCancelEdit, closeModal, showAle
         Name_Stage: stageToEdit.name_Stage || "",
         Weight_From: stageToEdit.weight_From || "",
         Weight_Upto: stageToEdit.weight_Upto || "",
-        Tot_Weeks: stageToEdit.tot_Weeks || "",
+        Dur_Stage: stageToEdit.dur_Stage || "",
       })
     } else {
       setFormData({
         Name_Stage: "",
         Weight_From: "",
         Weight_Upto: "",
-        Tot_Weeks: "",
+        Dur_Stage: "",
       })
     }
   }, [stageToEdit])
@@ -56,9 +56,9 @@ function StageForm({ refreshData, stageToEdit, onCancelEdit, closeModal, showAle
 
   async function handleSubmit(event) {
     event.preventDefault()
-    const { Name_Stage, Weight_From, Weight_Upto, Tot_Weeks } = formData
+    const { Name_Stage, Weight_From, Weight_Upto, Dur_Stage } = formData
 
-    if (!Name_Stage || !Weight_From || !Weight_Upto || !Tot_Weeks) {
+    if (!Name_Stage || !Weight_From || !Weight_Upto || !Dur_Stage) {
       if (showAlert) {
         showAlert("Todos los campos son requeridos.", "error")
       } else {
@@ -67,7 +67,7 @@ function StageForm({ refreshData, stageToEdit, onCancelEdit, closeModal, showAle
       return
     }
 
-    const body = { Name_Stage, Weight_From, Weight_Upto, Tot_Weeks }
+    const body = { Name_Stage, Weight_From, Weight_Upto, Dur_Stage }
 
     if (isEditing) {
       body.Id_Stage = stageToEdit.id_Stage
@@ -90,7 +90,7 @@ function StageForm({ refreshData, stageToEdit, onCancelEdit, closeModal, showAle
         Name_Stage: "",
         Weight_From: "",
         Weight_Upto: "",
-        Tot_Weeks: "",
+        Dur_Stage: "",
       })
 
       if (closeModal) closeModal()
@@ -102,7 +102,7 @@ function StageForm({ refreshData, stageToEdit, onCancelEdit, closeModal, showAle
       if (showAlert) {
         showAlert(
           `Ocurrió un error al ${isEditing ? "actualizar" : "registrar"} la etapa: ` + JSON.stringify(errorMessage),
-          "error",
+          "error"
         )
       } else {
         alert(`Ocurrió un error al ${isEditing ? "actualizar" : "registrar"} la etapa: ` + JSON.stringify(errorMessage))
@@ -154,13 +154,13 @@ function StageForm({ refreshData, stageToEdit, onCancelEdit, closeModal, showAle
             <LiaMicroscopeSolid className="icon" />
           </div>
 
-          {/* Total de semanas */}
+          {/* Duración de la etapa */}
           <div className="input_box">
             <input
               type="number"
-              name="Tot_Weeks"
-              placeholder="Dias"
-              value={formData.Tot_Weeks}
+              name="Dur_Stage"
+              placeholder="Duración (días)"
+              value={formData.Dur_Stage}
               onChange={handleChange}
             />
             <FaRegClock className="icon" />

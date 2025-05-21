@@ -18,6 +18,8 @@ function Corral() {
     "ID",
     "Descripción",
     "Total Animales",
+    "Total Pesaje",
+    "Estado",
   ];
 
   async function fetchCorral() {
@@ -30,6 +32,8 @@ function Corral() {
           id: corral.id_Corral,
           des_corral: corral.des_Corral,
           tot_animales: corral.tot_Animal,
+          tot_pesaje: corral.tot_Pesaje,
+          est_corral: corral.est_Corral,
           original: corral,
         }));
 

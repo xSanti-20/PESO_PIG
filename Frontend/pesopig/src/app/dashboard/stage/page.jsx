@@ -21,7 +21,13 @@ function Stage() {
     redirectUrl: null,
   })
 
-  const titlesStage = ["ID", "Nombre", "Peso Desde", "Peso Hasta", "Total Semanas"]
+  const titlesStage = [
+    "ID",
+    "Nombre",
+    "Peso Desde",
+    "Peso Hasta",
+    "Fecha Inicio Etapa"
+  ]
 
   const closeAlert = () => {
     setAlertInfo({
@@ -41,7 +47,7 @@ function Stage() {
           name_Stage: stage.name_Stage,
           weight_From: stage.weight_From,
           weight_Upto: stage.weight_Upto,
-          tot_Weeks: stage.tot_Weeks,
+          stage_StartDate: stage.stage_StartDate, // Campo adicional
           original: stage,
         }))
         setStageData(data)
@@ -138,7 +144,6 @@ function Stage() {
 
       {error && <div className="text-red-600 text-center mt-4">{error}</div>}
 
-      {/* Alerta personalizada */}
       <AlertModal
         isOpen={alertInfo.isOpen}
         message={alertInfo.message}

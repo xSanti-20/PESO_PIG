@@ -16,6 +16,7 @@ namespace API_PESO_PIG.DTOs
         public string Nam_Race { get; set; }
         public string Name_Stage { get; set; }
         public string Des_Corral { get; set; }
+        public DateTime Sta_Date { get; set; }
 
     }
 }

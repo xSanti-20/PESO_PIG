@@ -1,9 +1,20 @@
+:root {
+  --bg-color-primary: #1B8FB0;
+  --bg-color-rosado: #E57B76;
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 body {
   font-family: Arial, Helvetica, sans-serif;
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
 }
 
 @layer base {
@@ -42,6 +53,7 @@ body {
     --sidebar-border: 220 13% 91%;
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
+
   .dark {
     --background: 0 0% 3.9%;
     --foreground: 0 0% 98%;
@@ -82,11 +94,17 @@ body {
   * {
     @apply border-border;
   }
+
   body {
     @apply bg-background text-foreground;
   }
 }
 
+/* Asegurarse de que los estilos del NavPrivada tengan prioridad */
+.nav-sidebar {
+  background: linear-gradient(to bottom, var(--bg-color-primary), var(--bg-color-rosado)) !important;
+}
 
-
-
+.navbar.bg-nav-public {
+  background-color: var(--bg-color-primary) !important;
+}

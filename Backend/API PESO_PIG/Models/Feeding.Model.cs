@@ -6,6 +6,8 @@ namespace API_PESO_PIG.Models
 {
     public class Feeding
     {
+        internal object corral;
+
         [Key]
         public int id_Feeding { get; set; }
 
@@ -23,10 +25,10 @@ namespace API_PESO_PIG.Models
         public User? user { get; set; }
 
         // Foránea a la tabla Piglets
-        public int Id_Piglet { get; set; }
+        public int id_Corral { get; set; }
 
-        [ForeignKey("Id_Piglet")]
-        public Piglet? piglet { get; set; }
+        [ForeignKey("id_Corral")]
+        public Corral? Corral { get; set; }
 
         // Foránea a la tabla Foods
         public int id_Food { get; set; }

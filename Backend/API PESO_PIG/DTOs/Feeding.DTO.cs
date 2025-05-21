@@ -8,7 +8,7 @@ namespace API_PESO_PIG.DTOs
         public int Can_Food { get; set; }
         public int Sum_Food  {get; set; }
         public string Nom_Users { get; set; }
-        public string Name_Piglet { get; set; }
+        public string Nam_Corral { get; set; }
         public string Nam_Food { get; set;}
         public DateTime Dat_Feeding { get; set; }
     }
