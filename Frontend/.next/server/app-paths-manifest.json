@@ -1,7 +1,8 @@
 {
-  "/dashboard/feeding/page": "app/dashboard/feeding/page.js",
-  "/dashboard/food/page": "app/dashboard/food/page.js",
-  "/dashboard/animals/page": "app/dashboard/animals/page.js",
-  "/dashboard/corral/page": "app/dashboard/corral/page.js",
-  "/dashboard/weight/page": "app/dashboard/weight/page.js"
+  "/_not-found/page": "app/_not-found/page.js",
+  "/page": "app/page.js",
+  "/user/login/page": "app/user/login/page.js",
+  "/dashboard/page": "app/dashboard/page.js",
+  "/dashboard/Admi/page": "app/dashboard/Admi/page.js",
+  "/dashboard/animals/page": "app/dashboard/animals/page.js"
 }

@@ -2907,11 +2907,6 @@ body {
   background-color: rgb(255 255 255 / 0.9);
 }
 
-.hover\:bg-red-50:hover {
-  --tw-bg-opacity: 1;
-  background-color: rgb(254 242 242 / var(--tw-bg-opacity, 1));
-}
-
 .hover\:from-green-200:hover {
   --tw-gradient-from: #bbf7d0 var(--tw-gradient-from-position);
   --tw-gradient-to: rgb(187 247 208 / 0) var(--tw-gradient-to-position);

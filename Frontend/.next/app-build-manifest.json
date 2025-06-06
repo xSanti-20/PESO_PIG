@@ -23,41 +23,22 @@
       "static/css/app/dashboard/page.css",
       "static/chunks/app/dashboard/page.js"
     ],
-    "/dashboard/Admi/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/css/app/dashboard/Admi/page.css",
-      "static/chunks/app/dashboard/Admi/page.js"
-    ],
-    "/dashboard/feeding/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/css/app/dashboard/feeding/page.css",
-      "static/chunks/app/dashboard/feeding/page.js"
-    ],
-    "/dashboard/food/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/css/app/dashboard/food/page.css",
-      "static/chunks/app/dashboard/food/page.js"
-    ],
     "/dashboard/animals/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
       "static/css/app/dashboard/animals/page.css",
       "static/chunks/app/dashboard/animals/page.js"
     ],
-    "/dashboard/corral/page": [
+    "/dashboard/Admi/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/css/app/dashboard/corral/page.css",
-      "static/chunks/app/dashboard/corral/page.js"
+      "static/css/app/dashboard/Admi/page.css",
+      "static/chunks/app/dashboard/Admi/page.js"
     ],
-    "/dashboard/weight/page": [
+    "/_not-found/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/css/app/dashboard/weight/page.css",
-      "static/chunks/app/dashboard/weight/page.js"
+      "static/chunks/app/_not-found/page.js"
     ]
   }
 }

@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("API PESO_PIG")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+33fd19cc1564900227aae19fbceca2700373ae0b")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+caa0b1231d0b58bee57c9f700e0edba39694bfb8")]
 [assembly: System.Reflection.AssemblyProductAttribute("API PESO_PIG")]
 [assembly: System.Reflection.AssemblyTitleAttribute("API PESO_PIG")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
