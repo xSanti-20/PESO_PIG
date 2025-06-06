@@ -1,0 +1,17 @@
+# Ignora la carpeta de dependencias
+node_modules/
+
+# Ignora los archivos y carpetas generados por Next.js
+.next/
+
+# Ignora el archivo de entorno
+.env
+
+# Ignora logs
+npm-debug.log
+yarn-debug.log
+yarn-error.log
+
+# Ignora directorios del sistema operativo
+.DS_Store
+Thumbs.db
