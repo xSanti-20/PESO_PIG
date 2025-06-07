@@ -1,29 +1,35 @@
 import axios from "axios";
 import { toast } from "react-toastify";
-import Router from "next/router"; // para redirección en Next.js
+import Router from "next/router";
 
 const axiosInstance = axios.create({
   baseURL: 'http://localhost:5059/',
   headers: {
-    'accept': '/',
+    'accept': '*/*',
     'Content-Type': 'application/json'
   },
   withCredentials: true
 });
 
-// Interceptor para manejar respuestas no autorizadas
+// Interceptor de respuestas
 axiosInstance.interceptors.response.use(
   response => response,
   error => {
-    if (error.response?.status === 401 || error.response?.status === 403) {
-      toast.error("Sesión expirada. Por favor inicia sesión nuevamente.");
+    const status = error.response?.status;
+    const message = error.response?.data?.message;
 
-      // Redirigir después de 3 segundos
-      setTimeout(() => {
-        Router.push("/user/login");
-      }, 3000);
+    if (status === 403) {
+      toast.error(message || "No tiene permisos para acceder.");
+      // Puedes redirigir si quieres:
+      // Router.push("/unauthorized"); // crea esta página si deseas
     }
 
+    if (status === 401) {
+      toast.error("No está autenticado.");
+      // Router.push("/login");
+    }
+
+    // Siempre devuelve la promesa rechazada para que los catch() locales sigan funcionando
     return Promise.reject(error);
   }
 );

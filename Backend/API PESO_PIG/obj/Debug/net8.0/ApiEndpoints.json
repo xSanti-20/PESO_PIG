@@ -1015,6 +1015,16 @@
     "ReturnTypes": []
   },
   {
+    "ContainingType": "API_PESO_PIG.Controllers.UserController",
+    "Method": "ValidateToken",
+    "RelativePath": "api/User/ValidateToken",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "API_PESO_PIG.Controllers.WeighingController",
     "Method": "GetWeighings",
     "RelativePath": "api/Weighing/ConsultAllWeighings",

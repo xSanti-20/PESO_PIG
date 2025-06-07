@@ -1581,6 +1581,18 @@
         }
       }
     },
+    "/api/User/ValidateToken": {
+      "get": {
+        "tags": [
+          "User"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/api/User/CreateUser": {
       "post": {
         "tags": [

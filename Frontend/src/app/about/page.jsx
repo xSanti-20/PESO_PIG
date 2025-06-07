@@ -12,7 +12,7 @@ export default function QuienesSomos() {
     {
       name: "Santiago Puentes",
       role: "Gerente de Proyecto",
-      image: "/placeholder.svg?height=300&width=300",
+      image: "/assets/img/santiagoo.jpg",
       phone: "+57 311 260 4880",
       description:
         "Con una sólida experiencia en la coordinación de equipos, Santiago asegura que los proyectos se entreguen a tiempo, gestionando recursos de manera eficiente y promoviendo la comunicación efectiva entre todas las partes involucradas.",
@@ -20,7 +20,7 @@ export default function QuienesSomos() {
     {
       name: "Danna Marcela",
       role: "Analista y Desarrollador de Software",
-      image: "/placeholder.svg?height=300&width=300",
+      image: "/assets/img/dana.jpg",
       phone: "+57 320 456 3776",
       description:
         "Experta en interfaces de usuario, Danna combina creatividad y técnica para crear experiencias digitales intuitivas, priorizando la accesibilidad y el diseño centrado en el usuario.",
@@ -28,7 +28,7 @@ export default function QuienesSomos() {
     {
       name: "Sofia Guzman",
       role: "Subgerente de Proyecto",
-      image: "/placeholder.svg?height=300&width=300",
+      image: "/assets/img/sofi.jpeg",
       phone: "+57 314 526 7223",
       description:
         "Especialista en gestión ágil, Sofia se asegura de que cada proyecto cumpla con los objetivos del cliente y sea entregado dentro del plazo acordado, fomentando siempre el trabajo en equipo y la excelencia.",

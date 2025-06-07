@@ -138,7 +138,7 @@ function PublicNav() {
                   </Link>
                 </nav>
 
-                <div className="pt-4 border-t border-white/20">
+                <div className="">
                   <Button asChild className="w-full bg-white text-gray-800 hover:bg-white/90 font-medium">
                     <Link href="/user/login" onClick={closeMobileMenu}>
                       Ingresar

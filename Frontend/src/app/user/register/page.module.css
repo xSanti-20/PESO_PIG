@@ -1,6 +1,5 @@
 /* Estilos del contenedor principal con gradiente sutil */
 .wrapper {
-    background: linear-gradient(to bottom right, rgba(27, 143, 176, 0.3), rgba(229, 123, 118, 0.3)); /* Gradiente sutil */
     margin: 0;
     padding: 0;
     box-sizing: border-box;
@@ -25,7 +24,7 @@
     border-radius: 10px; /* Bordes redondeados */
     color: var(--bg-color-negro); /* Color de texto negro */
     margin-top: 10px; 
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); /* Sombra suave para dar profundidad */
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3); /* Sombra suave para dar profundidad */
 }
 
 /* Título del formulario */

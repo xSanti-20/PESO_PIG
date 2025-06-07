@@ -9,7 +9,6 @@
 
 /* Ajustes de estilo para el contenedor principal */
 .wrapper {
-    background: linear-gradient(to bottom right, rgba(27, 143, 176, 0.3), rgba(229, 123, 118, 0.3)); /* Gradiente sutil */
     margin: 0;
     padding: 0;
     box-sizing: border-box;
@@ -36,7 +35,7 @@
 
 /* Estilo principal del formulario */
 .form_box > form {
-    background: var(--bg-color-blanco);
+    background: var(--bg-color-white);
     width: 400px; /* Reducir el ancho */
     height: auto; /* Ajustar automáticamente la altura */
     padding: 25px; /* Reducir padding */
@@ -151,4 +150,3 @@
 .input_box input::placeholder {
     color: var(--bg-color-negro); /* Cambia el color a blanco */
 }
-

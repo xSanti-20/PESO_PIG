@@ -7,8 +7,8 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 import { useMobile } from "@/hooks/use-mobile"
 import { Button } from "@/components/ui/button"
 import axiosInstance from "@/lib/axiosInstance"
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer, toast } from "react-toastify"
+import "react-toastify/dist/ReactToastify.css"
 
 function NavPrivada({ children, title }) {
   const [isOpen, setIsOpen] = useState(false)
@@ -19,12 +19,13 @@ function NavPrivada({ children, title }) {
   const router = useRouter()
   const { isMobile, isTablet, isDesktop } = useMobile()
   const [role, setsole] = useState("")
+  // Add these new state variables
+  const [checkingAuth, setCheckingAuth] = useState(true)
+  const [authenticated, setAuthenticated] = useState(false)
 
   const menuItems = [
     // Aquí condicionamos la inserción del item
-    ...(role === "Administrador"
-      ? [{ title: "Gestión de Usuarios", path: "/dashboard/Admi", icon: "👤" }]
-      : []),
+    ...(role === "Administrador" ? [{ title: "Gestión de Usuarios", path: "/dashboard/Admi", icon: "👤" }] : []),
     { title: "Home", path: "/dashboard", icon: "📍" },
     { title: "Animales", path: "/dashboard/animals", icon: "🐷" },
     { title: "Alimento", path: "/dashboard/food", icon: "🌾" },
@@ -54,25 +55,46 @@ function NavPrivada({ children, title }) {
     }
   }, [isMobile, isDesktop])
 
+  // Add this new useEffect for token validation
+  useEffect(() => {
+    async function validarToken() {
+      try {
+        const res = await axiosInstance.get("api/User/ValidateToken", { withCredentials: true })
+        if (res.data.isValid) {
+          setAuthenticated(true)
+          // Datos ya cargados en el otro useEffect
+        } else {
+          setAuthenticated(false)
+          router.push("/user/login")
+        }
+      } catch (error) {
+        setAuthenticated(false)
+        router.push("/user/login")
+      } finally {
+        setCheckingAuth(false)
+      }
+    }
+    validarToken()
+  }, [router])
+
   const handleLogout = async () => {
     try {
-      const response = await axiosInstance.post("api/User/logout");
+      const response = await axiosInstance.post("api/User/logout", {}, { withCredentials: true })
 
       if (response.status === 200) {
-        toast.success(response.data.message);
+        toast.success(response.data.message || "Sesión cerrada correctamente")
         // Borra localStorage solo si el logout backend fue exitoso
-        localStorage.removeItem("token");
-        localStorage.removeItem("username");
-        localStorage.removeItem("email");
-        router.push("/user/login");
+        localStorage.clear()
+        router.push("/user/login")
       } else {
-        console.error("Error al cerrar sesión en el servidor");
+        toast.error("Error al cerrar sesión")
+        console.error("Error al cerrar sesión en el servidor")
       }
     } catch (error) {
-      console.error("Error en la petición logout:", error);
+      toast.error("Error al cerrar sesión")
+      console.error("Error en la petición logout:", error)
     }
-  };
-
+  }
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen)
@@ -82,20 +104,23 @@ function NavPrivada({ children, title }) {
     setIsMobileMenuOpen(false)
   }
 
+  // Add this loading check before the return statement's first element
+  if (checkingAuth) {
+    return (
+      <div className="fixed inset-0 flex items-center justify-center bg-white bg-opacity-80 z-50">
+        <img src="/assets/img/pesopig.png" alt="Cargando..." className="w-20 h-20 animate-spin" />
+      </div>
+    )
+  }
+
+  // Add this authentication check
+  if (!authenticated) {
+    return <div className="text-center mt-10 text-red-600 font-bold">No autorizado. Redirigiendo a login...</div>
+  }
+
   return (
     <>
-      <ToastContainer
-        position="top-right"
-        autoClose={10000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme="colored"
-      />
+      <ToastContainer position="top-right" autoClose={10000} theme="colored" />
       <div className="flex h-screen overflow-hidden">
         {/* Desktop Sidebar - Solo mostrar si NO es móvil */}
         {!isMobile && (
@@ -216,7 +241,9 @@ function NavPrivada({ children, title }) {
                     className={`absolute right-0 mt-2 bg-white rounded-lg shadow-lg py-2 z-50 ${isMobile ? "w-48" : "w-64"}`}
                     style={{ position: "absolute", top: "calc(100% + 8px)" }}
                   >
-                    <div className={`px-4 py-2 text-gray-700 font-semibold border-b ${isMobile ? "text-sm" : "text-sm"}`}>
+                    <div
+                      className={`px-4 py-2 text-gray-700 font-semibold border-b ${isMobile ? "text-sm" : "text-sm"}`}
+                    >
                       {username || "Usuario"}
                       <span className="block text-xs text-gray-500">{email || "email@demo.com"}</span>
                     </div>

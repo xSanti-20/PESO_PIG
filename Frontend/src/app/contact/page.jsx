@@ -9,10 +9,10 @@ const ContactPage = () => {
   return (
     <>
       <PublicNav></PublicNav>
-      <div className="min-h-screen bg-gradient-to-br from-pink-50 to-purple-50">
+      <div className="min-h-screen bg-gradient-to-br from-white-50 to-purple-50">
         {/* Header Section */}
         <header className="relative py-16 px-4 text-center">
-          <div className="absolute inset-0 bg-gradient-to-r from-pink-200/30 to-purple-200/30 rounded-3xl mx-4"></div>
+          <div className="absolute inset-0 bg-gradient-to-r from-white-200/30 to-purple-200/30 rounded-3xl mx-4"></div>
           <div className="relative z-10 max-w-4xl mx-auto">
             <h1 className="text-4xl md:text-6xl font-bold text-gray-800 mb-6">¡CONTACTANOS!🐷</h1>
             <p className="text-lg md:text-xl text-gray-600 leading-relaxed max-w-3xl mx-auto">
@@ -168,7 +168,7 @@ const ContactPage = () => {
         </div>
 
       {/* Footer */}
-      <footer className="bg-gradient-to-r from-pink-400 to-purple-500 text-white py-6 mt-8">
+      <footer className="bg-gradient-to-r from-[var(--bg-color-rosado)] to-[var(--bg-color-primary)] text-black py-6 text-center">
         <div className="container mx-auto text-center">
           <p className="text-sm font-bold">© 2024 PESO PIG. Todos los derechos reservados.</p>
         </div>

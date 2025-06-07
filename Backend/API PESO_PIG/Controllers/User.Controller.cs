@@ -239,6 +239,17 @@ namespace API_PESO_PIG.Controllers
             }
         }
 
+        [HttpGet("ValidateToken")]
+        public IActionResult ValidateToken()
+        {
+            if (HttpContext.User.Identity.IsAuthenticated)
+            {
+                return Ok(new { isValid = true });
+            }
+
+            return Unauthorized(new { isValid = false });
+        }
+
         [HttpPost("CreateUser")]
         public IActionResult Add(User entity)
         {
@@ -264,6 +275,7 @@ namespace API_PESO_PIG.Controllers
             }
         }
 
+        [Authorize(Roles = "Administrador")]
         [HttpGet("ConsultAllUser")]
         public ActionResult<IEnumerable<User>> AllUsers()
         {
@@ -278,6 +290,7 @@ namespace API_PESO_PIG.Controllers
                 return StatusCode(500, ex.ToString());
             }
         }
+        
         [HttpGet("GetUserId")]
         [Authorize]
         public async Task<IActionResult> GetUserId(int id_Users)
