@@ -1,22 +1,85 @@
-### AL ###
-#Template for AL projects for Dynamics 365 Business Central
-#launch.json folder
+<<<<<<< HEAD
+# Ignora la carpeta de dependencias del proyecto principal y del frontend
+node_modules/
+Frontend/node_modules/
+
+# Ignora los archivos generados por Next.js
+.next/
+Frontend/.next/
+
+# Ignora el archivo de entorno
+.env
+Frontend/.env
+
+# Ignora logs
+npm-debug.log
+yarn-debug.log
+yarn-error.log
+
+# Ignora directorios del sistema operativo
+.DS_Store
+Thumbs.db
+
+=======
+## Ignore Visual Studio temporary files, build results, and more ##
+## Based on https://github.com/github/gitignore/blob/main/VisualStudio.gitignore ##
+
+# User-specific files
+*.rsuser
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# User-specific files (MonoDevelop/Xamarin Studio)
+*.userprefs
+
+# Build results
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+bld/
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+
+# Uncomment if you have tasks that create the project's static files in wwwroot
+#wwwroot/
+
+# Visual Studio 2019/2022 auto-generated files
 .vscode/
-#Cache folder
-.alcache/
-#Symbols folder
-.alpackages/
-#Snapshots folder
-.snapshots/
-#Testing Output folder
-.output/
-#Extension App-file
-*.app
-#Rapid Application Development File
-rad.json
-#Translation Base-file
-*.g.xlf
-#License-file
-*.flf
-#Test results file
-TestResults.xml
+.vs/
+Generated\ Files/
+
+# Backup & temp files
+*.bak
+*.tmp
+*.temp
+~$*
+*.old
+
+# Windows system files
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# NuGet
+*.nupkg
+packages/
+*.snupkg
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+# Rider
+.idea/
+
+# Publish files
+publish/
+>>>>>>> recuperacion-backup

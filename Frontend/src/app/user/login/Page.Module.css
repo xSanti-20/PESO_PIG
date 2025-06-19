@@ -1,0 +1,152 @@
+/* Definición de colores */
+.colors {
+    --bg-color-primary: #1B8FB0;
+    --bg-color-rosado: #E57B76;
+    --bg-color-blanco: #ffffff;
+    --bg-color-negro: #000000; 
+    --bg-color-nav: #ffffff68;
+}
+
+/* Ajustes de estilo para el contenedor principal */
+.wrapper {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: bold;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 87vh;
+}
+
+/* Estilos del formulario */
+.form_box {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: bold;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 85vh;
+}
+
+/* Estilo principal del formulario */
+.form_box > form {
+    background: var(--bg-color-white);
+    width: 400px; /* Reducir el ancho */
+    height: auto; /* Ajustar automáticamente la altura */
+    padding: 25px; /* Reducir padding */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    border-radius: 10px;
+    color: var(--bg-color-negro);
+    box-shadow: 0 0 100px rgba(0, 0, 0, 0.3); /* Sombra suave para dar profundidad */
+
+}
+
+/* Título del formulario */
+.title {
+    font-size: 38px; /* Reducir tamaño del título */
+    text-align: center;
+    color: var(--bg-color-negro);
+    margin-bottom: 5px; /* Ajustar el margen inferior */
+
+}
+
+/* Caja de inputs */
+.input_box {
+    position: relative;
+    width: 100%;
+    height: 45px; /* Reducir altura de los inputs */
+    margin: 15px 0; /* Reducir margen entre los inputs */
+    
+}
+
+/* Estilos de los inputs */
+.input_box input {
+    width: 100%;
+    height: 100%;
+    background: transparent;
+    border: none;
+    outline: none;
+    border: 1px solid rgba(0, 0, 0, 0.402);
+    border-radius: 40px;
+    color: var(--bg-color-negro);
+    padding: 10px 45px 10px 20px; /* Reducir padding de los inputs */
+    
+}
+
+/* Iconos dentro de los inputs */
+.input_box .icon {
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 16px;
+}
+
+/* Estilo del botón de submit */
+.form_box button {
+    width: 100%;
+    height: 45px; /* Reducir altura del botón */
+    color: var(--bg-color-blanco);
+    border: none;
+    outline: none;
+    border-radius: 40px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, .1);
+    padding: 10px 40px;
+    cursor: pointer;
+    margin-top: 15px;
+    background: var(--bg-color-primary);
+    margin-bottom: 10px;
+}
+
+/* Enlaces para 'remember password' y 'forgot password' */
+.remember_forgot {
+    margin-top: 10px;
+}
+
+.remember_forgot a {
+    color: var(--bg-color-negro);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 15px;
+}
+
+.remember_forgot a:hover {
+    text-decoration: underline;
+}
+
+/* Estilo del enlace de registro */
+.register_link {
+    font-size: 14.5px;
+    text-align: center;
+    margin: 10px 0 10px; /* Reducir márgenes */
+}
+
+.register_link p a {
+    color: var(--bg-color-negro);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 15px;
+}
+
+.register_link p a:hover {
+    text-decoration: underline;
+}
+
+/* Ajuste de la imagen */
+.form_box img {
+    width: 60px; /* Reducir tamaño de la imagen */
+    height: 60px;
+}
+/* Estilo para los placeholders */
+.input_box input::placeholder {
+    color: var(--bg-color-negro); /* Cambia el color a blanco */
+}
