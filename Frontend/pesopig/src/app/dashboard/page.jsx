@@ -22,7 +22,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Badge } from "@/components/ui/badge"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import axiosInstance from "@/lib/axiosInstance"
-import { Router } from "next/router"
+import { useRouter } from "next/navigation"
 
 // Componente de tabla de datos resumida
 const DataTable = ({ columns, data, title, maxRows = 5 }) => {
@@ -274,6 +274,7 @@ const InfoPanel = ({ title, value, description, icon: Icon, color = "blue" }) =>
 }
 
 export default function Dashboard() {
+  // TODOS LOS HOOKS DEBEN ESTAR AL INICIO DEL COMPONENTE
   // Estados para almacenar datos
   const [piglets, setPiglets] = useState([])
   const [races, setRaces] = useState([])
@@ -295,6 +296,10 @@ export default function Dashboard() {
   const [lastUpdated, setLastUpdated] = useState(new Date())
   const [isVerifying, setIsVerifying] = useState(false)
   const [activeTab, setActiveTab] = useState("overview")
+  const [role, setRole] = useState("")
+
+  // Hook del router
+  const router = useRouter()
 
   // Función para formatear fecha
   const formatDate = (dateString) => {
@@ -422,25 +427,6 @@ export default function Dashboard() {
     }
   }
 
-  // Efecto para cargar datos iniciales
-  useEffect(() => {
-    loadAllData()
-
-    // Configurar intervalo para actualizar datos cada 60 segundos
-    const intervalId = setInterval(() => {
-      loadAllData()
-    }, 60000)
-
-    // Limpiar intervalo al desmontar
-    return () => clearInterval(intervalId)
-  }, [])
-
-  // Efecto para procesar los datos cuando se cargan
-  useEffect(() => {
-    prepareRecentActivity()
-    calculateStats()
-  }, [piglets, races, stages, corrals])
-
   // Preparar datos de actividad reciente
   const prepareRecentActivity = () => {
     try {
@@ -508,6 +494,40 @@ export default function Dashboard() {
     }
   }
 
+  // Efecto para cargar datos iniciales
+  useEffect(() => {
+    loadAllData()
+
+    // Configurar intervalo para actualizar datos cada 60 segundos
+    const intervalId = setInterval(() => {
+      loadAllData()
+    }, 60000)
+
+    // Limpiar intervalo al desmontar
+    return () => clearInterval(intervalId)
+  }, [])
+
+  // Efecto para procesar los datos cuando se cargan
+  useEffect(() => {
+    prepareRecentActivity()
+    calculateStats()
+  }, [piglets, races, stages, corrals])
+
+  // Efecto para obtener el rol del usuario
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const storedRole = localStorage.getItem("role")
+      if (storedRole) {
+        setRole(storedRole)
+      }
+    }
+  }, [])
+
+  // Función para navegar a otras páginas
+  const navigateToPage = (page) => {
+    router.push(page)
+  }
+
   // Mientras se verifica o cargan datos iniciales, mostrar un loader
   if (isVerifying) {
     return (
@@ -533,23 +553,6 @@ export default function Dashboard() {
     { header: "CORRAL", accessor: "corral" },
   ]
 
-  // Función para navegar a otras páginas
-  const navigateToPage = (page) => {
-    window.location.href = page
-  }
-  const [role, setRole] = useState()
-
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      const storedRole = localStorage.getItem("role")
-      if (storedRole) {
-        setRole(storedRole)
-      }
-    }
-  }, [])
-  // const goToUserManagement = () => {
-  //   Router.push("/dashboard/Admi")
-  // }
   return (
     <div className="flex min-h-screen">
       <div className="flex flex-col flex-1">
@@ -562,15 +565,7 @@ export default function Dashboard() {
                   <div>
                     <h1 className="text-3xl font-bold text-gray-800 dark:text-white">Inicio</h1>
                     {role === "Administrador" && (
-                      <>
-                        <h1 className="text-3xl font-bold text-gray-800 dark:text-white">Bienvenido Administrador</h1>
-                        {/* <button
-                          onClick={goToUserManagement}
-                          className="px-4 py-2 bg-blue-600 text-white rounded"
-                        >
-                          Ir a Gestión de Usuarios
-                        </button> */}
-                      </>
+                      <h1 className="text-3xl font-bold text-gray-800 dark:text-white">Bienvenido Administrador</h1>
                     )}
                     <p className="text-gray-600 dark:text-gray-400 mt-1">Resumen de la actividad de Porcinos</p>
                   </div>

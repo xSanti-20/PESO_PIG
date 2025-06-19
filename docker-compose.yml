@@ -1,24 +1,24 @@
-version '3.8'
+version: '3.8'
 
 services:
- backend:
-   build:
-     context: ./Backend/API_PESO_PIG
-     Dockerfile: Dockerfile
-   ports:
-     - "5059:80"
-   networks:
-     - app-network
+  backend:
+    build:
+      context: ./Backend/API_PESO_PIG
+      dockerfile: Dockerfile          # minúsculas
+    ports:
+      - "5059:80"
+    networks:
+      - app-network
 
-frontend:
-  build:
-    context: ./Frontend/pesopig
-    dockerfile: Dockerfile
-  ports:
-    - "3003:3003"
-  networks:
-    - app-network
+  frontend:
+    build:
+      context: ./Frontend/pesopig
+      dockerfile: Dockerfile          # minúsculas
+    ports:
+      - "3003:3003"
+    networks:
+      - app-network
 
 networks:
- app-network:
-   driver: bridge
+  app-network:
+    driver: bridge

@@ -5,8 +5,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { useMobile } from "@/hooks/use-mobile"
-import { MapPin, Users, Award, Play, Pause } from "lucide-react"
+import { MapPin, Users, Award } from "lucide-react"
 import VideoCard from "./VideoCard"
+import Image from "next/image"
 
 function HomePage() {
   const { isMobile } = useMobile()
@@ -158,11 +159,13 @@ function HomePage() {
                   className="group shadow-lg border-0 bg-white hover:shadow-xl transition-all duration-300 cursor-pointer hover:-translate-y-2"
                 >
                   <CardContent className="p-0">
-                    <div className="relative overflow-hidden">
-                      <img
+                    <div className="relative overflow-hidden h-48">
+                      <Image
                         src={feature.img || "/placeholder.svg"}
                         alt={feature.title}
-                        className="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-300"
+                        fill
+                        className="object-cover group-hover:scale-110 transition-transform duration-300"
+                        sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
                       />
                       <Badge className="absolute top-4 left-4 bg-white/90 text-gray-800">{feature.badge}</Badge>
                     </div>
@@ -196,11 +199,13 @@ function HomePage() {
                 className="group overflow-hidden shadow-lg border-0 bg-white hover:shadow-xl transition-all duration-300 cursor-pointer"
               >
                 <CardContent className="p-0">
-                  <div className="relative overflow-hidden">
-                    <img
+                  <div className="relative overflow-hidden h-64">
+                    <Image
                       src={`/assets/img/${img}.jpeg`}
                       alt={`Galería ${index + 1}`}
-                      className="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-300"
+                      fill
+                      className="object-cover group-hover:scale-110 transition-transform duration-300"
+                      sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
                     />
                     <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300"></div>
                   </div>

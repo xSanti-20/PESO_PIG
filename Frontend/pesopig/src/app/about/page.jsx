@@ -4,6 +4,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import PublicNav from "@/components/nav/PublicNav"
 import { FaWhatsapp, FaChevronLeft, FaChevronRight } from "react-icons/fa"
 import { useMobile } from "@/hooks/use-mobile"
+import Image from "next/image"
 
 export default function QuienesSomos() {
   const { isMobile, isTablet, isDesktop } = useMobile()
@@ -96,26 +97,24 @@ export default function QuienesSomos() {
             {/* Imagen con altura consistente */}
             <div
               className={`
-                flex-shrink-0
-                ${getResponsiveClasses(
-                "w-full h-60",
-                "md:w-1/2 h-full",
-                "md:w-1/2 h-full"
-              )}
+                flex-shrink-0 relative
+                ${getResponsiveClasses("w-full h-60", "md:w-1/2 md:h-80", "md:w-1/2 md:h-96")}
               `}
             >
-              <img
+              <Image
                 src={member.image || "/placeholder.svg"}
                 alt={member.name}
-                className="w-full h-full object-cover object-center"
-                style={{ objectPosition: "top center" }}
+                fill
+                className="object-cover object-top"
+                sizes="(max-width: 768px) 100vw, 50vw"
+                priority={currentIndex === 0}
               />
             </div>
 
             <CardContent
               className={`
-                w-full p-4 text-center
-                ${getResponsiveClasses("md:text-center", "md:w-1/2 md:p-5 md:text-left", "md:w-1/2 md:p-6 md:text-left")}
+                flex-1 p-4 flex flex-col justify-center
+                ${getResponsiveClasses("text-center", "md:p-5 md:text-left", "md:p-6 md:text-left")}
               `}
             >
               <h3 className={`font-semibold mb-1 ${getResponsiveClasses("text-lg", "text-xl", "text-2xl")}`}>
@@ -124,10 +123,14 @@ export default function QuienesSomos() {
               <p className={`text-gray-500 mb-3 ${getResponsiveClasses("text-sm", "text-base", "text-base")}`}>
                 {member.role}
               </p>
-              <p className={`mb-4 text-justify ${getResponsiveClasses("text-xs leading-relaxed", "text-sm", "text-sm")}`}>
+              <p
+                className={`mb-4 text-justify ${getResponsiveClasses("text-xs leading-relaxed", "text-sm", "text-sm")}`}
+              >
                 {member.description}
               </p>
-              <div className={`flex items-center text-green-600 gap-2 ${getResponsiveClasses("justify-center", "justify-center md:justify-start", "justify-center md:justify-start")}`}>
+              <div
+                className={`flex items-center text-green-600 gap-2 ${getResponsiveClasses("justify-center", "justify-center md:justify-start", "justify-center md:justify-start")}`}
+              >
                 <FaWhatsapp className={getResponsiveClasses("text-sm", "text-base", "text-base")} />
                 <a
                   href={`https://wa.me/${member.phone.replace(/\s/g, "")}`}
