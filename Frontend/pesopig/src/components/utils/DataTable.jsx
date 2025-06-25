@@ -40,6 +40,7 @@ function DataTable({
   const [currentPage, setCurrentPage] = useState(1)
   const [exportingPDF, setExportingPDF] = useState(new Set())
   const { isMobile, isTablet } = useMobile()
+  const [showAllDetails, setShowAllDetails] = useState(false) // ✅ MOVED: useState hook to top level
 
   const safeData = Array.isArray(Data) ? Data : []
   const itemsPerPage = isMobile ? 2 : isTablet ? 3 : 5
@@ -159,13 +160,28 @@ function DataTable({
           const isActive = row[statusField] ?? true
           const filteredActions = getFilteredExtraActions(row)
 
+          // ✅ DINÁMICO: Obtener todos los campos del objeto (excluyendo 'original')
+          const allFields = Object.keys(row)
+            .filter((key) => key !== "original") // Excluir el campo 'original'
+            .map((key, index) => ({
+              title: TitlesTable[index] || key, // Usar el título de la tabla o la key como fallback
+              value: row[key],
+              key: key,
+            }))
+
+          // ✅ DINÁMICO: Primeros 5 campos más importantes
+          const mainFields = allFields.slice(0, 5)
+
+          // ✅ DINÁMICO: Campos adicionales (del 6 en adelante)
+          const additionalFields = allFields.slice(5)
+
           return (
             <Card
               key={row.id || `mobile-${rowIndex}-${Math.random()}`}
               className={`p-3 shadow-sm ${!isActive ? "opacity-60 bg-gray-50" : ""}`}
             >
               <div className="space-y-2">
-                {/* ✅ Solo mostrar estado si showStatusColumn es true */}
+                {/* Estado */}
                 {showStatusColumn && (
                   <div className="flex justify-between items-center">
                     <span className="text-sm font-medium text-gray-600">Estado:</span>
@@ -173,17 +189,39 @@ function DataTable({
                   </div>
                 )}
 
-                {TitlesTable.slice(0, 3).map((title, cellIndex) => {
-                  const key = Object.keys(row)[cellIndex]
-                  const value = row[key]
-                  return (
-                    <div key={`mobile-${row.id}-${cellIndex}`} className="flex justify-between items-center">
-                      <span className="text-sm font-medium text-gray-600">{title}:</span>
-                      <span className="text-sm text-right">{truncateText(value)}</span>
-                    </div>
-                  )
-                })}
+                {/* ✅ DINÁMICO: Campos principales (primeros 5) */}
+                {mainFields.map((field, index) => (
+                  <div key={`main-${row.id}-${index}`} className="flex justify-between items-center">
+                    <span className="text-sm font-medium text-gray-600">{field.title}:</span>
+                    <span className="text-sm text-right">{truncateText(field.value)}</span>
+                  </div>
+                ))}
 
+                {/* ✅ DINÁMICO: Campos adicionales (expandibles) - Solo si hay más de 5 campos */}
+                {additionalFields.length > 0 &&
+                  showAllDetails &&
+                  additionalFields.map((field, index) => (
+                    <div key={`additional-${row.id}-${index}`} className="flex justify-between items-center">
+                      <span className="text-sm font-medium text-gray-600">{field.title}:</span>
+                      <span className="text-sm text-right">{truncateText(field.value)}</span>
+                    </div>
+                  ))}
+
+                {/* ✅ DINÁMICO: Botón Ver más/menos - Solo si hay más de 5 campos */}
+                {additionalFields.length > 0 && (
+                  <div className="flex justify-center pt-2 border-t border-gray-100">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setShowAllDetails(!showAllDetails)}
+                      className="text-xs text-blue-600 hover:text-blue-800"
+                    >
+                      {showAllDetails ? "Ver menos" : "Ver más detalles"}
+                    </Button>
+                  </div>
+                )}
+
+                {/* Botones de acción */}
                 <div className="flex justify-end pt-2 border-t border-gray-100">
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
@@ -226,7 +264,6 @@ function DataTable({
                         </DropdownMenuItem>
                       )}
 
-                      {/* ✅ Usar acciones filtradas */}
                       {filteredActions.map((action, index) => (
                         <DropdownMenuItem
                           key={index}
