@@ -2,13 +2,14 @@
 
 import { useState, useEffect } from "react"
 import PrivateNav from "@/components/nav/PrivateNav"
-import ContentPage from "@/components/utils/ContentPage"
 import axiosInstance from "@/lib/axiosInstance"
 import RegisterPiglet from "./formpiglet"
 import StageControlPanel from "@/components/StageControlPanel"
 import AlertModal from "@/components/AlertModal"
-import ExportAllPigletsButton from "@/components/ExportAllPigletsButton" // ✅ Usar la versión corregida
-import { FaExchangeAlt, FaCheckCircle } from "react-icons/fa"
+import ExportAllPigletsButton from "@/components/ExportAllPigletsButton"
+import DataTable from "@/components/utils/DataTable"
+import { FaExchangeAlt, FaCheckCircle, FaEye, FaEyeSlash } from "react-icons/fa"
+import { Button } from "@/components/ui/button"
 
 function Piglet() {
   const TitlePage = "Animales"
@@ -18,6 +19,7 @@ function Piglet() {
   const [editingPiglet, setEditingPiglet] = useState(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [showStagePanel, setShowStagePanel] = useState(false)
+  const [showInactiveRecords, setShowInactiveRecords] = useState(true)
   const [alertInfo, setAlertInfo] = useState({
     isOpen: false,
     message: "",
@@ -39,7 +41,6 @@ function Piglet() {
     "Placa Sena",
   ]
 
-  // ✅ Función para mostrar alertas
   const showAlert = (type, message, onSuccessCallback = null) => {
     setAlertInfo({
       isOpen: true,
@@ -89,7 +90,8 @@ function Piglet() {
             etapa: piglet.name_Stage || "Sin etapa",
             diasEnEtapa: daysInStage > 0 ? `${daysInStage} días` : "Sin fecha",
             placasena: piglet.placa_Sena ?? "Sin dato",
-            original: piglet, // ✅ Datos originales para PDF
+            isActive: piglet.is_Active ?? true,
+            original: piglet,
           }
         })
         setPigletData(data)
@@ -106,15 +108,18 @@ function Piglet() {
     fetchPiglets()
   }, [])
 
-  const handleDelete = async (id) => {
+  const handleToggleStatus = async (id, currentStatus) => {
     try {
       const numericId = Number.parseInt(id, 10)
-      await axiosInstance.delete(`/api/Piglet/DeletePiglet?id_Piglet=${numericId}`)
+      const newStatus = !currentStatus
+
+      await axiosInstance.put(`/api/Piglet/ToggleStatus?id_Piglet=${numericId}&isActive=${newStatus}`)
+
       fetchPiglets()
-      showAlert("success", "Lechón eliminado correctamente")
+      showAlert("success", `Lechón ${newStatus ? "activado" : "desactivado"} correctamente`)
     } catch (error) {
-      console.error("Error detallado al eliminar:", error)
-      showAlert("error", "Error al eliminar el lechón")
+      console.error("Error al cambiar estado:", error)
+      showAlert("error", "Error al cambiar el estado del lechón")
     }
   }
 
@@ -142,60 +147,6 @@ function Piglet() {
     setTimeout(() => {
       setEditingPiglet(null)
     }, 300)
-  }
-
-  const recalculatePigletWeight = async (row) => {
-    try {
-      if (!row?.original?.id_Piglet) {
-        showAlert("error", "No se puede recalcular el peso para este lechón.")
-        return
-      }
-
-      const pigletId = row.original.id_Piglet
-      const initialWeight = row.original.weight_Initial
-
-      await axiosInstance.post(
-        `/api/Weighing/RecalculatePigletWeight?id_Piglet=${pigletId}&newInitialWeight=${initialWeight}`,
-      )
-
-      showAlert(
-        "success",
-        "Peso del lechón recalculado correctamente. Se han actualizado todos los pesajes y verificado la etapa.",
-      )
-      fetchPiglets()
-    } catch (error) {
-      console.error("Error al recalcular el peso:", error)
-      showAlert("error", "Ocurrió un error al recalcular el peso del lechón.")
-    }
-  }
-
-  const checkPigletStage = async (row) => {
-    try {
-      if (!row?.original?.id_Piglet) {
-        showAlert("error", "No se puede verificar la etapa para este lechón.")
-        return
-      }
-
-      const pigletId = row.original.id_Piglet
-      const response = await axiosInstance.post(`/api/Piglet/CheckStage/${pigletId}`)
-
-      if (response.data.success) {
-        if (response.data.stageChanged) {
-          showAlert(
-            "success",
-            `${response.data.pigletName} cambió a etapa ${response.data.newStage}. Razón: ${response.data.transitionReason}`,
-          )
-          fetchPiglets()
-        } else {
-          showAlert("info", `${response.data.pigletName}: ${response.data.message}`)
-        }
-      } else {
-        showAlert("error", response.data.message || "Error al verificar la etapa")
-      }
-    } catch (error) {
-      console.error("Error al verificar etapa:", error)
-      showAlert("error", "Error al verificar la etapa del lechón.")
-    }
   }
 
   const checkAllStages = async () => {
@@ -261,7 +212,15 @@ function Piglet() {
               <span>Verificar Todas las Etapas</span>
             </button>
 
-            {/* ✅ Botón corregido para exportar todos los lechones */}
+            <Button
+              onClick={() => setShowInactiveRecords(!showInactiveRecords)}
+              variant="outline"
+              className="flex items-center space-x-2"
+            >
+              {showInactiveRecords ? <FaEyeSlash /> : <FaEye />}
+              <span>{showInactiveRecords ? "Ocultar Inactivos" : "Mostrar Inactivos"}</span>
+            </Button>
+
             <ExportAllPigletsButton pigletsData={pigletData.map((p) => p.original)} showAlert={showAlert} />
           </div>
 
@@ -271,40 +230,42 @@ function Piglet() {
             </div>
           )}
 
-          <ContentPage
-            TitlePage={TitlePage}
-            Data={pigletData}
-            TitlesTable={titlesPiglet}
-            FormPage={() => (
-              <RegisterPiglet
-                refreshData={fetchPiglets}
-                pigletToEdit={editingPiglet}
-                onCancelEdit={handleCloseModal}
-                closeModal={handleCloseModal}
-                showAlert={showAlert}
-              />
-            )}
-            onDelete={handleDelete}
-            onUpdate={handleUpdate}
-            endpoint="/api/Piglet/DeletePiglet"
-            isModalOpen={isModalOpen}
-            setIsModalOpen={setIsModalOpen}
-            refreshData={fetchPiglets}
-            extraActions={[
-              {
-                label: "Recalcular Peso",
-                onClick: recalculatePigletWeight,
-                icon: "calculator",
-                tooltip: "Recalcula el peso acumulado y verifica la etapa",
-              },
-              {
-                label: "Verificar Etapa",
-                onClick: checkPigletStage,
-                icon: "exchange-alt",
-                tooltip: "Verifica si debe cambiar de etapa",
-              },
-            ]}
-          />
+          <div className="bg-white rounded-lg shadow-md p-6">
+            <div className="flex items-center justify-between mb-6">
+              <h1 className="text-2xl font-bold text-gray-800">{TitlePage}</h1>
+              <Button onClick={() => setIsModalOpen(true)} className="bg-blue-600 hover:bg-blue-700 text-white">
+                Agregar Lechón
+              </Button>
+            </div>
+
+            {/* ✅ DataTable SIN los botones de Recalcular y Verificar Etapa */}
+            <DataTable
+              Data={pigletData}
+              TitlesTable={titlesPiglet}
+              onUpdate={handleUpdate}
+              onToggleStatus={handleToggleStatus}
+              showDeleteButton={false}
+              showToggleButton={true}
+              statusField="isActive"
+              showInactiveRecords={showInactiveRecords}
+              showStatusColumn={true}
+              extraActions={[]} // ✅ ARRAY VACÍO - Sin botones extra
+            />
+          </div>
+
+          {isModalOpen && (
+            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+              <div className="bg-white rounded-lg max-w-4xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+                <RegisterPiglet
+                  refreshData={fetchPiglets}
+                  pigletToEdit={editingPiglet}
+                  onCancelEdit={handleCloseModal}
+                  closeModal={handleCloseModal}
+                  showAlert={showAlert}
+                />
+              </div>
+            </div>
+          )}
         </>
       )}
 

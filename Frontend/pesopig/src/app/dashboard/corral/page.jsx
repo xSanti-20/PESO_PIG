@@ -125,6 +125,9 @@ function Corral() {
           TitlePage={TitlePage}
           Data={corralData}
           TitlesTable={titlesCorral}
+          showDeleteButton={true} // ✅ Mostrar eliminar
+          showToggleButton={false} // ✅ No mostrar toggle
+          showStatusColumn={false} // ✅ IMPORTANTE: No mostrar columna
           FormPage={() => (
             <RegisterCorral
               refreshData={fetchCorral}

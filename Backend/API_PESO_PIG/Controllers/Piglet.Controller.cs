@@ -22,6 +22,7 @@ namespace API_PESO_PIG.Controllers
             _Services = pigletServices;
             GeneralFunction = new UserFunction(configuration);
         }
+
         [Authorize]
         [HttpPost("CreatePiglet")]
         public async Task<IActionResult> Add(Piglet entity)
@@ -53,10 +54,11 @@ namespace API_PESO_PIG.Controllers
                     Fec_Birth = p.Fec_Birth,
                     Sex_Piglet = p.Sex_Piglet,
                     Placa_Sena = p.Placa_Sena,
-                    Sta_Date = p.Sta_Date ?? DateTime.Now, // Corregido: usar DateTime.Now si es null
+                    Sta_Date = p.Sta_Date ?? DateTime.Now,
                     Des_Corral = p.corral?.Des_Corral,
                     Nam_Race = p.race?.Nam_Race,
-                    Name_Stage = p.stage?.Name_Stage
+                    Name_Stage = p.stage?.Name_Stage,
+                    Is_Active = p.Is_Active // ✅ Agregar campo de estado
                 }).ToList();
 
                 return Ok(piglets);
@@ -67,6 +69,7 @@ namespace API_PESO_PIG.Controllers
                 return StatusCode(500, new { message = "Error interno del servidor", error = ex.Message });
             }
         }
+
         [Authorize]
         [HttpGet("GetPigletId")]
         public async Task<IActionResult> GetPigletId(int id_Piglet)
@@ -99,6 +102,31 @@ namespace API_PESO_PIG.Controllers
                 if (result)
                 {
                     return Ok(new { message = "Lechón eliminado correctamente." });
+                }
+                return NotFound("El lechón no fue encontrado.");
+            }
+            catch (Exception ex)
+            {
+                GeneralFunction.Addlog(ex.ToString());
+                return StatusCode(500, new { message = "Error interno del servidor", error = ex.Message });
+            }
+        }
+
+        // ✅ NUEVO MÉTODO: Activar/Desactivar lechón
+        [Authorize]
+        [HttpPut("ToggleStatus")]
+        public async Task<IActionResult> ToggleStatus(int id_Piglet, bool isActive)
+        {
+            try
+            {
+                var result = await _Services.ToggleStatus(id_Piglet, isActive);
+                if (result)
+                {
+                    return Ok(new
+                    {
+                        message = $"Lechón {(isActive ? "activado" : "desactivado")} correctamente.",
+                        success = true
+                    });
                 }
                 return NotFound("El lechón no fue encontrado.");
             }
@@ -193,5 +221,64 @@ namespace API_PESO_PIG.Controllers
                 return StatusCode(500, new { message = "Error interno del servidor", error = ex.Message });
             }
         }
+
+        // ✅ AGREGAR ESTOS MÉTODOS A TU CONTROLADOR PigletController
+
+        [Authorize]
+        [HttpGet("ConsultActivePiglets")]
+        public ActionResult<IEnumerable<Piglet>> GetActivePiglets()
+        {
+            try
+            {
+                var piglets = _Services.GetActivePiglets().Select(p => new PigletsDTO
+                {
+                    Id_Piglet = p.Id_Piglet,
+                    Name_Piglet = p.Name_Piglet,
+                    Weight_Initial = p.Weight_Initial,
+                    Acum_Weight = p.Acum_Weight,
+                    Fec_Birth = p.Fec_Birth,
+                    Sex_Piglet = p.Sex_Piglet,
+                    Placa_Sena = p.Placa_Sena,
+                    Sta_Date = p.Sta_Date ?? DateTime.Now,
+                    Des_Corral = p.corral?.Des_Corral,
+                    Nam_Race = p.race?.Nam_Race,
+                    Name_Stage = p.stage?.Name_Stage,
+                    Is_Active = p.Is_Active
+                }).ToList();
+
+                return Ok(piglets);
+            }
+            catch (Exception ex)
+            {
+                GeneralFunction.Addlog(ex.ToString());
+                return StatusCode(500, new { message = "Error interno del servidor", error = ex.Message });
+            }
+        }
+
+        [Authorize]
+        [HttpGet("GetActivePigletsForSelect")]
+        public ActionResult<IEnumerable<object>> GetActivePigletsForSelect()
+        {
+            try
+            {
+                // Solo devolver los campos necesarios para selects/dropdowns
+                var piglets = _Services.GetActivePiglets().Select(p => new
+                {
+                    Id_Piglet = p.Id_Piglet,
+                    Name_Piglet = p.Name_Piglet,
+                    Acum_Weight = p.Acum_Weight,
+                    Des_Corral = p.corral?.Des_Corral,
+                    Name_Stage = p.stage?.Name_Stage
+                }).ToList();
+
+                return Ok(piglets);
+            }
+            catch (Exception ex)
+            {
+                GeneralFunction.Addlog(ex.ToString());
+                return StatusCode(500, new { message = "Error interno del servidor", error = ex.Message });
+            }
+        }
+
     }
 }

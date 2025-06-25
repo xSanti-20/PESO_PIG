@@ -148,13 +148,16 @@ function Entries() {
             TitlePage={TitlePage}
             Data={entryData}
             TitlesTable={titlesEntry}
+            showDeleteButton={true} // ✅ Mostrar eliminar
+            showToggleButton={false} // ✅ No mostrar toggle
+            showStatusColumn={false} // ✅ IMPORTANTE: No mostrar columna
             FormPage={() => (
               <RegisterEntryPage
                 refreshData={fetchEntries}
                 entryToEdit={editingEntry}
                 onCancelEdit={handleCloseModal}
                 closeModal={handleCloseModal}
-                refreshFoods={() => {}} // Si necesitas refrescar alimentos
+                refreshFoods={() => { }} // Si necesitas refrescar alimentos
                 showAlert={(message, type, redirectUrl = null) => {
                   setAlertInfo({
                     isOpen: true,

@@ -71,11 +71,12 @@ function RegisterWeighingPage({ refreshData, weighingToEdit, onCancelEdit, close
     useEffect(() => {
         async function fetchData() {
             try {
-                const pigletResponse = await axiosInstance.get("/api/Piglet/ConsultAllPiglets")
+                const pigletResponse = await axiosInstance.get("/api/Piglet/GetActivePigletsForSelect")
                 setPiglets(pigletResponse.data)
 
                 const userResponse = await axiosInstance.get("/api/User/ConsultAllUser")
-                setUsers(userResponse.data)
+                const activeUsers = userResponse.data.filter(user => user.status !== "Inactivo")
+                setUsers(activeUsers)
             } catch (error) {
                 console.error("Error al cargar datos: ", error)
                 if (showAlert) showAlert("Error al cargar los datos necesarios", "error")
@@ -362,12 +363,12 @@ function RegisterWeighingPage({ refreshData, weighingToEdit, onCancelEdit, close
                         {weightValidation && (
                             <div
                                 className={`p-3 rounded-md text-sm ${weightValidation.type === "error"
-                                        ? "bg-red-50 text-red-700 border border-red-200"
-                                        : weightValidation.type === "warning"
-                                            ? "bg-yellow-50 text-yellow-700 border border-yellow-200"
-                                            : weightValidation.type === "info"
-                                                ? "bg-blue-50 text-blue-700 border border-blue-200"
-                                                : "bg-green-50 text-green-700 border border-green-200"
+                                    ? "bg-red-50 text-red-700 border border-red-200"
+                                    : weightValidation.type === "warning"
+                                        ? "bg-yellow-50 text-yellow-700 border border-yellow-200"
+                                        : weightValidation.type === "info"
+                                            ? "bg-blue-50 text-blue-700 border border-blue-200"
+                                            : "bg-green-50 text-green-700 border border-green-200"
                                     }`}
                             >
                                 <div className="flex items-start">

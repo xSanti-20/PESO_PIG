@@ -51,6 +51,17 @@ namespace API_PESO_PIG.Services
                 .Include(p => p.race)
                 .Include(p => p.stage)
                 .Include(p => p.corral)
+                .ToList(); // Devuelve todos los lechones (activos e inactivos)
+        }
+
+        // ✅ NUEVO: Método para obtener solo lechones activos
+        public IEnumerable<Piglet> GetActivePiglets()
+        {
+            return _context.Piglets
+                .Include(p => p.race)
+                .Include(p => p.stage)
+                .Include(p => p.corral)
+                .Where(p => p.Is_Active)
                 .ToList();
         }
 
@@ -63,13 +74,77 @@ namespace API_PESO_PIG.Services
                 .FirstOrDefaultAsync(x => x.Id_Piglet == id_Piglet);
         }
 
-        // ✅ CORREGIDO: Ahora actualiza el promedio del corral
+        // ✅ NUEVO MÉTODO: Activar/Desactivar lechón
+        public async Task<bool> ToggleStatus(int id_Piglet, bool isActive)
+        {
+            try
+            {
+                var piglet = await _context.Piglets.FindAsync(id_Piglet);
+                if (piglet == null)
+                {
+                    return false;
+                }
+
+                // Guardar el estado anterior para comparar
+                bool previousStatus = piglet.Is_Active;
+
+                // Actualizar el estado del lechón
+                piglet.Is_Active = isActive;
+
+                // Solo actualizar el corral si el estado realmente cambió
+                if (previousStatus != isActive)
+                {
+                    var corral = await _context.Corrals.FindAsync(piglet.Id_Corral);
+                    if (corral != null)
+                    {
+                        if (!isActive) // Se está desactivando
+                        {
+                            // Reducir el conteo de animales
+                            corral.Tot_Animal = Math.Max(0, corral.Tot_Animal - 1);
+                            if (corral.Tot_Animal == 0)
+                            {
+                                corral.Est_Corral = "libre";
+                                corral.Tot_Pesaje = 0;
+                            }
+                        }
+                        else // Se está activando
+                        {
+                            // Aumentar el conteo de animales
+                            corral.Tot_Animal += 1;
+                            corral.Est_Corral = "ocupado";
+                        }
+
+                        _context.Corrals.Update(corral);
+                    }
+                }
+
+                // Actualizar el lechón
+                _context.Piglets.Update(piglet);
+                await _context.SaveChangesAsync();
+
+                // Actualizar el promedio del corral solo si cambió el estado
+                if (previousStatus != isActive)
+                {
+                    await UpdateCorralAverageWeight(piglet.Id_Corral);
+                }
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error en ToggleStatus: {ex.Message}");
+                throw;
+            }
+        }
+
         public async Task Add(Piglet entity)
         {
             if (entity.Acum_Weight <= 0)
                 entity.Acum_Weight = entity.Weight_Initial;
 
             entity.Sta_Date = DateTime.Now;
+            // ✅ Asegurar que el lechón se cree como activo por defecto
+            entity.Is_Active = true;
 
             var corral = _context.Corrals.FirstOrDefault(c => c.id_Corral == entity.Id_Corral);
             if (corral != null)
@@ -82,11 +157,9 @@ namespace API_PESO_PIG.Services
             _context.Piglets.Add(entity);
             await _context.SaveChangesAsync();
 
-            // ✅ ACTUALIZAR PROMEDIO DEL CORRAL DESPUÉS DE AGREGAR
             await UpdateCorralAverageWeight(entity.Id_Corral);
         }
 
-        // ✅ CORREGIDO: Ahora actualiza el promedio del corral
         public async Task<bool> DelPiglet(int id_Piglet)
         {
             var piglet = await _context.Piglets.FindAsync(id_Piglet);
@@ -101,7 +174,7 @@ namespace API_PESO_PIG.Services
                     if (corral.Tot_Animal == 0)
                     {
                         corral.Est_Corral = "libre";
-                        corral.Tot_Pesaje = 0; // Sin animales, promedio = 0
+                        corral.Tot_Pesaje = 0;
                     }
                     _context.Corrals.Update(corral);
                 }
@@ -109,7 +182,6 @@ namespace API_PESO_PIG.Services
                 _context.Piglets.Remove(piglet);
                 await _context.SaveChangesAsync();
 
-                // ✅ ACTUALIZAR PROMEDIO DEL CORRAL DESPUÉS DE ELIMINAR
                 if (corral != null && corral.Tot_Animal > 0)
                 {
                     await UpdateCorralAverageWeight(corralId);
@@ -120,7 +192,6 @@ namespace API_PESO_PIG.Services
             return false;
         }
 
-        // ✅ CORREGIDO: Ahora actualiza el promedio del corral
         public async Task<bool> UpdatePiglet(int id_Piglet, Piglet updatedPiglet)
         {
             if (id_Piglet != updatedPiglet.Id_Piglet)
@@ -136,6 +207,16 @@ namespace API_PESO_PIG.Services
                 updatedPiglet.Sta_Date = DateTime.Now;
             else
                 updatedPiglet.Sta_Date = existing.Sta_Date;
+
+            // ✅ Preservar el estado activo si no se especifica
+            if (updatedPiglet.Is_Active == false && existing.Is_Active == true)
+            {
+                // Solo cambiar si se especifica explícitamente
+            }
+            else
+            {
+                updatedPiglet.Is_Active = existing.Is_Active;
+            }
 
             // Manejar cambio de corral
             if (existing.Id_Corral != updatedPiglet.Id_Corral)
@@ -165,23 +246,17 @@ namespace API_PESO_PIG.Services
             _context.Piglets.Update(updatedPiglet);
             await _context.SaveChangesAsync();
 
-            // ✅ ACTUALIZAR PROMEDIO DE AMBOS CORRALES
             if (existing.Id_Corral != updatedPiglet.Id_Corral)
             {
-                // Actualizar corral anterior
                 if (existing.Id_Corral > 0)
                     await UpdateCorralAverageWeight(existing.Id_Corral);
-
-                // Actualizar corral nuevo
                 await UpdateCorralAverageWeight(updatedPiglet.Id_Corral);
             }
             else
             {
-                // Solo actualizar el corral actual (cambió el peso)
                 await UpdateCorralAverageWeight(updatedPiglet.Id_Corral);
             }
 
-            // Siempre verificar etapa después de actualizar
             await CheckAndUpdateStageWithRegression(id_Piglet);
 
             return true;
@@ -196,7 +271,10 @@ namespace API_PESO_PIG.Services
             if (piglet == null)
                 return new StageTransitionResult { Success = false, Message = "Lechón no encontrado", PigletId = pigletId };
 
-            // USAR EL PESO ACUMULADO ACTUALIZADO
+            // ✅ No procesar lechones inactivos
+            if (!piglet.Is_Active)
+                return new StageTransitionResult { Success = false, Message = "Lechón inactivo - no se procesa", PigletId = pigletId };
+
             float currentWeight = piglet.Acum_Weight;
 
             var result = new StageTransitionResult
@@ -229,7 +307,6 @@ namespace API_PESO_PIG.Services
             var currentStageDef = StageDefinitions[currentStageKey];
             var nextStageKey = currentStageDef.NextStage;
 
-            // Verificar si debe avanzar por peso
             if (currentWeight >= currentStageDef.WeightMax)
             {
                 if (nextStageKey != null && StageDefinitions.ContainsKey(nextStageKey))
@@ -253,7 +330,6 @@ namespace API_PESO_PIG.Services
                     result.Message = "Peso objetivo alcanzado - Listo para sacrificio";
                 }
             }
-            // Verificar si debe avanzar por tiempo
             else if (daysInStage >= currentStageDef.MaxDays)
             {
                 if (nextStageKey != null && StageDefinitions.ContainsKey(nextStageKey))
@@ -289,10 +365,8 @@ namespace API_PESO_PIG.Services
             return result;
         }
 
-        // MÉTODO MEJORADO para manejar regresiones de etapa
         public async Task<StageTransitionResult> CheckAndUpdateStageWithRegression(int pigletId)
         {
-            // PRIMERO: Refrescar el lechón desde la base de datos para obtener el peso actualizado
             var piglet = await _context.Piglets
                 .Include(p => p.stage)
                 .FirstOrDefaultAsync(p => p.Id_Piglet == pigletId);
@@ -300,10 +374,11 @@ namespace API_PESO_PIG.Services
             if (piglet == null)
                 return new StageTransitionResult { Success = false, Message = "Lechón no encontrado", PigletId = pigletId };
 
-            // USAR EL PESO ACUMULADO ACTUALIZADO
-            float currentWeight = piglet.Acum_Weight;
+            // ✅ No procesar lechones inactivos
+            if (!piglet.Is_Active)
+                return new StageTransitionResult { Success = false, Message = "Lechón inactivo - no se procesa", PigletId = pigletId };
 
-            // Determinar la etapa correcta basada en el peso actual
+            float currentWeight = piglet.Acum_Weight;
             var correctStageKey = DetermineCorrectStageByWeight(currentWeight);
             var currentStageKey = GetStageKey(piglet.stage?.Name_Stage);
 
@@ -318,7 +393,6 @@ namespace API_PESO_PIG.Services
 
             Console.WriteLine($"DEBUG - Lechón {piglet.Name_Piglet}: Peso={currentWeight}kg, EtapaActual={currentStageKey}, EtapaCorrecta={correctStageKey}");
 
-            // Si la etapa correcta es diferente a la actual, hacer la transición
             if (correctStageKey != currentStageKey && correctStageKey != null)
             {
                 var success = await TransitionToNextStage(piglet, correctStageKey, "Ajuste automático por peso");
@@ -337,7 +411,6 @@ namespace API_PESO_PIG.Services
             }
             else
             {
-                // Si no hay cambio necesario, verificar normalmente
                 result.Message = $"Etapa correcta: {piglet.stage?.Name_Stage} para peso {currentWeight}kg";
             }
 
@@ -346,20 +419,20 @@ namespace API_PESO_PIG.Services
 
         private string DetermineCorrectStageByWeight(float weight)
         {
-            // CORREGIDO: Si está entre 6.5 y 30 kg debe estar en PRECEBO
             if (weight >= 6.5f && weight < 30f) return "PRECEBO";
             if (weight >= 30f && weight < 60f) return "LEVANTE";
             if (weight >= 60f) return "ENGORDE";
 
-            return "PRECEBO"; // Por defecto para pesos menores a 6.5kg
+            return "PRECEBO";
         }
 
         public async Task<List<StageTransitionResult>> CheckAllStages()
         {
             var results = new List<StageTransitionResult>();
+            // ✅ Solo procesar lechones activos
             var piglets = await _context.Piglets
                 .Include(p => p.stage)
-                .Where(p => p.stage.Name_Stage != "SACRIFICIO")
+                .Where(p => p.stage.Name_Stage != "SACRIFICIO" && p.Is_Active)
                 .ToListAsync();
 
             foreach (var piglet in piglets)
@@ -375,7 +448,6 @@ namespace API_PESO_PIG.Services
         {
             Console.WriteLine($"DEBUG - Intentando transición a: {nextStageKey}");
 
-            // CORREGIDO: Buscar la etapa correcta en la base de datos
             Stage nextStage = null;
 
             if (nextStageKey == "PRECEBO")
@@ -395,7 +467,6 @@ namespace API_PESO_PIG.Services
             }
             else
             {
-                // Búsqueda genérica para otras etapas
                 var nextStageName = StageDefinitions.ContainsKey(nextStageKey) ? StageDefinitions[nextStageKey].Name : nextStageKey;
                 nextStage = await _context.Stages
                     .FirstOrDefaultAsync(s => s.Name_Stage.ToUpper().Contains(nextStageKey.ToUpper()) ||
@@ -405,11 +476,8 @@ namespace API_PESO_PIG.Services
             if (nextStage == null)
             {
                 Console.WriteLine($"ERROR: No se encontró la etapa {nextStageKey} en la base de datos");
-
-                // Mostrar todas las etapas disponibles para debugging
                 var availableStages = await _context.Stages.Select(s => s.Name_Stage).ToListAsync();
                 Console.WriteLine($"Etapas disponibles: {string.Join(", ", availableStages)}");
-
                 return false;
             }
 
@@ -430,7 +498,6 @@ namespace API_PESO_PIG.Services
             if (string.IsNullOrEmpty(stageName)) return null;
             var upperName = stageName.ToUpper();
 
-            // CORREGIDO: Reconocer PRECEBO como la etapa principal
             if (upperName.Contains("PRECEBO")) return "PRECEBO";
             if (upperName.Contains("PRE") && upperName.Contains("INICIACION")) return "PRECEBO";
             if (upperName.Contains("INICIACION") && !upperName.Contains("PRE")) return "PRECEBO";
@@ -445,11 +512,12 @@ namespace API_PESO_PIG.Services
             return StageDefinitions;
         }
 
-        // ✅ NUEVO MÉTODO para actualizar promedio del corral
+        // ✅ MODIFICADO: Solo considerar lechones activos para el promedio del corral
         private async Task UpdateCorralAverageWeight(int corralId)
         {
+            // Solo considerar lechones activos
             var pigletsInCorral = await _context.Piglets
-                .Where(p => p.Id_Corral == corralId)
+                .Where(p => p.Id_Corral == corralId && p.Is_Active)
                 .ToListAsync();
 
             var corral = await _context.Corrals.FindAsync(corralId);
@@ -467,7 +535,6 @@ namespace API_PESO_PIG.Services
 
             foreach (var piglet in pigletsInCorral)
             {
-                // Obtener el peso más actual (último pesaje o peso inicial)
                 var lastWeighing = await _context.Weighings
                     .Where(w => w.Id_Piglet == piglet.Id_Piglet)
                     .OrderByDescending(w => w.Fec_Weight)
@@ -478,14 +545,13 @@ namespace API_PESO_PIG.Services
                 currentWeights.Add(currentWeight);
             }
 
-            // ✅ CALCULAR PROMEDIO (igual que en FeedingServices)
             var promedio = currentWeights.Average();
             corral.Tot_Pesaje = (float)Math.Round(promedio, 2);
 
             _context.Entry(corral).State = EntityState.Modified;
             await _context.SaveChangesAsync();
 
-            Console.WriteLine($"Promedio del corral {corralId} actualizado: {promedio:F2} kg");
+            Console.WriteLine($"Promedio del corral {corralId} actualizado: {promedio:F2} kg (solo lechones activos)");
         }
     }
 }

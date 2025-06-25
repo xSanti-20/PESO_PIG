@@ -57,7 +57,8 @@ function RegisterFeedingPage({ refreshData, feedingToEdit, onCancelEdit, closeMo
           axiosInstance.get("/api/Corral/ConsultAllCorrals"),
           axiosInstance.get("/api/Food/ConsultAllFoods"),
         ])
-        setUsers(usersRes.data)
+        const activeUsers = usersRes.data.filter(user => user.status !== "Inactivo")
+        setUsers(activeUsers)
         setCorrals(corralsRes.data)
         setFoods(foodsRes.data)
       } catch (error) {

@@ -27,6 +27,9 @@ namespace API_PESO_PIG.Models
         [DisplayName("Placa Sena")]
         public int Placa_Sena { get; set; }
 
+        [DisplayName("Estado")]
+        public bool Is_Active { get; set; } = true; // Nuevo campo
+
         //foránea a la tabla Races
         public int Id_Race { get; set; }
 

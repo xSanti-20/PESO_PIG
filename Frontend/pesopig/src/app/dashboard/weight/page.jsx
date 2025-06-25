@@ -280,6 +280,9 @@ function Weighing() {
           <ContentPage
             TitlePage={TitlePage}
             Data={weighingData}
+            showDeleteButton={true} // ✅ Mostrar eliminar
+            showToggleButton={false} // ✅ No mostrar toggle
+            showStatusColumn={false} // ✅ IMPORTANTE: No mostrar columna
             TitlesTable={titlesWeighing}
             FormPage={() => (
               <RegisterWeighing

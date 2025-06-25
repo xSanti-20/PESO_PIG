@@ -115,6 +115,9 @@ function Stage() {
           TitlePage={TitlePage}
           Data={stageData}
           TitlesTable={titlesStage}
+          showDeleteButton={true} // ✅ Mostrar eliminar
+          showToggleButton={false} // ✅ No mostrar toggle
+          showStatusColumn={false} // ✅ IMPORTANTE: No mostrar columna
           FormPage={() => (
             <RegisterStage
               refreshData={fetchStage}

@@ -155,6 +155,9 @@ function Feeding() {
             TitlePage={TitlePage}
             Data={feedingData}
             TitlesTable={titlesFeeding}
+            showDeleteButton={true} // ✅ Mostrar eliminar
+            showToggleButton={false} // ✅ No mostrar toggle
+            showStatusColumn={false} // ✅ IMPORTANTE: No mostrar columna
             FormPage={() => (
               <RegisterFeeding
                 refreshData={fetchFeedings}

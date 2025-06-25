@@ -108,6 +108,9 @@ function RacePage() {
           TitlePage={TitlePage}
           Data={raceData}
           TitlesTable={titlesRace}
+          showDeleteButton={true} // ✅ Mostrar eliminar
+          showToggleButton={false} // ✅ No mostrar toggle
+          showStatusColumn={false} // ✅ IMPORTANTE: No mostrar columna
           FormPage={() => (
             <RegisterRace
               refreshData={fetchRaces}

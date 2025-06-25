@@ -178,6 +178,9 @@ function Food() {
             TitlePage={TitlePage}
             Data={foodData}
             TitlesTable={titlesFood}
+            showDeleteButton={true} // ✅ Mostrar eliminar
+            showToggleButton={false} // ✅ No mostrar toggle
+            showStatusColumn={false} // ✅ IMPORTANTE: No mostrar columna
             FormPage={() => (
               <RegisterFood
                 refreshData={fetchFoods}

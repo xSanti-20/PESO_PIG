@@ -2,15 +2,40 @@
 
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
-import { Search, Edit, ChevronLeft, ChevronRight, MoreVertical, Trash2, FileText } from "lucide-react"
+import {
+  Search,
+  Edit,
+  ChevronLeft,
+  ChevronRight,
+  MoreVertical,
+  Trash2,
+  FileText,
+  ToggleLeft,
+  ToggleRight,
+} from "lucide-react"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardHeader, CardFooter } from "@/components/ui/card"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import { Badge } from "@/components/ui/badge"
 import { useMobile } from "@/hooks/use-mobile"
 import PDFExportService from "@/services/pdfExportService"
 
-function DataTable({ Data, TitlesTable, onDelete, onUpdate, endpoint, refreshData, extraActions = [] }) {
+function DataTable({
+  Data,
+  TitlesTable,
+  onDelete,
+  onUpdate,
+  onToggleStatus,
+  endpoint,
+  refreshData,
+  extraActions = [],
+  showDeleteButton = true,
+  showToggleButton = false,
+  statusField = "isActive",
+  showInactiveRecords = true,
+  showStatusColumn = false, // ✅ NUEVO: Controlar si mostrar columna de estado
+}) {
   const [searchTerm, setSearchTerm] = useState("")
   const [currentPage, setCurrentPage] = useState(1)
   const [exportingPDF, setExportingPDF] = useState(new Set())
@@ -19,9 +44,19 @@ function DataTable({ Data, TitlesTable, onDelete, onUpdate, endpoint, refreshDat
   const safeData = Array.isArray(Data) ? Data : []
   const itemsPerPage = isMobile ? 2 : isTablet ? 3 : 5
 
-  const filteredData = safeData.filter((row) =>
-    Object.values(row).some((cell) => cell && cell.toString().toLowerCase().includes(searchTerm.toLowerCase())),
-  )
+  // Filtrar datos basado en búsqueda y estado
+  const filteredData = safeData.filter((row) => {
+    const matchesSearch = Object.values(row).some(
+      (cell) => cell && cell.toString().toLowerCase().includes(searchTerm.toLowerCase()),
+    )
+
+    // Si no se muestran registros inactivos, filtrar solo activos
+    if (!showInactiveRecords && statusField in row) {
+      return matchesSearch && row[statusField]
+    }
+
+    return matchesSearch
+  })
 
   const indexOfLastItem = currentPage * itemsPerPage
   const indexOfFirstItem = indexOfLastItem - itemsPerPage
@@ -38,10 +73,8 @@ function DataTable({ Data, TitlesTable, onDelete, onUpdate, endpoint, refreshDat
 
   const totalPages = Math.ceil(filteredData.length / itemsPerPage)
 
-  // ✅ Función corregida para exportar PDF
   const handleExportPDF = async (row) => {
     try {
-      // ✅ Obtener pigletId correctamente
       const pigletId = row.original?.id_Piglet || row.id
 
       if (!pigletId) {
@@ -50,17 +83,12 @@ function DataTable({ Data, TitlesTable, onDelete, onUpdate, endpoint, refreshDat
         return
       }
 
-      console.log(`Exportando PDF para lechón ID: ${pigletId}`)
       setExportingPDF((prev) => new Set(prev).add(pigletId))
-
       await PDFExportService.exportSinglePiglet(pigletId)
-
-      console.log(`PDF generado exitosamente para lechón ${pigletId}`)
     } catch (error) {
       console.error("Error al exportar PDF:", error)
       alert(`Error al generar el PDF: ${error.message}`)
     } finally {
-      // ✅ Asegurar que pigletId esté definido antes de usarlo
       const pigletId = row.original?.id_Piglet || row.id
       if (pigletId) {
         setExportingPDF((prev) => {
@@ -70,6 +98,37 @@ function DataTable({ Data, TitlesTable, onDelete, onUpdate, endpoint, refreshDat
         })
       }
     }
+  }
+
+  const handleToggleStatus = (row) => {
+    if (onToggleStatus) {
+      const currentStatus = row[statusField] ?? true
+      onToggleStatus(row.id, currentStatus)
+    }
+  }
+
+  const getStatusBadge = (row) => {
+    if (!(statusField in row)) return null
+
+    const isActive = row[statusField]
+    return (
+      <Badge variant={isActive ? "default" : "secondary"} className="ml-2">
+        {isActive ? "Activo" : "Inactivo"}
+      </Badge>
+    )
+  }
+
+  // ✅ NUEVO: Filtrar acciones extra basado en el estado del registro
+  const getFilteredExtraActions = (row) => {
+    const isActive = row[statusField] ?? true
+
+    return extraActions.filter((action) => {
+      // Si el lechón está inactivo, ocultar "Recalcular Peso" y "Verificar Etapa"
+      if (!isActive && (action.label.includes("Recalcular") || action.label.includes("Verificar"))) {
+        return false
+      }
+      return true
+    })
   }
 
   const truncateText = (text, maxLength = 15) => {
@@ -97,10 +156,23 @@ function DataTable({ Data, TitlesTable, onDelete, onUpdate, endpoint, refreshDat
         {currentItems.map((row, rowIndex) => {
           const pigletId = row.original?.id_Piglet || row.id
           const isExporting = pigletId ? exportingPDF.has(pigletId) : false
+          const isActive = row[statusField] ?? true
+          const filteredActions = getFilteredExtraActions(row)
 
           return (
-            <Card key={row.id || `mobile-${rowIndex}-${Math.random()}`} className="p-3 shadow-sm">
+            <Card
+              key={row.id || `mobile-${rowIndex}-${Math.random()}`}
+              className={`p-3 shadow-sm ${!isActive ? "opacity-60 bg-gray-50" : ""}`}
+            >
               <div className="space-y-2">
+                {/* ✅ Solo mostrar estado si showStatusColumn es true */}
+                {showStatusColumn && (
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm font-medium text-gray-600">Estado:</span>
+                    {getStatusBadge(row)}
+                  </div>
+                )}
+
                 {TitlesTable.slice(0, 3).map((title, cellIndex) => {
                   const key = Object.keys(row)[cellIndex]
                   const value = row[key]
@@ -112,27 +184,6 @@ function DataTable({ Data, TitlesTable, onDelete, onUpdate, endpoint, refreshDat
                   )
                 })}
 
-                {TitlesTable.length > 3 && (
-                  <details className="mt-2">
-                    <summary className="text-xs text-blue-600 cursor-pointer">Ver más detalles</summary>
-                    <div className="mt-2 space-y-1">
-                      {TitlesTable.slice(3).map((title, cellIndex) => {
-                        const key = Object.keys(row)[cellIndex + 3]
-                        const value = row[key]
-                        return (
-                          <div
-                            key={`mobile-extra-${row.id}-${cellIndex}`}
-                            className="flex justify-between items-center"
-                          >
-                            <span className="text-xs font-medium text-gray-500">{title}:</span>
-                            <span className="text-xs text-right">{truncateText(value, 20)}</span>
-                          </div>
-                        )
-                      })}
-                    </div>
-                  </details>
-                )}
-
                 <div className="flex justify-end pt-2 border-t border-gray-100">
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
@@ -140,26 +191,43 @@ function DataTable({ Data, TitlesTable, onDelete, onUpdate, endpoint, refreshDat
                         <MoreVertical className="w-4 h-4" />
                       </Button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="w-32">
+                    <DropdownMenuContent align="end" className="w-40">
                       {onUpdate && (
                         <DropdownMenuItem onClick={() => onUpdate(row)} className="text-sm">
                           <Edit className="w-3 h-3 mr-2" />
                           Editar
                         </DropdownMenuItem>
                       )}
-                      {/* ✅ Botón PDF en móvil - solo mostrar si hay pigletId */}
+
+                      {showToggleButton && onToggleStatus && (
+                        <DropdownMenuItem onClick={() => handleToggleStatus(row)} className="text-sm">
+                          {isActive ? (
+                            <>
+                              <ToggleLeft className="w-3 h-3 mr-2" />
+                              Desactivar
+                            </>
+                          ) : (
+                            <>
+                              <ToggleRight className="w-3 h-3 mr-2" />
+                              Activar
+                            </>
+                          )}
+                        </DropdownMenuItem>
+                      )}
+
                       {pigletId && (
                         <DropdownMenuItem
                           onClick={() => handleExportPDF(row)}
                           disabled={isExporting}
-                          className="text-sm text-red-600 focus:text-red-600"
+                          className="text-sm"
                         >
                           <FileText className="w-3 h-3 mr-2" />
                           {isExporting ? "Exportando..." : "PDF"}
                         </DropdownMenuItem>
                       )}
-                      {/* Acciones extra */}
-                      {extraActions.map((action, index) => (
+
+                      {/* ✅ Usar acciones filtradas */}
+                      {filteredActions.map((action, index) => (
                         <DropdownMenuItem
                           key={index}
                           onClick={() => action.onClick(row)}
@@ -169,7 +237,8 @@ function DataTable({ Data, TitlesTable, onDelete, onUpdate, endpoint, refreshDat
                           {action.label}
                         </DropdownMenuItem>
                       ))}
-                      {onDelete && (
+
+                      {showDeleteButton && onDelete && (
                         <DropdownMenuItem
                           onClick={() => onDelete(row.id)}
                           className="text-sm text-red-600 focus:text-red-600"
@@ -199,6 +268,10 @@ function DataTable({ Data, TitlesTable, onDelete, onUpdate, endpoint, refreshDat
         <Table>
           <TableHeader>
             <TableRow className="bg-gray-50">
+              {/* ✅ Solo mostrar columna Estado si showStatusColumn es true */}
+              {showStatusColumn && (
+                <TableHead className={`font-bold text-black ${isMobile ? "text-xs px-2" : ""}`}>Estado</TableHead>
+              )}
               {TitlesTable.map((title, index) => (
                 <TableHead key={index} className={`font-bold text-black ${isMobile ? "text-xs px-2" : ""}`}>
                   {isMobile ? title.substring(0, 8) : title}
@@ -211,9 +284,19 @@ function DataTable({ Data, TitlesTable, onDelete, onUpdate, endpoint, refreshDat
             {currentItems.map((row, rowIndex) => {
               const pigletId = row.original?.id_Piglet || row.id
               const isExporting = pigletId ? exportingPDF.has(pigletId) : false
+              const isActive = row[statusField] ?? true
+              const filteredActions = getFilteredExtraActions(row)
 
               return (
-                <TableRow key={row.id || `table-${rowIndex}-${Math.random()}`} className="hover:bg-gray-50">
+                <TableRow
+                  key={row.id || `table-${rowIndex}-${Math.random()}`}
+                  className={`hover:bg-gray-50 ${!isActive ? "opacity-60 bg-gray-50" : ""}`}
+                >
+                  {/* ✅ Solo mostrar celda Estado si showStatusColumn es true */}
+                  {showStatusColumn && (
+                    <TableCell className={isMobile ? "text-xs px-2 py-1" : ""}>{getStatusBadge(row)}</TableCell>
+                  )}
+
                   {TitlesTable.map((title, cellIndex) => {
                     const key = Object.keys(row)[cellIndex]
                     const value = row[key]
@@ -223,6 +306,7 @@ function DataTable({ Data, TitlesTable, onDelete, onUpdate, endpoint, refreshDat
                       </TableCell>
                     )
                   })}
+
                   <TableCell className={isMobile ? "px-2 py-1" : ""}>
                     <div className={`flex ${isMobile ? "flex-col space-y-1" : "space-x-2"}`}>
                       {onUpdate && (
@@ -236,7 +320,28 @@ function DataTable({ Data, TitlesTable, onDelete, onUpdate, endpoint, refreshDat
                           {isMobile ? "Edit" : "Editar"}
                         </Button>
                       )}
-                      {/* ✅ Botón PDF en tabla - solo mostrar si hay pigletId */}
+
+                      {showToggleButton && onToggleStatus && (
+                        <Button
+                          variant="outline"
+                          size={isMobile ? "sm" : "sm"}
+                          onClick={() => handleToggleStatus(row)}
+                          className={`${isActive ? "text-orange-600 hover:text-orange-800" : "text-green-600 hover:text-green-800"} ${isMobile ? "text-xs px-2 py-1 h-7" : ""}`}
+                        >
+                          {isActive ? (
+                            <>
+                              <ToggleLeft className={`${isMobile ? "w-3 h-3 mr-1" : "w-4 h-4 mr-1"}`} />
+                              {isMobile ? "Des" : "Desactivar"}
+                            </>
+                          ) : (
+                            <>
+                              <ToggleRight className={`${isMobile ? "w-3 h-3 mr-1" : "w-4 h-4 mr-1"}`} />
+                              {isMobile ? "Act" : "Activar"}
+                            </>
+                          )}
+                        </Button>
+                      )}
+
                       {pigletId && (
                         <Button
                           variant="outline"
@@ -249,8 +354,9 @@ function DataTable({ Data, TitlesTable, onDelete, onUpdate, endpoint, refreshDat
                           {isExporting ? (isMobile ? "..." : "Exportando...") : isMobile ? "PDF" : "PDF"}
                         </Button>
                       )}
-                      {/* Acciones extra */}
-                      {extraActions.map((action, index) => (
+
+                      {/* ✅ Usar acciones filtradas */}
+                      {filteredActions.map((action, index) => (
                         <Button
                           key={index}
                           variant="outline"
@@ -262,7 +368,8 @@ function DataTable({ Data, TitlesTable, onDelete, onUpdate, endpoint, refreshDat
                           {action.label}
                         </Button>
                       ))}
-                      {onDelete && (
+
+                      {showDeleteButton && onDelete && (
                         <Button
                           variant="outline"
                           size={isMobile ? "sm" : "sm"}
