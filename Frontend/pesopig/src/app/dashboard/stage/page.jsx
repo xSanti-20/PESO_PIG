@@ -21,12 +21,7 @@ function Stage() {
     redirectUrl: null,
   })
 
-  const titlesStage = [
-    "ID",
-    "Nombre",
-    "Peso Desde",
-    "Peso Hasta",
-  ]
+  const titlesStage = ["ID", "Nombre", "Peso Desde (kg)", "Peso Hasta (kg)", "Duración (días)"]
 
   const closeAlert = () => {
     setAlertInfo({
@@ -44,8 +39,10 @@ function Stage() {
         const data = response.data.map((stage) => ({
           id: stage.id_Stage,
           name_Stage: stage.name_Stage,
-          weight_From: stage.weight_From,
-          weight_Upto: stage.weight_Upto,
+          // ✅ Formatear pesos con decimales
+          weight_From: typeof stage.weight_From === "number" ? stage.weight_From.toFixed(1) : stage.weight_From,
+          weight_Upto: typeof stage.weight_Upto === "number" ? stage.weight_Upto.toFixed(1) : stage.weight_Upto,
+          dur_Stage: stage.dur_Stage,
           original: stage,
         }))
         setStageData(data)
@@ -115,9 +112,9 @@ function Stage() {
           TitlePage={TitlePage}
           Data={stageData}
           TitlesTable={titlesStage}
-          showDeleteButton={true} // ✅ Mostrar eliminar
-          showToggleButton={false} // ✅ No mostrar toggle
-          showStatusColumn={false} // ✅ IMPORTANTE: No mostrar columna
+          showDeleteButton={true}
+          showToggleButton={false}
+          showStatusColumn={false}
           FormPage={() => (
             <RegisterStage
               refreshData={fetchStage}

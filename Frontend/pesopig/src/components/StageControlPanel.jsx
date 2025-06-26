@@ -115,7 +115,7 @@ function StageControlPanel({ showAlert, pigletId = null }) {
                         </div>
                         <div className="flex items-center">
                             <FaClock className="w-3 h-3 mr-1" />
-                            <span>24 días máx.</span>
+
                         </div>
                     </div>
                 </div>
@@ -129,7 +129,7 @@ function StageControlPanel({ showAlert, pigletId = null }) {
                         </div>
                         <div className="flex items-center">
                             <FaClock className="w-3 h-3 mr-1" />
-                            <span>42 días máx.</span>
+
                         </div>
                     </div>
                 </div>
@@ -143,7 +143,7 @@ function StageControlPanel({ showAlert, pigletId = null }) {
                         </div>
                         <div className="flex items-center">
                             <FaClock className="w-3 h-3 mr-1" />
-                            <span>47 días máx.</span>
+
                         </div>
                     </div>
                 </div>

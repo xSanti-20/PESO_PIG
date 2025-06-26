@@ -30,7 +30,7 @@ namespace API_PESO_PIG.Controllers
             try
             {
                 await _Services.Add(entity);
-                return Ok(new { message = "Lechón creado con éxito." });
+                return Ok(new { message = "Lechón creado con éxito. El sistema verificará automáticamente las transiciones de etapa." });
             }
             catch (Exception ex)
             {
@@ -58,7 +58,7 @@ namespace API_PESO_PIG.Controllers
                     Des_Corral = p.corral?.Des_Corral,
                     Nam_Race = p.race?.Nam_Race,
                     Name_Stage = p.stage?.Name_Stage,
-                    Is_Active = p.Is_Active // ✅ Agregar campo de estado
+                    Is_Active = p.Is_Active
                 }).ToList();
 
                 return Ok(piglets);
@@ -93,6 +93,28 @@ namespace API_PESO_PIG.Controllers
         }
 
         [Authorize]
+        [HttpGet("GetPigletForWeighing")]
+        public async Task<IActionResult> GetPigletForWeighing(int id_Piglet)
+        {
+            try
+            {
+                var pigletInfo = await _Services.GetPigletForWeighing(id_Piglet);
+
+                if (pigletInfo == null)
+                {
+                    return NotFound("Lechón no existe en la BD.");
+                }
+
+                return Ok(pigletInfo);
+            }
+            catch (Exception ex)
+            {
+                GeneralFunction.Addlog(ex.ToString());
+                return StatusCode(500, new { message = "Error interno del servidor", error = ex.Message });
+            }
+        }
+
+        [Authorize]
         [HttpDelete("DeletePiglet")]
         public async Task<IActionResult> DelPiglet(int id_Piglet)
         {
@@ -112,7 +134,6 @@ namespace API_PESO_PIG.Controllers
             }
         }
 
-        // ✅ NUEVO MÉTODO: Activar/Desactivar lechón
         [Authorize]
         [HttpPut("ToggleStatus")]
         public async Task<IActionResult> ToggleStatus(int id_Piglet, bool isActive)
@@ -155,7 +176,7 @@ namespace API_PESO_PIG.Controllers
                     return NotFound("Lechón no existe en la BD.");
                 }
 
-                return Ok(new { message = "Lechón actualizado correctamente y etapa verificada." });
+                return Ok(new { message = "Lechón actualizado correctamente. El sistema ha verificado automáticamente la etapa según el peso actual." });
             }
             catch (Exception ex)
             {
@@ -164,6 +185,7 @@ namespace API_PESO_PIG.Controllers
             }
         }
 
+        // ✅ ENDPOINT PARA VERIFICAR ETAPA DE UN LECHÓN ESPECÍFICO
         [Authorize]
         [HttpPost("CheckStage/{pigletId}")]
         public async Task<IActionResult> CheckStage(int pigletId)
@@ -180,6 +202,7 @@ namespace API_PESO_PIG.Controllers
             }
         }
 
+        // ✅ ENDPOINT PARA VERIFICAR TODAS LAS ETAPAS
         [Authorize]
         [HttpPost("CheckAllStages")]
         public async Task<IActionResult> CheckAllStages()
@@ -194,7 +217,17 @@ namespace API_PESO_PIG.Controllers
                     StageChanges = results.Count(r => r.StageChanged),
                     WeightDeficient = results.Count(r => r.IsWeightDeficient),
                     Errors = results.Count(r => !r.Success),
-                    Details = results
+                    Details = results.Select(r => new
+                    {
+                        r.PigletId,
+                        r.PigletName,
+                        r.CurrentStage,
+                        r.NewStage,
+                        r.CurrentWeight,
+                        r.StageChanged,
+                        r.TransitionReason,
+                        r.Message
+                    })
                 };
 
                 return Ok(summary);
@@ -206,6 +239,7 @@ namespace API_PESO_PIG.Controllers
             }
         }
 
+        // ✅ ENDPOINT PARA OBTENER LAS DEFINICIONES DE ETAPAS
         [Authorize]
         [HttpGet("GetStageDefinitions")]
         public IActionResult GetStageDefinitions()
@@ -221,8 +255,6 @@ namespace API_PESO_PIG.Controllers
                 return StatusCode(500, new { message = "Error interno del servidor", error = ex.Message });
             }
         }
-
-        // ✅ AGREGAR ESTOS MÉTODOS A TU CONTROLADOR PigletController
 
         [Authorize]
         [HttpGet("ConsultActivePiglets")]
@@ -261,7 +293,6 @@ namespace API_PESO_PIG.Controllers
         {
             try
             {
-                // Solo devolver los campos necesarios para selects/dropdowns
                 var piglets = _Services.GetActivePiglets().Select(p => new
                 {
                     Id_Piglet = p.Id_Piglet,
@@ -279,6 +310,5 @@ namespace API_PESO_PIG.Controllers
                 return StatusCode(500, new { message = "Error interno del servidor", error = ex.Message });
             }
         }
-
     }
 }

@@ -36,13 +36,41 @@ namespace API_PESO_PIG.Services
             public bool Success { get; set; } = true;
         }
 
+        // ✅ NUEVAS DEFINICIONES DE ETAPAS SEGÚN TUS REQUERIMIENTOS
         private static readonly Dictionary<string, StageInfo> StageDefinitions = new()
         {
-            ["PRECEBO"] = new StageInfo { Name = "Precebo", WeightMin = 6.5f, WeightMax = 30f, MaxDays = 49, NextStage = "LEVANTE" },
-            ["PRE_INICIACION"] = new StageInfo { Name = "Pre-iniciación", WeightMin = 6.5f, WeightMax = 17.5f, MaxDays = 25, NextStage = "INICIACION" },
-            ["INICIACION"] = new StageInfo { Name = "Iniciación", WeightMin = 17.5f, WeightMax = 30f, MaxDays = 24, NextStage = "LEVANTE" },
-            ["LEVANTE"] = new StageInfo { Name = "Levante", WeightMin = 30f, WeightMax = 60f, MaxDays = 42, NextStage = "ENGORDE" },
-            ["ENGORDE"] = new StageInfo { Name = "Engorde", WeightMin = 60f, WeightMax = 120f, MaxDays = 47, NextStage = "SACRIFICIO" }
+            ["PRE_INICIO"] = new StageInfo
+            {
+                Name = "Pre-inicio",
+                WeightMin = 6.5f,
+                WeightMax = 17.5f,
+                MaxDays = 25,
+                NextStage = "INICIACION"
+            },
+            ["INICIACION"] = new StageInfo
+            {
+                Name = "Iniciación",
+                WeightMin = 17.5f,
+                WeightMax = 30f,
+                MaxDays = 24,
+                NextStage = "LEVANTE"
+            },
+            ["LEVANTE"] = new StageInfo
+            {
+                Name = "Levante",
+                WeightMin = 30f,
+                WeightMax = 60f,
+                MaxDays = 42,
+                NextStage = "ENGORDE"
+            },
+            ["ENGORDE"] = new StageInfo
+            {
+                Name = "Engorde",
+                WeightMin = 60f,
+                WeightMax = 120f,
+                MaxDays = 47,
+                NextStage = "SACRIFICIO"
+            }
         };
 
         public IEnumerable<Piglet> GetPiglets()
@@ -51,10 +79,9 @@ namespace API_PESO_PIG.Services
                 .Include(p => p.race)
                 .Include(p => p.stage)
                 .Include(p => p.corral)
-                .ToList(); // Devuelve todos los lechones (activos e inactivos)
+                .ToList();
         }
 
-        // ✅ NUEVO: Método para obtener solo lechones activos
         public IEnumerable<Piglet> GetActivePiglets()
         {
             return _context.Piglets
@@ -74,7 +101,61 @@ namespace API_PESO_PIG.Services
                 .FirstOrDefaultAsync(x => x.Id_Piglet == id_Piglet);
         }
 
-        // ✅ NUEVO MÉTODO: Activar/Desactivar lechón
+        public async Task<object> GetPigletForWeighing(int id_Piglet)
+        {
+            var piglet = await _context.Piglets
+                .Include(p => p.race)
+                .Include(p => p.stage)
+                .Include(p => p.corral)
+                .FirstOrDefaultAsync(x => x.Id_Piglet == id_Piglet);
+
+            if (piglet == null)
+                return null;
+
+            var lastWeighing = await _context.Weighings
+                .Where(w => w.Id_Piglet == id_Piglet)
+                .OrderByDescending(w => w.Fec_Weight)
+                .ThenByDescending(w => w.id_Weighings)
+                .FirstOrDefaultAsync();
+
+            return new
+            {
+                Id_Piglet = piglet.Id_Piglet,
+                Name_Piglet = piglet.Name_Piglet,
+                Weight_Initial = piglet.Weight_Initial,
+                Acum_Weight = piglet.Acum_Weight,
+                Current_Weight = lastWeighing?.Weight_Current ?? piglet.Weight_Initial,
+                Fec_Birth = piglet.Fec_Birth,
+                Sex_Piglet = piglet.Sex_Piglet,
+                Placa_Sena = piglet.Placa_Sena,
+                Sta_Date = piglet.Sta_Date,
+                Is_Active = piglet.Is_Active,
+                Race = new
+                {
+                    Id_Race = piglet.race?.id_Race,
+                    Nam_Race = piglet.race?.Nam_Race
+                },
+                Stage = new
+                {
+                    Id_Stage = piglet.stage?.id_Stage,
+                    Name_Stage = piglet.stage?.Name_Stage
+                },
+                Corral = new
+                {
+                    Id_Corral = piglet.corral?.id_Corral,
+                    Des_Corral = piglet.corral?.Des_Corral
+                },
+                LastWeighing = lastWeighing != null ? new
+                {
+                    Weight_Current = lastWeighing.Weight_Current,
+                    Weight_Gain = lastWeighing.Weight_Gain,
+                    Fec_Weight = lastWeighing.Fec_Weight
+                } : null,
+                DaysInStage = piglet.Sta_Date.HasValue ?
+                    (DateTime.Now - piglet.Sta_Date.Value).Days : 0
+            };
+        }
+
         public async Task<bool> ToggleStatus(int id_Piglet, bool isActive)
         {
             try
@@ -85,21 +166,16 @@ namespace API_PESO_PIG.Services
                     return false;
                 }
 
-                // Guardar el estado anterior para comparar
                 bool previousStatus = piglet.Is_Active;
-
-                // Actualizar el estado del lechón
                 piglet.Is_Active = isActive;
 
-                // Solo actualizar el corral si el estado realmente cambió
                 if (previousStatus != isActive)
                 {
                     var corral = await _context.Corrals.FindAsync(piglet.Id_Corral);
                     if (corral != null)
                     {
-                        if (!isActive) // Se está desactivando
+                        if (!isActive)
                         {
-                            // Reducir el conteo de animales
                             corral.Tot_Animal = Math.Max(0, corral.Tot_Animal - 1);
                             if (corral.Tot_Animal == 0)
                             {
@@ -107,9 +183,8 @@ namespace API_PESO_PIG.Services
                                 corral.Tot_Pesaje = 0;
                             }
                         }
-                        else // Se está activando
+                        else
                         {
-                            // Aumentar el conteo de animales
                             corral.Tot_Animal += 1;
                             corral.Est_Corral = "ocupado";
                         }
@@ -118,11 +193,9 @@ namespace API_PESO_PIG.Services
                     }
                 }
 
-                // Actualizar el lechón
                 _context.Piglets.Update(piglet);
                 await _context.SaveChangesAsync();
 
-                // Actualizar el promedio del corral solo si cambió el estado
                 if (previousStatus != isActive)
                 {
                     await UpdateCorralAverageWeight(piglet.Id_Corral);
@@ -143,7 +216,6 @@ namespace API_PESO_PIG.Services
                 entity.Acum_Weight = entity.Weight_Initial;
 
             entity.Sta_Date = DateTime.Now;
-            // ✅ Asegurar que el lechón se cree como activo por defecto
             entity.Is_Active = true;
 
             var corral = _context.Corrals.FirstOrDefault(c => c.id_Corral == entity.Id_Corral);
@@ -208,15 +280,7 @@ namespace API_PESO_PIG.Services
             else
                 updatedPiglet.Sta_Date = existing.Sta_Date;
 
-            // ✅ Preservar el estado activo si no se especifica
-            if (updatedPiglet.Is_Active == false && existing.Is_Active == true)
-            {
-                // Solo cambiar si se especifica explícitamente
-            }
-            else
-            {
-                updatedPiglet.Is_Active = existing.Is_Active;
-            }
+            updatedPiglet.Is_Active = existing.Is_Active;
 
             // Manejar cambio de corral
             if (existing.Id_Corral != updatedPiglet.Id_Corral)
@@ -262,109 +326,7 @@ namespace API_PESO_PIG.Services
             return true;
         }
 
-        public async Task<StageTransitionResult> CheckAndUpdateStage(int pigletId)
-        {
-            var piglet = await _context.Piglets
-                .Include(p => p.stage)
-                .FirstOrDefaultAsync(p => p.Id_Piglet == pigletId);
-
-            if (piglet == null)
-                return new StageTransitionResult { Success = false, Message = "Lechón no encontrado", PigletId = pigletId };
-
-            // ✅ No procesar lechones inactivos
-            if (!piglet.Is_Active)
-                return new StageTransitionResult { Success = false, Message = "Lechón inactivo - no se procesa", PigletId = pigletId };
-
-            float currentWeight = piglet.Acum_Weight;
-
-            var result = new StageTransitionResult
-            {
-                PigletId = piglet.Id_Piglet,
-                PigletName = piglet.Name_Piglet,
-                CurrentStage = piglet.stage?.Name_Stage ?? "Sin etapa",
-                CurrentWeight = currentWeight,
-                Success = true
-            };
-
-            if (!piglet.Sta_Date.HasValue)
-            {
-                piglet.Sta_Date = DateTime.Now;
-                _context.Entry(piglet).State = EntityState.Modified;
-                await _context.SaveChangesAsync();
-            }
-
-            var daysInStage = (DateTime.Now - piglet.Sta_Date.Value).Days;
-            result.DaysInStage = daysInStage;
-
-            var currentStageKey = GetStageKey(piglet.stage?.Name_Stage);
-
-            if (currentStageKey == null || !StageDefinitions.ContainsKey(currentStageKey))
-            {
-                result.Message = $"Etapa actual '{piglet.stage?.Name_Stage}' no reconocida en el sistema";
-                return result;
-            }
-
-            var currentStageDef = StageDefinitions[currentStageKey];
-            var nextStageKey = currentStageDef.NextStage;
-
-            if (currentWeight >= currentStageDef.WeightMax)
-            {
-                if (nextStageKey != null && StageDefinitions.ContainsKey(nextStageKey))
-                {
-                    var success = await TransitionToNextStage(piglet, nextStageKey, "Peso alcanzado");
-                    if (success)
-                    {
-                        result.StageChanged = true;
-                        result.NewStage = StageDefinitions[nextStageKey].Name;
-                        result.TransitionReason = "Peso objetivo alcanzado";
-                        result.Message = $"Transición por peso: {currentWeight}kg >= {currentStageDef.WeightMax}kg";
-                    }
-                    else
-                    {
-                        result.Success = false;
-                        result.Message = "Error al realizar la transición por peso";
-                    }
-                }
-                else
-                {
-                    result.Message = "Peso objetivo alcanzado - Listo para sacrificio";
-                }
-            }
-            else if (daysInStage >= currentStageDef.MaxDays)
-            {
-                if (nextStageKey != null && StageDefinitions.ContainsKey(nextStageKey))
-                {
-                    var success = await TransitionToNextStage(piglet, nextStageKey, "Tiempo límite alcanzado");
-                    if (success)
-                    {
-                        result.StageChanged = true;
-                        result.NewStage = StageDefinitions[nextStageKey].Name;
-                        result.TransitionReason = "Tiempo límite alcanzado";
-                        result.Message = $"Transición por tiempo: {daysInStage} días >= {currentStageDef.MaxDays} días";
-                        result.IsWeightDeficient = true;
-                    }
-                    else
-                    {
-                        result.Success = false;
-                        result.Message = "Error al realizar la transición por tiempo";
-                    }
-                }
-                else
-                {
-                    result.Message = $"Tiempo límite alcanzado - Peso insuficiente: {currentWeight}kg";
-                    result.IsWeightDeficient = true;
-                }
-            }
-            else
-            {
-                var daysRemaining = currentStageDef.MaxDays - daysInStage;
-                var weightRemaining = currentStageDef.WeightMax - currentWeight;
-                result.Message = $"En progreso: {daysRemaining} días restantes, {weightRemaining:F1}kg para siguiente etapa";
-            }
-
-            return result;
-        }
-
+        // ✅ MÉTODO PRINCIPAL PARA VERIFICAR Y ACTUALIZAR ETAPAS
         public async Task<StageTransitionResult> CheckAndUpdateStageWithRegression(int pigletId)
         {
             var piglet = await _context.Piglets
@@ -374,7 +336,6 @@ namespace API_PESO_PIG.Services
             if (piglet == null)
                 return new StageTransitionResult { Success = false, Message = "Lechón no encontrado", PigletId = pigletId };
 
-            // ✅ No procesar lechones inactivos
             if (!piglet.Is_Active)
                 return new StageTransitionResult { Success = false, Message = "Lechón inactivo - no se procesa", PigletId = pigletId };
 
@@ -417,19 +378,33 @@ namespace API_PESO_PIG.Services
             return result;
         }
 
+        // ✅ MÉTODO ACTUALIZADO CON LOS NUEVOS RANGOS DE PESO
         private string DetermineCorrectStageByWeight(float weight)
         {
-            if (weight >= 6.5f && weight < 30f) return "PRECEBO";
-            if (weight >= 30f && weight < 60f) return "LEVANTE";
-            if (weight >= 60f) return "ENGORDE";
+            // Pre-inicio/Precebo: 6.5kg a 17.5kg
+            if (weight >= 6.5f && weight < 17.5f) return "PRE_INICIO";
 
-            return "PRECEBO";
+            // Iniciación: 17.5kg a 30kg
+            if (weight >= 17.5f && weight < 30f) return "INICIACION";
+
+            // Levante: 30kg a 60kg
+            if (weight >= 30f && weight < 60f) return "LEVANTE";
+
+            // Engorde: 60kg a 120kg
+            if (weight >= 60f && weight <= 120f) return "ENGORDE";
+
+            // Si el peso es menor a 6.5kg, mantener en pre-inicio
+            if (weight < 6.5f) return "PRE_INICIO";
+
+            // Si el peso es mayor a 120kg, listo para sacrificio
+            if (weight > 120f) return "ENGORDE"; // Mantener en engorde hasta sacrificio
+
+            return "PRE_INICIO"; // Por defecto
         }
 
         public async Task<List<StageTransitionResult>> CheckAllStages()
         {
             var results = new List<StageTransitionResult>();
-            // ✅ Solo procesar lechones activos
             var piglets = await _context.Piglets
                 .Include(p => p.stage)
                 .Where(p => p.stage.Name_Stage != "SACRIFICIO" && p.Is_Active)
@@ -450,10 +425,18 @@ namespace API_PESO_PIG.Services
 
             Stage nextStage = null;
 
-            if (nextStageKey == "PRECEBO")
+            // ✅ BÚSQUEDA ACTUALIZADA PARA LAS NUEVAS ETAPAS
+            if (nextStageKey == "PRE_INICIO")
             {
                 nextStage = await _context.Stages
-                    .FirstOrDefaultAsync(s => s.Name_Stage.ToUpper().Contains("PRECEBO"));
+                    .FirstOrDefaultAsync(s => s.Name_Stage.ToUpper().Contains("PRE") &&
+                                            (s.Name_Stage.ToUpper().Contains("INICIO") || s.Name_Stage.ToUpper().Contains("PRECEBO")));
+            }
+            else if (nextStageKey == "INICIACION")
+            {
+                nextStage = await _context.Stages
+                    .FirstOrDefaultAsync(s => s.Name_Stage.ToUpper().Contains("INICIACION") &&
+                                            !s.Name_Stage.ToUpper().Contains("PRE"));
             }
             else if (nextStageKey == "LEVANTE")
             {
@@ -464,13 +447,6 @@ namespace API_PESO_PIG.Services
             {
                 nextStage = await _context.Stages
                     .FirstOrDefaultAsync(s => s.Name_Stage.ToUpper().Contains("ENGORDE"));
-            }
-            else
-            {
-                var nextStageName = StageDefinitions.ContainsKey(nextStageKey) ? StageDefinitions[nextStageKey].Name : nextStageKey;
-                nextStage = await _context.Stages
-                    .FirstOrDefaultAsync(s => s.Name_Stage.ToUpper().Contains(nextStageKey.ToUpper()) ||
-                                              s.Name_Stage.ToUpper().Contains(nextStageName.ToUpper()));
             }
 
             if (nextStage == null)
@@ -493,16 +469,27 @@ namespace API_PESO_PIG.Services
             return true;
         }
 
+        // ✅ MÉTODO ACTUALIZADO PARA RECONOCER LAS NUEVAS ETAPAS
         private string GetStageKey(string stageName)
         {
             if (string.IsNullOrEmpty(stageName)) return null;
             var upperName = stageName.ToUpper();
 
-            if (upperName.Contains("PRECEBO")) return "PRECEBO";
-            if (upperName.Contains("PRE") && upperName.Contains("INICIACION")) return "PRECEBO";
-            if (upperName.Contains("INICIACION") && !upperName.Contains("PRE")) return "PRECEBO";
-            if (upperName.Contains("LEVANTE")) return "LEVANTE";
-            if (upperName.Contains("ENGORDE")) return "ENGORDE";
+            // Pre-inicio o Precebo
+            if (upperName.Contains("PRE") && (upperName.Contains("INICIO") || upperName.Contains("PRECEBO")))
+                return "PRE_INICIO";
+
+            // Iniciación (pero no pre-iniciación)
+            if (upperName.Contains("INICIACION") && !upperName.Contains("PRE"))
+                return "INICIACION";
+
+            // Levante
+            if (upperName.Contains("LEVANTE"))
+                return "LEVANTE";
+
+            // Engorde
+            if (upperName.Contains("ENGORDE"))
+                return "ENGORDE";
 
             return null;
         }
@@ -512,10 +499,8 @@ namespace API_PESO_PIG.Services
             return StageDefinitions;
         }
 
-        // ✅ MODIFICADO: Solo considerar lechones activos para el promedio del corral
         private async Task UpdateCorralAverageWeight(int corralId)
         {
-            // Solo considerar lechones activos
             var pigletsInCorral = await _context.Piglets
                 .Where(p => p.Id_Corral == corralId && p.Is_Active)
                 .ToListAsync();

@@ -40,7 +40,7 @@ CREATE TABLE `corrals` (
 
 LOCK TABLES `corrals` WRITE;
 /*!40000 ALTER TABLE `corrals` DISABLE KEYS */;
-INSERT INTO `corrals` VALUES (1,'Corral 1',0,0,'libre');
+INSERT INTO `corrals` VALUES (1,'Corral 1',2,8.2,'ocupado');
 /*!40000 ALTER TABLE `corrals` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -128,7 +128,7 @@ CREATE TABLE `foods` (
   PRIMARY KEY (`id_Food`),
   KEY `fk_food_stages_idx` (`id_Stage`),
   CONSTRAINT `fk_foods_stages` FOREIGN KEY (`id_Stage`) REFERENCES `stages` (`id_Stage`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -167,7 +167,7 @@ CREATE TABLE `piglets` (
   CONSTRAINT `fk_piglets_corrals` FOREIGN KEY (`id_Corral`) REFERENCES `corrals` (`id_Corral`),
   CONSTRAINT `fk_piglets_races` FOREIGN KEY (`id_Race`) REFERENCES `races` (`id_Race`),
   CONSTRAINT `fk_piglets_stages` FOREIGN KEY (`id_Stage`) REFERENCES `stages` (`id_Stage`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -190,7 +190,7 @@ CREATE TABLE `races` (
   `id_Race` int NOT NULL AUTO_INCREMENT,
   `Nam_Race` varchar(40) NOT NULL,
   PRIMARY KEY (`id_Race`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -199,6 +199,7 @@ CREATE TABLE `races` (
 
 LOCK TABLES `races` WRITE;
 /*!40000 ALTER TABLE `races` DISABLE KEYS */;
+INSERT INTO `races` VALUES (2,'Trple Jamon');
 /*!40000 ALTER TABLE `races` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -212,11 +213,11 @@ DROP TABLE IF EXISTS `stages`;
 CREATE TABLE `stages` (
   `id_Stage` int NOT NULL AUTO_INCREMENT,
   `Name_Stage` varchar(45) NOT NULL,
-  `Weight_From` int NOT NULL,
-  `Weight_Upto` int NOT NULL,
+  `Weight_From` float DEFAULT NULL,
+  `Weight_Upto` float DEFAULT NULL,
   `Dur_Stage` int NOT NULL,
   PRIMARY KEY (`id_Stage`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -225,6 +226,7 @@ CREATE TABLE `stages` (
 
 LOCK TABLES `stages` WRITE;
 /*!40000 ALTER TABLE `stages` DISABLE KEYS */;
+INSERT INTO `stages` VALUES (4,'Pre-Inicio',6.5,17.5,24),(5,'Iniciacion',17.5,30,24),(6,'Levante',30,60,42),(7,'Engorde',60,120,49);
 /*!40000 ALTER TABLE `stages` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -259,7 +261,7 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES (1,'SantiagoP','Administrador','puentessantiago2003@gmail.com',0,0,'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InB1ZW50ZXNzYW50aWFnbzIwMDNAZ21haWwuY29tIiwiVXNlcklkIjoiMSIsInJvbGUiOiJBZG1pbmlzdHJhZG9yIiwibmJmIjoxNzUwODYwNDcyLCJleHAiOjE3NTA4NjQwNzIsImlhdCI6MTc1MDg2MDQ3MiwiaXNzIjoiUGVzb1BpZ0FQSSIsImF1ZCI6IlBlc29QaWdGcm9udGVuZCJ9.U2-PdDrHQrPzJIfX1_WZgmXwEHz0y6GzKnKlU5huwno','$2a$11$a7/TqHrMt1FaephZaaJxM.HB.BoNpDGlS1P6E2fWKAblJr9r4axbu','$2a$11$eO9WmeFwyrOlkfHGMycsm.',NULL,NULL,'Activo','2025-06-25 14:07:53'),(2,'Administrador','Administrador','jumoraless@sena.edu.co',0,0,'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Imp1bW9yYWxlc3NAc2VuYS5lZHUuY28iLCJVc2VySWQiOiIyIiwicm9sZSI6IkFkbWluaXN0cmFkb3IiLCJuYmYiOjE3NTAzNDM3MzQsImV4cCI6MTc1MDM0NzMzNCwiaWF0IjoxNzUwMzQzNzM0LCJpc3MiOiJQZXNvUGlnQVBJIiwiYXVkIjoiUGVzb1BpZ0Zyb250ZW5kIn0.0mpI2OByaEZQW9eMLLQYyiCNyX9U9xEy8TRFhWq_Ntg','$2a$11$t0dsydc5kPYtjVYgSUNrkOqLyrGXs92/hDU5ZESrThjZDKd4xIHxi','$2a$11$rcBq5.q1PaLoTE72kIpV4.',NULL,NULL,'Activo','2025-06-19 14:35:35');
+INSERT INTO `users` VALUES (1,'SantiagoP','Administrador','puentessantiago2003@gmail.com',0,0,'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InB1ZW50ZXNzYW50aWFnbzIwMDNAZ21haWwuY29tIiwiVXNlcklkIjoiMSIsInJvbGUiOiJBZG1pbmlzdHJhZG9yIiwibmJmIjoxNzUwOTU4NTQ2LCJleHAiOjE3NTA5NjIxNDYsImlhdCI6MTc1MDk1ODU0NiwiaXNzIjoiUGVzb1BpZ0FQSSIsImF1ZCI6IlBlc29QaWdGcm9udGVuZCJ9.jIkX22-Fd1b9L9tQ4mQDhw9_njq8PHRu2D2MxbyeCXo','$2a$11$VkuxQt5UkoWbESUn1pHWW.5tVi3QgvDHtDHxmPfmZMvb0YLZ5K.SS','$2a$11$3exBn4NGSlMHE/6TN3BqTO',NULL,NULL,'Activo','2025-06-26 17:22:26'),(2,'Administrador','Administrador','jumoraless@sena.edu.co',0,0,'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Imp1bW9yYWxlc3NAc2VuYS5lZHUuY28iLCJVc2VySWQiOiIyIiwicm9sZSI6IkFkbWluaXN0cmFkb3IiLCJuYmYiOjE3NTAzNDM3MzQsImV4cCI6MTc1MDM0NzMzNCwiaWF0IjoxNzUwMzQzNzM0LCJpc3MiOiJQZXNvUGlnQVBJIiwiYXVkIjoiUGVzb1BpZ0Zyb250ZW5kIn0.0mpI2OByaEZQW9eMLLQYyiCNyX9U9xEy8TRFhWq_Ntg','$2a$11$t0dsydc5kPYtjVYgSUNrkOqLyrGXs92/hDU5ZESrThjZDKd4xIHxi','$2a$11$rcBq5.q1PaLoTE72kIpV4.',NULL,NULL,'Activo','2025-06-19 14:35:35');
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -282,7 +284,7 @@ CREATE TABLE `weighings` (
   KEY `fk_weighings_piglet_idx` (`id_Piglet`),
   CONSTRAINT `fk_weighings_piglet` FOREIGN KEY (`id_Piglet`) REFERENCES `piglets` (`id_Piglet`),
   CONSTRAINT `fk_weighings_users` FOREIGN KEY (`id_Users`) REFERENCES `users` (`id_Users`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -303,4 +305,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-06-25  9:31:55
+-- Dump completed on 2025-06-26 12:46:20

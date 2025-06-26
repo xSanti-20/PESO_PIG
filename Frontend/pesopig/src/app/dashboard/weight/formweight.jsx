@@ -2,212 +2,181 @@
 
 import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import axiosInstance from "@/lib/axiosInstance"
-import {
-    FaWeightHanging,
-    FaCalendarAlt,
-    FaUser,
-    FaPiggyBank,
-    FaCalculator,
-    FaInfoCircle,
-    FaExclamationTriangle,
-} from "react-icons/fa"
+import { FaInfoCircle, FaWeight, FaExclamationTriangle } from "react-icons/fa"
 
-async function SendData(body, isEditing = false) {
-    if (isEditing) {
-        return await axiosInstance.put("/api/Weighing/UpdateWeighing", body)
-    } else {
-        return await axiosInstance.post("/api/Weighing/CreateWeighing", body)
-    }
-}
+function RegisterWeighing({ refreshData, weighingToEdit, onCancelEdit, closeModal, showAlert }) {
+    const [formData, setFormData] = useState({
+        weight_Current: "",
+        fec_Weight: new Date().toISOString().split("T")[0],
+        id_Piglet: "",
+        id_Users: "",
+    })
 
-function RegisterWeighingPage({ refreshData, weighingToEdit, onCancelEdit, closeModal, showAlert }) {
     const [piglets, setPiglets] = useState([])
     const [users, setUsers] = useState([])
+    const [selectedPigletInfo, setSelectedPigletInfo] = useState(null)
+    const [weighings, setWeighings] = useState([])
     const [loading, setLoading] = useState(false)
-    const [selectedPiglet, setSelectedPiglet] = useState(null)
-    const [weightCurrent, setWeightCurrent] = useState("")
-    const [weightGain, setWeightGain] = useState("")
-    const [isCalculating, setIsCalculating] = useState(false)
-    const [fechaPesaje, setFechaPesaje] = useState("")
-    const [idUsuario, setIdUsuario] = useState("")
-    const [pigletWeighings, setPigletWeighings] = useState([])
-    const [weightValidation, setWeightValidation] = useState(null)
+    const [calculatedGain, setCalculatedGain] = useState(0)
 
-    const isEditing = !!weighingToEdit
+    useEffect(() => {
+        fetchPiglets()
+        fetchUsers()
+
+        // Establecer fecha actual por defecto
+        const today = new Date().toISOString().split("T")[0]
+        setFormData((prev) => ({ ...prev, fec_Weight: today }))
+    }, [])
 
     useEffect(() => {
         if (weighingToEdit) {
-            const formatDate = (dateString) => {
-                if (!dateString) return ""
-                const date = new Date(dateString)
-                return date.toISOString().split("T")[0]
-            }
+            setFormData({
+                id_Weighings: weighingToEdit.id_Weighings,
+                weight_Current: weighingToEdit.weight_Current || "",
+                fec_Weight: weighingToEdit.fec_Weight ? new Date(weighingToEdit.fec_Weight).toISOString().split("T")[0] : "",
+                id_Piglet: weighingToEdit.id_Piglet || "",
+                id_Users: weighingToEdit.id_Users || "",
+            })
 
-            setWeightCurrent(weighingToEdit.weight_Current || "")
-            setWeightGain(weighingToEdit.weight_Gain || "")
-            setFechaPesaje(formatDate(weighingToEdit.fec_Weight))
-            setIdUsuario(weighingToEdit.id_Users?.toString() || "")
-
-            if (weighingToEdit.id_Piglet && piglets.length > 0) {
-                const piglet = piglets.find((p) => p.id_Piglet == weighingToEdit.id_Piglet)
-                if (piglet) {
-                    setSelectedPiglet(piglet)
-                    loadPigletWeighings(weighingToEdit.id_Piglet)
-                }
+            if (weighingToEdit.id_Piglet) {
+                fetchPigletInfo(weighingToEdit.id_Piglet)
             }
-        } else {
-            setWeightCurrent("")
-            setWeightGain("")
-            setFechaPesaje("")
-            setIdUsuario("")
-            setSelectedPiglet(null)
-            setPigletWeighings([])
-            setWeightValidation(null)
         }
-    }, [weighingToEdit, piglets])
+    }, [weighingToEdit])
 
+    // ✅ CALCULAR GANANCIA CUANDO CAMBIE EL PESO ACTUAL
     useEffect(() => {
-        async function fetchData() {
-            try {
-                const pigletResponse = await axiosInstance.get("/api/Piglet/GetActivePigletsForSelect")
-                setPiglets(pigletResponse.data)
-
-                const userResponse = await axiosInstance.get("/api/User/ConsultAllUser")
-                const activeUsers = userResponse.data.filter(user => user.status !== "Inactivo")
-                setUsers(activeUsers)
-            } catch (error) {
-                console.error("Error al cargar datos: ", error)
-                if (showAlert) showAlert("Error al cargar los datos necesarios", "error")
-            }
+        if (formData.weight_Current && selectedPigletInfo) {
+            calculateWeightGain()
         }
-        fetchData()
-    }, [showAlert])
+    }, [formData.weight_Current, selectedPigletInfo, weighings])
 
-    const loadPigletWeighings = async (pigletId) => {
+    const fetchPiglets = async () => {
         try {
-            const response = await axiosInstance.get(`/api/Weighing/GetWeighingsByPiglet?id_Piglet=${pigletId}`)
-            setPigletWeighings(response.data || [])
+            const response = await axiosInstance.get("/api/Piglet/GetActivePigletsForSelect")
+            setPiglets(response.data)
         } catch (error) {
-            console.error("Error al cargar pesajes del lechón:", error)
-            setPigletWeighings([])
+            console.error("Error al cargar lechones:", error)
         }
     }
 
-    const validateWeight = (currentWeight, piglet, weighings) => {
-        if (!currentWeight || !piglet) {
-            setWeightValidation(null)
+    const fetchUsers = async () => {
+        try {
+            const response = await axiosInstance.get("/api/User/ConsultAllUser")
+            setUsers(response.data)
+        } catch (error) {
+            console.error("Error al cargar usuarios:", error)
+        }
+    }
+
+    // ✅ FUNCIÓN MEJORADA PARA OBTENER INFORMACIÓN DEL LECHÓN
+    const fetchPigletInfo = async (pigletId) => {
+        try {
+            console.log(`Obteniendo información del lechón ${pigletId}`)
+
+            // Obtener información completa del lechón
+            const pigletResponse = await axiosInstance.get(`/api/Piglet/GetPigletForWeighing?id_Piglet=${pigletId}`)
+            const pigletInfo = pigletResponse.data
+
+            console.log("Información del lechón:", pigletInfo)
+
+            // ✅ CORREGIDO: Obtener pesajes del lechón sin mostrar error si no hay
+            const weighingsResponse = await axiosInstance.get(`/api/Weighing/GetWeighingsByPiglet?id_Piglet=${pigletId}`)
+            const pigletWeighings = weighingsResponse.data || []
+
+            console.log("Pesajes del lechón:", pigletWeighings)
+
+            setSelectedPigletInfo(pigletInfo)
+            setWeighings(pigletWeighings)
+        } catch (error) {
+            console.error("Error al obtener información del lechón:", error)
+            // ✅ CORREGIDO: No mostrar error si es por falta de pesajes
+            if (error.response && error.response.status === 404) {
+                console.log("No se encontraron pesajes previos para este lechón")
+                setWeighings([])
+            } else {
+                setSelectedPigletInfo(null)
+                setWeighings([])
+            }
+        }
+    }
+
+    // ✅ FUNCIÓN CORREGIDA PARA CALCULAR GANANCIA DE PESO
+    const calculateWeightGain = () => {
+        if (!formData.weight_Current || !selectedPigletInfo) {
+            setCalculatedGain(0)
             return
         }
 
-        const weightNum = Number.parseFloat(currentWeight)
-        const lastWeight = weighings.length > 0 ? weighings[weighings.length - 1].weight_Current : piglet.weight_Initial
+        const currentWeight = Number.parseFloat(formData.weight_Current)
+        let previousWeight = 0
 
-        const expectedGain = weightNum - lastWeight
-        const isWeightLoss = expectedGain < 0
-        const isSignificantGain = expectedGain > 5 // Más de 5kg de ganancia
-        const isVeryLowGain = expectedGain < 0.1 && expectedGain > 0 // Menos de 100g de ganancia
-
-        let validation = {
-            isValid: true,
-            type: "success",
-            message: `Ganancia normal: +${expectedGain.toFixed(2)} kg`,
+        // ✅ CORREGIDO: Acceso correcto al peso inicial
+        if (!weighings || weighings.length === 0) {
+            // Si no hay pesajes previos, usar el peso inicial
+            previousWeight =
+                selectedPigletInfo.Weight_Initial || selectedPigletInfo.weight_Initial || selectedPigletInfo.acum_Weight || 0
+            console.log(`Primer pesaje - Peso inicial: ${previousWeight}kg`)
+        } else {
+            // Si hay pesajes previos, usar el último peso registrado
+            const sortedWeighings = weighings.sort((a, b) => new Date(b.fec_Weight) - new Date(a.fec_Weight))
+            previousWeight =
+                sortedWeighings[0]?.weight_Current ||
+                selectedPigletInfo.Weight_Initial ||
+                selectedPigletInfo.weight_Initial ||
+                0
+            console.log(`Pesajes previos - Último peso: ${previousWeight}kg`)
         }
 
-        if (isWeightLoss) {
-            validation = {
-                isValid: false,
-                type: "error",
-                message: `⚠️ Pérdida de peso detectada: ${expectedGain.toFixed(2)} kg. Verifica el peso ingresado.`,
-            }
-        } else if (isSignificantGain) {
-            validation = {
-                isValid: false,
-                type: "warning",
-                message: `⚠️ Ganancia muy alta: +${expectedGain.toFixed(2)} kg. Verifica el peso ingresado.`,
-            }
-        } else if (isVeryLowGain) {
-            validation = {
-                isValid: true,
-                type: "info",
-                message: `ℹ️ Ganancia muy baja: +${expectedGain.toFixed(2)} kg. Esto es normal en algunos casos.`,
-            }
-        }
+        const gain = currentWeight - previousWeight
+        setCalculatedGain(gain)
 
-        setWeightValidation(validation)
+        console.log(`Cálculo de ganancia: ${currentWeight}kg - ${previousWeight}kg = ${gain}kg`)
+    }
+
+    const handleInputChange = (e) => {
+        const { name, value } = e.target
+        setFormData((prev) => ({ ...prev, [name]: value }))
     }
 
     const handlePigletChange = async (e) => {
         const pigletId = e.target.value
-        if (!pigletId) {
-            setSelectedPiglet(null)
-            setWeightGain("")
-            setPigletWeighings([])
-            setWeightValidation(null)
-            return
-        }
+        setFormData((prev) => ({ ...prev, id_Piglet: pigletId }))
 
-        const piglet = piglets.find((p) => p.id_Piglet == pigletId)
-        setSelectedPiglet(piglet)
-
-        // Cargar pesajes del lechón
-        await loadPigletWeighings(pigletId)
-
-        if (weightCurrent) {
-            calculateWeightGain(weightCurrent, piglet)
-        }
-    }
-
-    const handleWeightCurrentChange = (e) => {
-        const newWeightCurrent = e.target.value
-        setWeightCurrent(newWeightCurrent)
-
-        if (selectedPiglet && newWeightCurrent) {
-            calculateWeightGain(newWeightCurrent, selectedPiglet)
-            validateWeight(newWeightCurrent, selectedPiglet, pigletWeighings)
+        if (pigletId) {
+            await fetchPigletInfo(pigletId)
         } else {
-            setWeightGain("")
-            setWeightValidation(null)
+            setSelectedPigletInfo(null)
+            setWeighings([])
+            setCalculatedGain(0)
         }
     }
 
-    const calculateWeightGain = (currentWeight, piglet) => {
-        if (!piglet || !currentWeight) return
-
-        setIsCalculating(true)
-
-        const weightCurrentNum = Number.parseFloat(currentWeight)
-
-        // Usar el último pesaje si existe, sino el peso inicial
-        const lastWeight =
-            pigletWeighings.length > 0 ? pigletWeighings[pigletWeighings.length - 1].weight_Current : piglet.weight_Initial
-
-        const gain = weightCurrentNum - lastWeight
-        setWeightGain(gain.toFixed(2))
-        setIsCalculating(false)
-    }
-
-    async function handlerSubmit(event) {
-        event.preventDefault()
+    const handleSubmit = async (e) => {
+        e.preventDefault()
         setLoading(true)
 
-        if (!weightCurrent || !fechaPesaje || !selectedPiglet || !idUsuario) {
-            showAlert?.("Todos los campos son requeridos.", "error")
+        // Validaciones
+        if (!formData.id_Piglet || !formData.weight_Current || !formData.fec_Weight || !formData.id_Users) {
+            showAlert("Todos los campos son requeridos.", "error")
             setLoading(false)
             return
         }
 
-        if (isNaN(Number.parseFloat(weightCurrent))) {
-            showAlert?.("El peso actual debe ser un valor válido.", "error")
+        const currentWeight = Number.parseFloat(formData.weight_Current)
+
+        // ✅ VALIDAR QUE EL PESO SEA POSITIVO
+        if (currentWeight <= 0) {
+            showAlert("El peso debe ser mayor a 0.", "error")
             setLoading(false)
             return
         }
 
-        // Validar peso si hay problemas detectados
-        if (weightValidation && !weightValidation.isValid && weightValidation.type === "error") {
+        // ✅ VALIDAR QUE NO SEA UNA PÉRDIDA DE PESO EXCESIVA
+        if (calculatedGain < -5) {
             const confirmProceed = window.confirm(
-                `${weightValidation.message}\n\n¿Estás seguro de que deseas continuar con este peso?`,
+                `El lechón perdió ${Math.abs(calculatedGain).toFixed(1)} kg. ¿Estás seguro de que el peso es correcto?`,
             )
             if (!confirmProceed) {
                 setLoading(false)
@@ -216,224 +185,155 @@ function RegisterWeighingPage({ refreshData, weighingToEdit, onCancelEdit, close
         }
 
         const body = {
-            weight_Current: Number.parseFloat(weightCurrent),
-            fec_Weight: fechaPesaje,
-            id_Piglet: Number.parseInt(selectedPiglet.id_Piglet),
-            id_Users: Number.parseInt(idUsuario),
+            Weight_Current: currentWeight,
+            Weight_Gain: calculatedGain, // ✅ Enviar la ganancia calculada
+            Fec_Weight: formData.fec_Weight,
+            Id_Piglet: Number.parseInt(formData.id_Piglet),
+            id_Users: Number.parseInt(formData.id_Users),
         }
 
-        // No enviamos weight_Gain porque se calcula automáticamente en el backend
-        if (isEditing) {
-            body.id_Weighings = weighingToEdit.id_Weighing || weighingToEdit.id_Weighings
+        if (weighingToEdit) {
+            body.id_Weighings = formData.id_Weighings
         }
 
         try {
-            const response = await SendData(body, isEditing)
-            const successMessage =
-                response.data?.message || (isEditing ? "Pesaje actualizado exitosamente." : "Pesaje registrado exitosamente.")
+            if (weighingToEdit) {
+                await axiosInstance.put("/api/Weighing/UpdateWeighing", body)
+                showAlert(
+                    "Pesaje actualizado correctamente. El sistema ha verificado automáticamente la etapa del lechón.",
+                    "success",
+                )
+            } else {
+                await axiosInstance.post("/api/Weighing/CreateWeighing", body)
+                showAlert(
+                    "Pesaje registrado correctamente. El sistema ha verificado automáticamente la etapa del lechón.",
+                    "success",
+                )
+            }
 
-            showAlert?.(successMessage, "success")
-            handleReset()
+            // Limpiar formulario
+            setFormData({
+                weight_Current: "",
+                fec_Weight: new Date().toISOString().split("T")[0],
+                id_Piglet: "",
+                id_Users: "",
+            })
+
+            setSelectedPigletInfo(null)
+            setWeighings([])
+            setCalculatedGain(0)
+
+            refreshData()
+            closeModal()
         } catch (error) {
-            console.error(error)
-            const errorMessage =
-                error.response?.data?.message || `Ocurrió un error al ${isEditing ? "actualizar" : "registrar"} el pesaje.`
-            showAlert?.(errorMessage, "error")
+            console.error("Error al procesar pesaje:", error)
+            const errorMessage = error.response?.data?.message || "Error al procesar el pesaje"
+            showAlert(errorMessage, "error")
         } finally {
             setLoading(false)
         }
     }
 
-    const handleReset = () => {
-        setWeightCurrent("")
-        setWeightGain("")
-        setFechaPesaje("")
-        setIdUsuario("")
-        setSelectedPiglet(null)
-        setPigletWeighings([])
-        setWeightValidation(null)
+    // ✅ FUNCIÓN CORREGIDA PARA OBTENER EL PESO ANTERIOR
+    const getPreviousWeight = () => {
+        if (!selectedPigletInfo) return 0
 
-        closeModal?.()
-        refreshData?.()
+        if (!weighings || weighings.length === 0) {
+            return (
+                selectedPigletInfo.Weight_Initial || selectedPigletInfo.weight_Initial || selectedPigletInfo.acum_Weight || 0
+            )
+        }
+
+        const sortedWeighings = weighings.sort((a, b) => new Date(b.fec_Weight) - new Date(a.fec_Weight))
+        return (
+            sortedWeighings[0]?.weight_Current || selectedPigletInfo.Weight_Initial || selectedPigletInfo.weight_Initial || 0
+        )
     }
 
+    const previousWeight = getPreviousWeight()
+
     return (
-        <div className="max-w-4xl mx-auto p-4 sm:p-6">
-            <Card className="w-full">
-                <CardHeader>
-                    <CardTitle className="text-2xl font-bold text-center">
-                        {isEditing ? "Actualizar Pesaje" : "Registrar Pesaje"}
-                    </CardTitle>
-                </CardHeader>
-                <CardContent>
-                    <form onSubmit={handlerSubmit} className="space-y-6">
-                        {/* Animal */}
-                        <div className="space-y-2">
-                            <label className="block text-sm font-medium text-gray-700">
-                                <FaPiggyBank className="inline mr-2" />
-                                Animal *
-                            </label>
+        <div className="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-md">
+            <div className="flex items-center justify-between mb-6">
+                <h2 className="text-2xl font-bold text-gray-800">
+                    {weighingToEdit ? "Editar Pesaje" : "Registrar Nuevo Pesaje"}
+                </h2>
+            </div>
+
+            <form onSubmit={handleSubmit} className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {/* Columna izquierda */}
+                    <div className="space-y-4">
+                        <h3 className="text-lg font-semibold text-gray-700">Información del Pesaje</h3>
+
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">Lechón *</label>
                             <select
-                                id="Id_Piglet"
-                                name="Id_Piglet"
-                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                name="id_Piglet"
+                                value={formData.id_Piglet}
                                 onChange={handlePigletChange}
-                                value={selectedPiglet?.id_Piglet || ""}
-                                disabled={isEditing} // No permitir cambiar el lechón al editar
                                 required
+                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                             >
-                                <option value="">Selecciona un animal</option>
-                                {piglets.map((piglet) => (
-                                    <option key={piglet.id_Piglet} value={piglet.id_Piglet}>
-                                        {piglet.name_Piglet}
-                                    </option>
-                                ))}
+                                <option value="">Seleccionar lechón</option>
+                                {piglets
+                                    .filter(
+                                        (piglet) =>
+                                            piglet &&
+                                            (piglet.Id_Piglet || piglet.id_Piglet) &&
+                                            (piglet.Name_Piglet || piglet.name_Piglet)
+                                    )
+                                    .map((piglet) => {
+                                        const id = piglet.Id_Piglet ?? piglet.id_Piglet
+                                        const name = piglet.Name_Piglet ?? piglet.name_Piglet
+                                        const acum = piglet.Acum_Weight ?? piglet.acum_Weight ?? 0
+                                        return (
+                                            <option key={id} value={id}>
+                                                {name}
+                                            </option>
+                                        )
+                                    })}
                             </select>
+
                         </div>
 
-                        {/* Info del lechón */}
-                        {selectedPiglet && (
-                            <div className="space-y-4">
-                                <div className="bg-gray-50 p-4 rounded-lg">
-                                    <h4 className="font-semibold text-gray-700 mb-3 flex items-center">
-                                        <FaInfoCircle className="mr-2" />
-                                        Información del Lechón
-                                    </h4>
-                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
-                                        <p>
-                                            <strong>Peso inicial:</strong> {selectedPiglet.weight_Initial} kg
-                                        </p>
-                                        <p>
-                                            <strong>Peso acumulado:</strong> {selectedPiglet.acum_Weight} kg
-                                        </p>
-                                        <p>
-                                            <strong>Etapa actual:</strong> {selectedPiglet.name_Stage}
-                                        </p>
-                                        <p>
-                                            <strong>Total pesajes:</strong> {pigletWeighings.length}
-                                        </p>
-                                    </div>
-                                </div>
-
-                                {pigletWeighings.length > 0 && (
-                                    <div className="bg-blue-50 p-4 rounded-lg">
-                                        <h5 className="font-semibold text-blue-700 mb-2">Último Pesaje</h5>
-                                        <div className="text-sm text-blue-600 grid grid-cols-1 sm:grid-cols-2 gap-2">
-                                            <p>
-                                                <strong>Peso:</strong> {pigletWeighings[pigletWeighings.length - 1].weight_Current} kg
-                                            </p>
-                                            <p>
-                                                <strong>Fecha:</strong>{" "}
-                                                {new Date(pigletWeighings[pigletWeighings.length - 1].fec_Weight).toLocaleDateString()}
-                                            </p>
-                                        </div>
-                                    </div>
-                                )}
-
-                                <div className="bg-green-50 p-3 rounded-lg">
-                                    <p className="text-sm text-green-700 flex items-start">
-                                        <FaInfoCircle className="mr-2 mt-0.5 flex-shrink-0" />
-                                        <strong>Nota:</strong> La ganancia se calcula automáticamente basada en el{" "}
-                                        {pigletWeighings.length > 0 ? "último pesaje" : "peso inicial"}.
-                                    </p>
-                                </div>
-                            </div>
-                        )}
-
-                        {/* Peso actual */}
-                        <div className="space-y-2">
-                            <label className="block text-sm font-medium text-gray-700">
-                                <FaWeightHanging className="inline mr-2" />
-                                Peso Actual (kg) *
-                            </label>
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">Peso Actual (kg) *</label>
                             <input
                                 type="number"
-                                step="0.01"
-                                id="Weight_Current"
-                                name="Weight_Current"
-                                placeholder="Ingresa el peso actual en kg"
-                                value={weightCurrent}
-                                onChange={handleWeightCurrentChange}
-                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                step="0.1"
+                                min="0"
+                                name="weight_Current"
+                                value={formData.weight_Current}
+                                onChange={handleInputChange}
                                 required
+                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                placeholder="Ingrese el peso actual"
                             />
                         </div>
 
-                        {/* Validación de peso */}
-                        {weightValidation && (
-                            <div
-                                className={`p-3 rounded-md text-sm ${weightValidation.type === "error"
-                                    ? "bg-red-50 text-red-700 border border-red-200"
-                                    : weightValidation.type === "warning"
-                                        ? "bg-yellow-50 text-yellow-700 border border-yellow-200"
-                                        : weightValidation.type === "info"
-                                            ? "bg-blue-50 text-blue-700 border border-blue-200"
-                                            : "bg-green-50 text-green-700 border border-green-200"
-                                    }`}
-                            >
-                                <div className="flex items-start">
-                                    {weightValidation.type === "error" && <FaExclamationTriangle className="mr-2 mt-0.5 flex-shrink-0" />}
-                                    {weightValidation.type === "warning" && (
-                                        <FaExclamationTriangle className="mr-2 mt-0.5 flex-shrink-0" />
-                                    )}
-                                    {weightValidation.type === "info" && <FaInfoCircle className="mr-2 mt-0.5 flex-shrink-0" />}
-                                    {weightValidation.type === "success" && <FaInfoCircle className="mr-2 mt-0.5 flex-shrink-0" />}
-                                    <span>{weightValidation.message}</span>
-                                </div>
-                            </div>
-                        )}
-
-                        {/* Ganancia de peso */}
-                        <div className="space-y-2">
-                            <label className="block text-sm font-medium text-gray-700">
-                                <FaCalculator className="inline mr-2" />
-                                Ganancia de Peso (kg)
-                            </label>
-                            <input
-                                type="number"
-                                step="0.01"
-                                id="Weight_Gain"
-                                name="Weight_Gain"
-                                placeholder="Se calcula automáticamente"
-                                value={weightGain}
-                                readOnly
-                                className="w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded-md cursor-not-allowed"
-                            />
-                            {isCalculating && <span className="text-xs text-gray-500">Calculando...</span>}
-                        </div>
-
-                        {/* Fecha */}
-                        <div className="space-y-2">
-                            <label className="block text-sm font-medium text-gray-700">
-                                <FaCalendarAlt className="inline mr-2" />
-                                Fecha de Pesaje *
-                            </label>
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">Fecha del Pesaje *</label>
                             <input
                                 type="date"
-                                id="Fec_Weight"
-                                name="Fec_Weight"
-                                value={fechaPesaje}
-                                onChange={(e) => setFechaPesaje(e.target.value)}
-                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                name="fec_Weight"
+                                value={formData.fec_Weight}
+                                onChange={handleInputChange}
                                 required
+                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                             />
                         </div>
 
-                        {/* Usuario */}
-                        <div className="space-y-2">
-                            <label className="block text-sm font-medium text-gray-700">
-                                <FaUser className="inline mr-2" />
-                                Usuario *
-                            </label>
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">Usuario *</label>
                             <select
-                                id="Id_Users"
-                                name="Id_Users"
-                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                                value={idUsuario}
-                                onChange={(e) => setIdUsuario(e.target.value)}
+                                name="id_Users"
+                                value={formData.id_Users}
+                                onChange={handleInputChange}
                                 required
+                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                             >
-                                <option value="">Selecciona un usuario</option>
+                                <option value="">Seleccionar usuario</option>
                                 {users.map((user) => (
                                     <option key={user.id_Users} value={user.id_Users}>
                                         {user.nom_Users}
@@ -441,46 +341,110 @@ function RegisterWeighingPage({ refreshData, weighingToEdit, onCancelEdit, close
                                 ))}
                             </select>
                         </div>
+                    </div>
 
-                        {/* Información adicional */}
-                        {!isEditing && (
-                            <div className="bg-green-50 p-4 rounded-lg">
-                                <h4 className="font-semibold text-green-800 mb-2">🎯 Sistema Automático</h4>
-                                <ul className="text-green-700 space-y-1 text-sm">
-                                    <li>• La ganancia de peso se calcula automáticamente</li>
-                                    <li>• Se actualizará el peso acumulado del lechón</li>
-                                    <li>• Se verificará automáticamente si debe cambiar de etapa</li>
-                                    <li>• Se actualizarán las estadísticas del corral</li>
-                                </ul>
+                    {/* Columna derecha - Información del lechón */}
+                    <div className="space-y-4">
+                        <h3 className="text-lg font-semibold text-gray-700 flex items-center">
+                            <FaInfoCircle className="mr-2" />
+                            Información del Lechón
+                        </h3>
+
+                        {selectedPigletInfo ? (
+                            <div className="bg-gray-50 p-4 rounded-lg space-y-3">
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <span className="text-sm font-medium text-gray-600">Peso inicial:</span>
+                                        <p className="text-lg font-semibold text-gray-800">
+                                            {/* ✅ CORREGIDO: Acceso correcto al peso inicial */}
+                                            {(
+                                                selectedPigletInfo.Weight_Initial ||
+                                                selectedPigletInfo.weight_Initial ||
+                                                selectedPigletInfo.acum_Weight ||
+                                                0
+                                            ).toFixed(1)}{" "}
+                                            kg
+                                        </p>
+                                    </div>
+                                    <div>
+                                        <span className="text-sm font-medium text-gray-600">Peso acumulado:</span>
+                                        <p className="text-lg font-semibold text-gray-800">
+                                            {(selectedPigletInfo.Acum_Weight || selectedPigletInfo.acum_Weight || 0).toFixed(1)} kg
+                                        </p>
+                                    </div>
+                                    <div>
+                                        <span className="text-sm font-medium text-gray-600">Etapa actual:</span>
+                                        <p className="text-lg font-semibold text-gray-800">
+                                            {selectedPigletInfo.Stage?.name_Stage || selectedPigletInfo.stage?.name_Stage || "Sin etapa"}
+                                        </p>
+                                    </div>
+                                    <div>
+                                        <span className="text-sm font-medium text-gray-600">Total pesajes:</span>
+                                        <p className="text-lg font-semibold text-gray-800">{weighings.length}</p>
+                                    </div>
+                                </div>
+
+                                {/* ✅ MOSTRAR PESO ANTERIOR Y GANANCIA CALCULADA */}
+                                <div className="border-t pt-3">
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div>
+                                            <span className="text-sm font-medium text-gray-600">Peso anterior:</span>
+                                            <p className="text-lg font-semibold text-blue-600">{previousWeight.toFixed(1)} kg</p>
+                                            <p className="text-xs text-gray-500">
+                                                {weighings.length === 0 ? "(peso inicial)" : "(último pesaje)"}
+                                            </p>
+                                        </div>
+                                        <div>
+                                            <span className="text-sm font-medium text-gray-600">Ganancia calculada:</span>
+                                            <p className={`text-lg font-semibold ${calculatedGain >= 0 ? "text-green-600" : "text-red-600"}`}>
+                                                {calculatedGain >= 0 ? "+" : ""}
+                                                {calculatedGain.toFixed(1)} kg
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* ✅ INFORMACIÓN ADICIONAL */}
+                                <div className="bg-blue-50 p-3 rounded-md">
+                                    <p className="text-sm text-blue-700 flex items-center">
+                                        <FaInfoCircle className="mr-2" />
+                                        {weighings.length === 0
+                                            ? "Este será el primer pesaje del lechón. La ganancia se calcula basándose en el peso inicial."
+                                            : `La ganancia se calcula basándose en el último pesaje (${previousWeight.toFixed(1)} kg).`}
+                                    </p>
+                                </div>
+
+                                {/* ✅ ADVERTENCIA SI HAY PÉRDIDA DE PESO */}
+                                {calculatedGain < 0 && formData.weight_Current && (
+                                    <div className="bg-yellow-50 p-3 rounded-md border border-yellow-200">
+                                        <p className="text-sm text-yellow-700 flex items-center">
+                                            <FaExclamationTriangle className="mr-2" />
+                                            Advertencia: El lechón perdió {Math.abs(calculatedGain).toFixed(1)} kg. Verifica que el peso sea
+                                            correcto.
+                                        </p>
+                                    </div>
+                                )}
+                            </div>
+                        ) : (
+                            <div className="bg-gray-50 p-4 rounded-lg text-center text-gray-500">
+                                <FaWeight className="mx-auto text-3xl mb-2" />
+                                <p>Selecciona un lechón para ver su información</p>
                             </div>
                         )}
+                    </div>
+                </div>
 
-                        {/* Botones */}
-                        <div className="flex flex-col sm:flex-row gap-3 pt-4">
-                            {isEditing && (
-                                <Button
-                                    type="button"
-                                    onClick={onCancelEdit}
-                                    variant="outline"
-                                    disabled={loading}
-                                    className="w-full sm:w-auto"
-                                >
-                                    Cancelar
-                                </Button>
-                            )}
-                            <Button
-                                type="submit"
-                                disabled={loading || !selectedPiglet || !weightCurrent || !fechaPesaje || !idUsuario}
-                                className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700"
-                            >
-                                {loading ? (isEditing ? "Actualizando..." : "Registrando...") : isEditing ? "Actualizar" : "Registrar"}
-                            </Button>
-                        </div>
-                    </form>
-                </CardContent>
-            </Card>
+                <div className="flex justify-end space-x-4 pt-6 border-t">
+                    <Button type="button" onClick={onCancelEdit} variant="outline" disabled={loading}>
+                        Cancelar
+                    </Button>
+                    <Button type="submit" disabled={loading || !selectedPigletInfo} className="bg-blue-600 hover:bg-blue-700">
+                        {loading ? "Procesando..." : weighingToEdit ? "Actualizar" : "Registrar"}
+                    </Button>
+                </div>
+            </form>
         </div>
     )
 }
 
-export default RegisterWeighingPage
+export default RegisterWeighing

@@ -20,15 +20,21 @@ function RegisterPiglet({ refreshData, pigletToEdit, onCancelEdit, closeModal, s
     const [races, setRaces] = useState([])
     const [corrals, setCorrals] = useState([])
     const [stages, setStages] = useState([])
-    const [stageDefinitions, setStageDefinitions] = useState({})
     const [loading, setLoading] = useState(false)
     const [stageValidation, setStageValidation] = useState(null)
+
+    // ✅ NUEVAS DEFINICIONES DE ETAPAS ACTUALIZADAS
+    const newStageRanges = {
+        PRE_INICIO: { name: "Pre-inicio", min: 6.5, max: 17.5, maxDays: 25 },
+        INICIACION: { name: "Iniciación", min: 17.5, max: 30, maxDays: 24 },
+        LEVANTE: { name: "Levante", min: 30, max: 60, maxDays: 42 },
+        ENGORDE: { name: "Engorde", min: 60, max: 120, maxDays: 47 },
+    }
 
     useEffect(() => {
         fetchRaces()
         fetchCorrals()
         fetchStages()
-        fetchStageDefinitions()
     }, [])
 
     useEffect(() => {
@@ -56,7 +62,7 @@ function RegisterPiglet({ refreshData, pigletToEdit, onCancelEdit, closeModal, s
         if (formData.weight_Initial && formData.id_Stage) {
             validateStageSelection()
         }
-    }, [formData.weight_Initial, formData.id_Stage, stageDefinitions, stages])
+    }, [formData.weight_Initial, formData.id_Stage, stages])
 
     const validateStageSelection = () => {
         const weight = Number.parseFloat(formData.weight_Initial)
@@ -72,33 +78,24 @@ function RegisterPiglet({ refreshData, pigletToEdit, onCancelEdit, closeModal, s
         }
 
         const stageKey = getStageKeyFromName(selectedStage.name_Stage)
-        if (!stageKey || !stageDefinitions[stageKey]) {
+        if (!stageKey || !newStageRanges[stageKey]) {
             setStageValidation(null)
             return
         }
 
-        const stageDef = stageDefinitions[stageKey]
-        const isWeightInRange = weight >= stageDef.WeightMin && weight <= stageDef.WeightMax
+        const stageDef = newStageRanges[stageKey]
+        const isWeightInRange = weight >= stageDef.min && weight <= stageDef.max
         const suggestedStage = getSuggestedStageByWeight(weight)
 
         setStageValidation({
             isValid: isWeightInRange,
             currentStage: selectedStage.name_Stage,
             suggestedStage: suggestedStage?.name_Stage,
-            weightRange: `${stageDef.WeightMin} - ${stageDef.WeightMax} kg`,
+            weightRange: `${stageDef.min} - ${stageDef.max} kg`,
             message: isWeightInRange
                 ? "El peso está dentro del rango para esta etapa"
-                : `El peso ${weight} kg no está en el rango de ${selectedStage.name_Stage} (${stageDef.WeightMin} - ${stageDef.WeightMax} kg)`,
+                : `El peso ${weight} kg no está en el rango de ${selectedStage.name_Stage} (${stageDef.min} - ${stageDef.max} kg)`,
         })
-    }
-
-    const fetchStageDefinitions = async () => {
-        try {
-            const response = await axiosInstance.get("/api/Piglet/GetStageDefinitions")
-            setStageDefinitions(response.data)
-        } catch (error) {
-            console.error("Error al cargar definiciones de etapas:", error)
-        }
     }
 
     const fetchRaces = async () => {
@@ -156,11 +153,14 @@ function RegisterPiglet({ refreshData, pigletToEdit, onCancelEdit, closeModal, s
         try {
             if (pigletToEdit) {
                 await axiosInstance.put("/api/Piglet/UpdatePiglet", body)
-                showAlert("Lechón actualizado correctamente. La etapa ha sido verificada automáticamente.", "success")
+                showAlert(
+                    "Lechón actualizado correctamente. El sistema ha verificado automáticamente la etapa según el peso actual.",
+                    "success",
+                )
             } else {
                 await axiosInstance.post("/api/Piglet/CreatePiglet", body)
                 showAlert(
-                    "Lechón registrado correctamente. El conteo de días para esta etapa inicia ahora y se verificará automáticamente.",
+                    "Lechón registrado correctamente. El sistema verificará automáticamente las transiciones de etapa según los nuevos rangos de peso.",
                     "success",
                 )
             }
@@ -192,35 +192,67 @@ function RegisterPiglet({ refreshData, pigletToEdit, onCancelEdit, closeModal, s
         const selectedStage = stages.find((stage) => stage.id_Stage == formData.id_Stage)
         if (!selectedStage) return null
         const stageKey = getStageKeyFromName(selectedStage.name_Stage)
-        if (stageKey && stageDefinitions[stageKey]) {
+        if (stageKey && newStageRanges[stageKey]) {
             return {
                 ...selectedStage,
-                definition: stageDefinitions[stageKey],
+                definition: newStageRanges[stageKey],
             }
         }
         return selectedStage
     }
 
+    // ✅ FUNCIÓN ACTUALIZADA PARA LAS NUEVAS ETAPAS
     const getStageKeyFromName = (stageName) => {
         if (!stageName) return null
         const upperName = stageName.toUpperCase()
-        if (upperName.includes("PRE") && upperName.includes("INICIACION")) return "PRE_INICIACION"
+
+        // Pre-inicio o Precebo
+        if (upperName.includes("PRE") && (upperName.includes("INICIO") || upperName.includes("PRECEBO")))
+            return "PRE_INICIO"
+
+        // Iniciación (pero no pre-iniciación)
         if (upperName.includes("INICIACION") && !upperName.includes("PRE")) return "INICIACION"
+
+        // Levante
         if (upperName.includes("LEVANTE")) return "LEVANTE"
+
+        // Engorde
         if (upperName.includes("ENGORDE")) return "ENGORDE"
+
         return null
     }
 
+    // ✅ FUNCIÓN ACTUALIZADA CON LOS NUEVOS RANGOS
     const getSuggestedStageByWeight = (weight) => {
         if (!weight || !stages.length) return null
         const weightNum = Number.parseFloat(weight)
-        if (weightNum >= 6.5 && weightNum < 17.5) return stages.find((s) => s.name_Stage.toUpperCase().includes("PRE"))
-        if (weightNum >= 17.5 && weightNum < 30)
-            return stages.find(
-                (s) => s.name_Stage.toUpperCase().includes("INICIACION") && !s.name_Stage.toUpperCase().includes("PRE"),
-            )
-        if (weightNum >= 30 && weightNum < 60) return stages.find((s) => s.name_Stage.toUpperCase().includes("LEVANTE"))
-        if (weightNum >= 60) return stages.find((s) => s.name_Stage.toUpperCase().includes("ENGORDE"))
+
+        // Pre-inicio: 6.5kg a 17.5kg
+        if (weightNum >= 6.5 && weightNum < 17.5) {
+            return stages.find((s) => {
+                const upperName = s.name_Stage.toUpperCase()
+                return upperName.includes("PRE") && (upperName.includes("INICIO") || upperName.includes("PRECEBO"))
+            })
+        }
+
+        // Iniciación: 17.5kg a 30kg
+        if (weightNum >= 17.5 && weightNum < 30) {
+            return stages.find((s) => {
+                const upperName = s.name_Stage.toUpperCase()
+                return upperName.includes("INICIACION") && !upperName.includes("PRE")
+            })
+        }
+
+        // Levante: 30kg a 60kg
+        if (weightNum >= 30 && weightNum < 60) {
+            return stages.find((s) => s.name_Stage.toUpperCase().includes("LEVANTE"))
+        }
+
+        // Engorde: 60kg a 120kg
+        if (weightNum >= 60) {
+            return stages.find((s) => s.name_Stage.toUpperCase().includes("ENGORDE"))
+        }
+
         return null
     }
 
@@ -258,6 +290,7 @@ function RegisterPiglet({ refreshData, pigletToEdit, onCancelEdit, closeModal, s
                             <input
                                 type="number"
                                 step="0.1"
+                                min="0"
                                 name="weight_Initial"
                                 value={formData.weight_Initial}
                                 onChange={handleInputChange}
@@ -354,7 +387,7 @@ function RegisterPiglet({ refreshData, pigletToEdit, onCancelEdit, closeModal, s
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-1">
                                 Etapa Actual *
-                                <span className="text-xs text-gray-500 ml-2">(El conteo de días iniciará desde el registro)</span>
+                                <span className="text-xs text-gray-500 ml-2">(El sistema verificará automáticamente)</span>
                             </label>
                             <select
                                 name="id_Stage"
@@ -396,7 +429,7 @@ function RegisterPiglet({ refreshData, pigletToEdit, onCancelEdit, closeModal, s
                             {!pigletToEdit && formData.id_Stage && (
                                 <p className="text-xs text-green-600 mt-1 flex items-center">
                                     <FaClock className="mr-1" />
-                                    El conteo de días para esta etapa comenzará al registrar el lechón
+                                    El sistema verificará automáticamente las transiciones de etapa
                                 </p>
                             )}
                         </div>
@@ -410,33 +443,44 @@ function RegisterPiglet({ refreshData, pigletToEdit, onCancelEdit, closeModal, s
                                 <div className="text-sm text-blue-600 space-y-1">
                                     <div className="flex items-center">
                                         <FaWeight className="mr-2" />
-                                        <strong>Rango de peso:</strong> {selectedStageInfo.definition.WeightMin} -{" "}
-                                        {selectedStageInfo.definition.WeightMax} kg
+                                        <strong>Rango de peso:</strong> {selectedStageInfo.definition.min} -{" "}
+                                        {selectedStageInfo.definition.max} kg
                                     </div>
                                     <div className="flex items-center">
                                         <FaClock className="mr-2" />
-                                        <strong>Duración máxima:</strong> {selectedStageInfo.definition.MaxDays} días
+                                        <strong>Duración máxima:</strong> {selectedStageInfo.definition.maxDays} días
                                     </div>
-                                    {selectedStageInfo.definition.NextStage && (
-                                        <div>
-                                            <strong>Siguiente etapa:</strong> {selectedStageInfo.definition.NextStage}
-                                        </div>
-                                    )}
                                 </div>
                             </div>
                         )}
                     </div>
                 </div>
 
+                {/* ✅ INFORMACIÓN ACTUALIZADA CON LAS NUEVAS ETAPAS */}
                 {!pigletToEdit && (
                     <div className="bg-yellow-50 p-4 rounded-lg border border-yellow-200">
-                        <h4 className="font-semibold text-yellow-800 mb-2">📋 Información Importante</h4>
-                        <ul className="text-sm text-yellow-700 space-y-1">
-                            <li>• El lechón se registrará en la etapa que selecciones</li>
-                            <li>• El conteo de días para esa etapa comenzará desde el momento del registro</li>
-                            <li>• El sistema verificará automáticamente si debe cambiar de etapa por peso o días</li>
-                            <li>• Se recomienda seleccionar la etapa apropiada según el peso actual</li>
-                        </ul>
+                        <h4 className="font-semibold text-yellow-800 mb-2">📋 Nuevas Etapas de Crecimiento</h4>
+                        <div className="text-sm text-yellow-700 space-y-2">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <strong>Pre-inicio:</strong> 6.5 - 17.5 kg (25 días máx.)
+                                </div>
+                                <div>
+                                    <strong>Iniciación:</strong> 17.5 - 30 kg (24 días máx.)
+                                </div>
+                                <div>
+                                    <strong>Levante:</strong> 30 - 60 kg (42 días máx.)
+                                </div>
+                                <div>
+                                    <strong>Engorde:</strong> 60 - 120 kg (47 días máx.)
+                                </div>
+                            </div>
+                            <ul className="mt-2 space-y-1">
+                                <li>• El sistema verificará automáticamente las transiciones de etapa</li>
+                                <li>• Se recomienda seleccionar la etapa apropiada según el peso actual</li>
+                                <li>• Las transiciones se basan en peso y tiempo en etapa</li>
+                            </ul>
+                        </div>
                     </div>
                 )}
 

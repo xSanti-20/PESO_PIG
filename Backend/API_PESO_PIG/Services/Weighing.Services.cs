@@ -34,18 +34,49 @@ namespace API_PESO_PIG.Services
                 .FirstOrDefaultAsync(x => x.id_Weighings == id_Weighings);
         }
 
+        // ✅ MÉTODO CORREGIDO CON LOGGING Y VERIFICACIÓN
         public async Task<IEnumerable<Weighing>> GetWeighingsByPigletId(int pigletId)
         {
-            return await _context.Weighings
-                .Where(w => w.Id_Piglet == pigletId)
-                .OrderBy(w => w.Fec_Weight)
-                .ToListAsync();
+            try
+            {
+                Console.WriteLine($"DEBUG Service: Buscando pesajes para lechón ID: {pigletId}");
+
+                // ✅ AGREGAR: Verificar si el lechón existe
+                var pigletExists = await _context.Piglets.AnyAsync(p => p.Id_Piglet == pigletId);
+                Console.WriteLine($"DEBUG Service: ¿Lechón {pigletId} existe? {pigletExists}");
+
+                if (!pigletExists)
+                {
+                    Console.WriteLine($"WARNING: Lechón {pigletId} no existe en la base de datos");
+                    return new List<Weighing>(); // Devolver lista vacía si el lechón no existe
+                }
+
+                var weighings = await _context.Weighings
+                    .Where(w => w.Id_Piglet == pigletId)
+                    .OrderBy(w => w.Fec_Weight)
+                    .ToListAsync();
+
+                Console.WriteLine($"DEBUG Service: Encontrados {weighings.Count} pesajes para lechón {pigletId}");
+
+                return weighings;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"ERROR en GetWeighingsByPigletId: {ex.Message}");
+                Console.WriteLine($"Stack trace: {ex.StackTrace}");
+                throw; // Re-lanzar la excepción para que el controlador la maneje
+            }
         }
 
+        // ✅ MÉTODO CORREGIDO CON LOGGING MEJORADO
         public async Task CreateWeighingAndUpdateCorral(Weighing entity)
         {
             var piglet = await _context.Piglets.FirstOrDefaultAsync(p => p.Id_Piglet == entity.Id_Piglet);
             if (piglet == null) throw new Exception("Lechón no encontrado");
+
+            // ✅ AGREGAR: Logging detallado
+            Console.WriteLine($"DEBUG: Creando pesaje para lechón {piglet.Name_Piglet}");
+            Console.WriteLine($"DEBUG: Peso actual: {entity.Weight_Current}kg, Ganancia recibida: {entity.Weight_Gain}kg");
 
             // Obtener el peso del último pesaje para calcular la ganancia correctamente
             var lastWeighing = await _context.Weighings
@@ -55,7 +86,13 @@ namespace API_PESO_PIG.Services
 
             // Calcular ganancia de peso basada en el peso anterior
             float previousWeight = lastWeighing?.Weight_Current ?? piglet.Weight_Initial;
-            entity.Weight_Gain = entity.Weight_Current - previousWeight;
+
+            // ✅ MODIFICAR: Solo calcular si no se envió ganancia
+            if (entity.Weight_Gain == 0)
+            {
+                entity.Weight_Gain = entity.Weight_Current - previousWeight;
+                Console.WriteLine($"DEBUG: Ganancia calculada automáticamente: {entity.Weight_Current}kg - {previousWeight}kg = {entity.Weight_Gain}kg");
+            }
 
             _context.Weighings.Add(entity);
             await _context.SaveChangesAsync();
@@ -212,7 +249,7 @@ namespace API_PESO_PIG.Services
         private async Task UpdateCorralAverageWeight(int corralId)
         {
             var pigletsInCorral = await _context.Piglets
-                .Where(p => p.Id_Corral == corralId)
+                .Where(p => p.Id_Corral == corralId && p.Is_Active) // Solo lechones activos
                 .ToListAsync();
 
             var corral = await _context.Corrals.FindAsync(corralId);

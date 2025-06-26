@@ -23,16 +23,20 @@ namespace API_PESO_PIG.Controllers
             GeneralFunction = new UserFunction(configuration);
         }
 
+        // ✅ MÉTODO CORREGIDO CON LOGGING
         [HttpPost("CreateWeighing")]
         public async Task<IActionResult> Add(Weighing entity)
         {
             try
             {
+                Console.WriteLine($"DEBUG: Creando pesaje - Lechón: {entity.Id_Piglet}, Peso: {entity.Weight_Current}, Ganancia: {entity.Weight_Gain}");
+
                 await _Services.CreateWeighingAndUpdateCorral(entity);
                 return Ok(new { message = "Pesaje creado con éxito, corral actualizado y etapa verificada." });
             }
             catch (Exception ex)
             {
+                Console.WriteLine($"ERROR en CreateWeighing: {ex.Message}");
                 GeneralFunction.Addlog(ex.ToString());
                 return StatusCode(500, new { message = "Error interno del servidor", error = ex.Message });
             }
@@ -83,20 +87,44 @@ namespace API_PESO_PIG.Controllers
             }
         }
 
+        // ✅ MÉTODO CRÍTICO CORREGIDO - ESTE ERA EL PROBLEMA PRINCIPAL
+        [Authorize]
         [HttpGet("GetWeighingsByPiglet")]
         public async Task<IActionResult> GetWeighingsByPiglet(int id_Piglet)
         {
             try
             {
+                Console.WriteLine($"DEBUG: Endpoint GetWeighingsByPiglet llamado con id_Piglet: {id_Piglet}");
+
                 var weighings = await _Services.GetWeighingsByPigletId(id_Piglet);
+
+                Console.WriteLine($"DEBUG: Encontrados {weighings?.Count() ?? 0} pesajes para lechón {id_Piglet}");
+
                 if (weighings == null || !weighings.Any())
                 {
-                    return NotFound("No se encontraron pesajes para este cerdo.");
+                    Console.WriteLine($"DEBUG: No se encontraron pesajes para lechón {id_Piglet}");
+                    // ✅ CAMBIO CRÍTICO: Devolver 200 con array vacío en lugar de 404
+                    return Ok(new List<object>());
                 }
-                return Ok(weighings);
+
+                // ✅ DEVOLVER LOS PESAJES EN EL FORMATO CORRECTO
+                var result = weighings.Select(w => new
+                {
+                    id_Weighings = w.id_Weighings,
+                    weight_Current = w.Weight_Current,
+                    weight_Gain = w.Weight_Gain,
+                    fec_Weight = w.Fec_Weight,
+                    id_Piglet = w.Id_Piglet,
+                    id_Users = w.id_Users
+                }).ToList();
+
+                Console.WriteLine($"DEBUG: Devolviendo {result.Count} pesajes");
+                return Ok(result);
             }
             catch (Exception ex)
             {
+                Console.WriteLine($"ERROR en GetWeighingsByPiglet: {ex.Message}");
+                Console.WriteLine($"Stack trace: {ex.StackTrace}");
                 GeneralFunction.Addlog(ex.ToString());
                 return StatusCode(500, new { message = "Error interno del servidor", error = ex.Message });
             }
@@ -152,6 +180,8 @@ namespace API_PESO_PIG.Controllers
 
             try
             {
+                Console.WriteLine($"DEBUG: Actualizando pesaje - ID: {updatedWeighing.id_Weighings}, Peso: {updatedWeighing.Weight_Current}, Ganancia: {updatedWeighing.Weight_Gain}");
+
                 var result = await _Services.UpdateWeighing(updatedWeighing.id_Weighings, updatedWeighing);
 
                 if (!result)
@@ -163,6 +193,7 @@ namespace API_PESO_PIG.Controllers
             }
             catch (Exception ex)
             {
+                Console.WriteLine($"ERROR en UpdateWeighing: {ex.Message}");
                 GeneralFunction.Addlog(ex.ToString());
                 return StatusCode(500, new { message = "Error interno del servidor", error = ex.Message });
             }
