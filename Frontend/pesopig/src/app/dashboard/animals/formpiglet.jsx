@@ -463,16 +463,16 @@ function RegisterPiglet({ refreshData, pigletToEdit, onCancelEdit, closeModal, s
                         <div className="text-sm text-yellow-700 space-y-2">
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
-                                    <strong>Pre-inicio:</strong> 6.5 - 17.5 kg (25 días máx.)
+                                    <strong>Pre-inicio:</strong> 6.5 - 17.5 kg
                                 </div>
                                 <div>
-                                    <strong>Iniciación:</strong> 17.5 - 30 kg (24 días máx.)
+                                    <strong>Iniciación:</strong> 17.5 - 30 kg
                                 </div>
                                 <div>
-                                    <strong>Levante:</strong> 30 - 60 kg (42 días máx.)
+                                    <strong>Levante:</strong> 30 - 60 kg
                                 </div>
                                 <div>
-                                    <strong>Engorde:</strong> 60 - 120 kg (47 días máx.)
+                                    <strong>Engorde:</strong> 60 - 120 kg
                                 </div>
                             </div>
                             <ul className="mt-2 space-y-1">

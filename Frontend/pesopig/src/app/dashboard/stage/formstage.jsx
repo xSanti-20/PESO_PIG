@@ -1,20 +1,16 @@
 "use client"
 import { useState, useEffect } from "react"
-import "./Stage.Module.css"
 import axiosInstance from "@/lib/axiosInstance"
 import { FaFileAlt, FaRegClock } from "react-icons/fa"
 import { LiaMicroscopeSolid } from "react-icons/lia"
 import { Button } from "@/components/ui/button"
+import "./Stage.Module.css"
 
-// Función para enviar datos al backend
 async function sendData(body, isEditing = false) {
-  if (isEditing) {
-    const response = await axiosInstance.put("api/Stage/UpdateStage", body)
-    return response
-  } else {
-    const response = await axiosInstance.post("api/Stage/CreateStage", body)
-    return response
-  }
+  const response = isEditing
+    ? await axiosInstance.put("api/Stage/UpdateStage", body)
+    : await axiosInstance.post("api/Stage/CreateStage", body)
+  return response
 }
 
 function StageForm({ refreshData, stageToEdit, onCancelEdit, closeModal, showAlert }) {
@@ -54,19 +50,11 @@ function StageForm({ refreshData, stageToEdit, onCancelEdit, closeModal, showAle
     }))
   }
 
-  // ✅ Validación mejorada para rangos de peso
   const validateWeightRange = () => {
-    const weightFrom = Number.parseFloat(formData.Weight_From)
-    const weightUpto = Number.parseFloat(formData.Weight_Upto)
-
-    if (weightFrom >= weightUpto) {
-      return "El peso inicial debe ser menor que el peso final"
-    }
-
-    if (weightFrom < 0 || weightUpto < 0) {
-      return "Los pesos no pueden ser negativos"
-    }
-
+    const weightFrom = parseFloat(formData.Weight_From)
+    const weightUpto = parseFloat(formData.Weight_Upto)
+    if (weightFrom >= weightUpto) return "El peso inicial debe ser menor que el peso final"
+    if (weightFrom < 0 || weightUpto < 0) return "Los pesos no pueden ser negativos"
     return null
   }
 
@@ -75,84 +63,52 @@ function StageForm({ refreshData, stageToEdit, onCancelEdit, closeModal, showAle
     const { Name_Stage, Weight_From, Weight_Upto, Dur_Stage } = formData
 
     if (!Name_Stage || !Weight_From || !Weight_Upto || !Dur_Stage) {
-      if (showAlert) {
-        showAlert("Todos los campos son requeridos.", "error")
-      } else {
-        alert("Todos los campos son requeridos.")
-      }
+      showAlert?.("Todos los campos son requeridos.", "error")
       return
     }
 
-    // ✅ Validar rangos de peso
-    const weightValidationError = validateWeightRange()
-    if (weightValidationError) {
-      if (showAlert) {
-        showAlert(weightValidationError, "error")
-      } else {
-        alert(weightValidationError)
-      }
+    const errorPeso = validateWeightRange()
+    if (errorPeso) {
+      showAlert?.(errorPeso, "error")
       return
     }
 
-    // ✅ Convertir a números con decimales
     const body = {
       Name_Stage,
-      Weight_From: Number.parseFloat(Weight_From),
-      Weight_Upto: Number.parseFloat(Weight_Upto),
-      Dur_Stage: Number.parseInt(Dur_Stage),
+      Weight_From: parseFloat(Weight_From),
+      Weight_Upto: parseFloat(Weight_Upto),
+      Dur_Stage: parseInt(Dur_Stage),
     }
 
-    if (isEditing) {
-      body.Id_Stage = stageToEdit.id_Stage
-    }
+    if (isEditing) body.Id_Stage = stageToEdit.id_Stage
 
     try {
       setLoading(true)
       const response = await sendData(body, isEditing)
-
-      const successMessage =
-        response.data.message || (isEditing ? "Etapa actualizada con éxito." : "Etapa registrada con éxito.")
-
-      if (showAlert) {
-        showAlert(successMessage, "success")
-      } else {
-        alert(successMessage)
-      }
-
-      setFormData({
-        Name_Stage: "",
-        Weight_From: "",
-        Weight_Upto: "",
-        Dur_Stage: "",
-      })
-
-      if (closeModal) closeModal()
-      if (typeof refreshData === "function") refreshData()
+      showAlert?.(response.data.message || (isEditing ? "Etapa actualizada." : "Etapa registrada."), "success")
+      setFormData({ Name_Stage: "", Weight_From: "", Weight_Upto: "", Dur_Stage: "" })
+      closeModal?.()
+      refreshData?.()
     } catch (error) {
-      console.error("Error completo:", error)
-      const errorMessage = error.response?.data || "Error desconocido"
-
-      if (showAlert) {
-        showAlert(
-          `Ocurrió un error al ${isEditing ? "actualizar" : "registrar"} la etapa: ` + JSON.stringify(errorMessage),
-          "error",
-        )
-      } else {
-        alert(`Ocurrió un error al ${isEditing ? "actualizar" : "registrar"} la etapa: ` + JSON.stringify(errorMessage))
-      }
+      console.error(error)
+      showAlert?.(
+        `Ocurrió un error al ${isEditing ? "actualizar" : "registrar"} la etapa: ${JSON.stringify(
+          error.response?.data || "Error desconocido"
+        )}`,
+        "error"
+      )
     } finally {
       setLoading(false)
     }
   }
 
   return (
-    <div className="wrapper">
-      <div className="form_box">
-        <form onSubmit={handleSubmit}>
-          <h2 className="title">{isEditing ? "Actualizar Etapa" : "Registrar Etapa"}</h2>
+    <div className="stage-wrapper">
+      <div className="stage-form-container">
+        <form onSubmit={handleSubmit} className="stage-form">
+          <h2 className="stage-title">{isEditing ? "Actualizar Etapa" : "Registrar Etapa"}</h2>
 
-          {/* Nombre Etapa */}
-          <div className="input_box">
+          <div className="input-group">
             <input
               type="text"
               name="Name_Stage"
@@ -164,8 +120,7 @@ function StageForm({ refreshData, stageToEdit, onCancelEdit, closeModal, showAle
             <FaFileAlt className="icon" />
           </div>
 
-          {/* ✅ Peso Desde - Ahora acepta decimales */}
-          <div className="input_box">
+          <div className="input-group">
             <input
               type="number"
               step="0.1"
@@ -179,8 +134,7 @@ function StageForm({ refreshData, stageToEdit, onCancelEdit, closeModal, showAle
             <LiaMicroscopeSolid className="icon" />
           </div>
 
-          {/* ✅ Peso Hasta - Ahora acepta decimales */}
-          <div className="input_box">
+          <div className="input-group">
             <input
               type="number"
               step="0.1"
@@ -194,8 +148,7 @@ function StageForm({ refreshData, stageToEdit, onCancelEdit, closeModal, showAle
             <LiaMicroscopeSolid className="icon" />
           </div>
 
-          {/* Duración de la etapa */}
-          <div className="input_box">
+          <div className="input-group">
             <input
               type="number"
               min="1"
@@ -208,32 +161,23 @@ function StageForm({ refreshData, stageToEdit, onCancelEdit, closeModal, showAle
             <FaRegClock className="icon" />
           </div>
 
-          {/* ✅ Información de ayuda para las nuevas etapas */}
-          <div className="bg-blue-50 p-3 rounded-lg border border-blue-200 mb-4">
-            <h4 className="font-semibold text-blue-800 mb-2">📋 Rangos de Peso Recomendados:</h4>
-            <ul className="text-sm text-blue-600 space-y-1">
-              <li>
-                • <strong>Pre-inicio:</strong> 6.5 - 17.5 kg
-              </li>
-              <li>
-                • <strong>Iniciación:</strong> 17.5 - 30 kg
-              </li>
-              <li>
-                • <strong>Levante:</strong> 30 - 60 kg
-              </li>
-              <li>
-                • <strong>Engorde:</strong> 60 - 120 kg
-              </li>
+          <div className="recommendation-box">
+            <h4>📋 Rangos de Peso Recomendados:</h4>
+            <ul>
+              <li><strong>Pre-inicio:</strong> 6.5 - 17.5 kg</li>
+              <li><strong>Iniciación:</strong> 17.5 - 30 kg</li>
+              <li><strong>Levante:</strong> 30 - 60 kg</li>
+              <li><strong>Engorde:</strong> 60 - 120 kg</li>
             </ul>
           </div>
 
-          <div className="flex justify-end space-x-4">
+          <div className="form-buttons">
             {onCancelEdit && (
               <Button type="button" onClick={onCancelEdit} variant="outline" disabled={loading}>
                 Cancelar
               </Button>
             )}
-            <Button type="submit" disabled={loading} className="enviar">
+            <Button type="submit" disabled={loading} className="submit-btn">
               {loading ? (isEditing ? "Actualizando..." : "Registrando...") : isEditing ? "Actualizar" : "Registrar"}
             </Button>
           </div>

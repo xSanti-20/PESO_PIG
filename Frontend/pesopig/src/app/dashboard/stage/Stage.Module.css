@@ -1,120 +1,130 @@
 /* Contenedor principal */
-.wrapper {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: Arial, Helvetica, sans-serif;
+.stage-wrapper {
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 75vh;
+  padding: 20px;
+  box-sizing: border-box;
+  min-height: 100vh;
+  background-color: #f9fafb;
 }
 
 /* Caja del formulario */
-.form_box {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  width: 350px;
-  background: var(--bg-color-blanco, #ffffff);
-  border-radius: 10px;
-  padding: 25px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Sombra moderna */
-  transition: all 0.3s ease;
+.stage-form-container {
+  background: #ffffff;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 420px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+  padding: 24px;
+  overflow-y: auto;
+  max-height: 90vh;
 }
 
-/* Título del formulario */
-.title {
-  font-size: 25px;
-  text-align: center;
+/* Título */
+.stage-title {
+  font-size: 24px;
   font-weight: bold;
-  color: var(--bg-color-negro, #000000);
-  margin-bottom: 15px;
+  margin-bottom: 20px;
+  text-align: center;
+  color: #333;
 }
 
-/* Caja de inputs */
-.input_box {
+/* Grupo de entrada */
+.input-group {
   position: relative;
-  width: 100%;
-  height: 50px;
-  margin: 10px 0;
+  margin-bottom: 16px;
 }
 
-/* Estilos de inputs */
-.input_box input {
+.input-group input {
   width: 100%;
-  height: 100%;
-  background: var(--bg-color-blanco, white);
-  border: 1px solid var(--bg-color-negro, #333);
-  border-radius: 10px;
-  color: var(--bg-color-negro, #333);
-  padding: 12px 20px;
+  padding: 12px 16px 12px 16px;
+  padding-right: 40px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
   font-size: 16px;
-  transition: border 0.3s ease-in-out;
+  color: #333;
+  box-sizing: border-box;
 }
 
-.input_box input:focus {
-  border: 2px solid var(--bg-color-negro, #333);
+.input-group input:focus {
   outline: none;
+  border-color: #007bff;
 }
 
-.input_box input::placeholder {
-  color: var(--bg-color-negro, #333);
-  opacity: 0.7;
-}
-
-/* Icono dentro del input */
-.input_box .icon {
+.icon {
   position: absolute;
-  right: 15px;
+  right: 12px;
   top: 50%;
   transform: translateY(-50%);
   font-size: 18px;
-  color: var(--bg-color-negro, #333);
+  color: #666;
 }
 
-/* Botón de envío */
-.enviar {
-  width: 100%;
-  height: 50px;
-  background: var(--bg-color-primary, #007bff);
+/* Recuadro de ayuda */
+.recommendation-box {
+  background-color: #e6f0ff;
+  border-left: 4px solid #3b82f6;
+  border-radius: 8px;
+  padding: 12px 16px;
+  font-size: 14px;
+  margin-bottom: 16px;
+  color: #1e40af;
+}
+
+.recommendation-box h4 {
+  margin-bottom: 8px;
+  font-weight: 600;
+}
+
+.recommendation-box ul {
+  padding-left: 20px;
+  list-style: disc;
+}
+
+/* Botones */
+.form-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.submit-btn {
+  background-color: #007bff;
   border: none;
-  border-radius: 10px;
-  color: var(--bg-color-blanco, white);
+  color: white;
+  padding: 12px;
   font-size: 16px;
   font-weight: bold;
+  border-radius: 8px;
   cursor: pointer;
-  margin-top: 10px;
-  transition: background 0.3s ease;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.2s ease;
 }
 
-.enviar:hover {
-  background: #333333;
-}
-
-/* Mensaje de error */
-.error {
-  color: #E57B76;
-  font-size: 14px;
-  font-weight: bold;
-  margin-bottom: 10px;
-  text-align: center;
+.submit-btn:hover {
+  background-color: #0056b3;
 }
 
 /* Responsive */
-@media (max-width: 1080px) {
-  .form_box {
-    width: 90%;
-    padding: 20px;
+@media (max-width: 480px) {
+  .stage-form-container {
+    padding: 16px;
   }
 
-  .input_box {
-    height: 45px;
+  .stage-title {
+    font-size: 20px;
   }
 
-  .enviar {
-    height: 45px;
+  .input-group input {
+    font-size: 15px;
+  }
+
+  .recommendation-box {
+    font-size: 13px;
+  }
+
+  .submit-btn {
+    font-size: 15px;
+    padding: 10px;
   }
 }
