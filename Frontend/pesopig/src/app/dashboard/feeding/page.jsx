@@ -129,28 +129,6 @@ function Feeding() {
 
       {!isLoading && (
         <>
-          {/* Información del plan de alimentación */}
-          <div className="bg-blue-50 p-4 rounded-md mb-4">
-            <h3 className="font-semibold text-blue-800 mb-2">Plan de Alimentación SENA</h3>
-            <div className="grid grid-cols-3 gap-4 text-sm">
-              <div className="bg-white p-3 rounded">
-                <strong>Precebos:</strong> 6.5 - 30 kg
-                <br />
-                <span className="text-gray-600">Duración: 49 días</span>
-              </div>
-              <div className="bg-white p-3 rounded">
-                <strong>Levante:</strong> 30 - 60 kg
-                <br />
-                <span className="text-gray-600">Duración: 42 días</span>
-              </div>
-              <div className="bg-white p-3 rounded">
-                <strong>Engorde:</strong> 60 - 100 kg
-                <br />
-                <span className="text-gray-600">Duración: 47 días</span>
-              </div>
-            </div>
-          </div>
-
           <ContentPage
             TitlePage={TitlePage}
             Data={feedingData}

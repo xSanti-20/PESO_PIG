@@ -180,7 +180,7 @@ function RegisterFoodPage({ refreshData, foodToEdit, onCancelEdit, closeModal, s
             <input
               type="number"
               name="vlr_Unit"
-              placeholder="Valor Unitario por KG"
+              placeholder="Valor Unitario por BULTO"
               value={formData.vlr_Unit}
               onChange={handleChange}
               step="1"

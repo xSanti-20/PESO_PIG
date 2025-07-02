@@ -446,10 +446,6 @@ function RegisterPiglet({ refreshData, pigletToEdit, onCancelEdit, closeModal, s
                                         <strong>Rango de peso:</strong> {selectedStageInfo.definition.min} -{" "}
                                         {selectedStageInfo.definition.max} kg
                                     </div>
-                                    <div className="flex items-center">
-                                        <FaClock className="mr-2" />
-                                        <strong>Duración máxima:</strong> {selectedStageInfo.definition.maxDays} días
-                                    </div>
                                 </div>
                             </div>
                         )}

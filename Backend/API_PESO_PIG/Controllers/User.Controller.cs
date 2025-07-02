@@ -251,22 +251,31 @@ namespace API_PESO_PIG.Controllers
         }
 
         [HttpPost("CreateUser")]
-        public IActionResult Add(User entity)
+        public async Task<IActionResult> Add(User entity)
         {
             try
             {
-                // Generar salt
                 string salt = BCrypt.Net.BCrypt.GenerateSalt();
-
-                // Hashear la contraseña
                 entity.Hashed_Password = BCrypt.Net.BCrypt.HashPassword(entity.Hashed_Password + salt);
                 entity.Salt = salt;
-                entity.Token = ""; // Se inicializa el token en vacío por ahora
 
-                // Agregar el usuario
+                // Se sigue asignando el token por si se quiere usar en futuro
+                string token = Convert.ToBase64String(Guid.NewGuid().ToByteArray());
+                entity.ResetToken = token;
+                entity.ResetTokenExpiration = DateTime.UtcNow.AddHours(2);
+                entity.Status = "Inactivo";
+
                 _Services.Add(entity);
 
-                return Ok(new { message = "Usuario creado con éxito" });
+                // Leer los correos del administrador
+                List<string> adminEmails = _Configuration.GetSection("AdminActivation").Get<List<string>>();
+
+                var result = await GeneralFunction.SendNewUserNotification(adminEmails, entity);
+
+                if (!result.Status)
+                    return BadRequest(new { message = "Usuario creado, pero no se pudo notificar al administrador." });
+
+                return Ok(new { message = "Usuario creado y notificación enviada al administrador." });
             }
             catch (Exception ex)
             {
@@ -275,7 +284,34 @@ namespace API_PESO_PIG.Controllers
             }
         }
 
-        [Authorize(Roles = "Administrador")]
+
+        [HttpGet("ActivateAccount")]
+        public async Task<IActionResult> ActivateAccount(string token)
+        {
+            var user = await _Services.GetByTokenAsync(token);
+
+            if (user == null || user.ResetTokenExpiration < DateTime.UtcNow)
+            {
+                return BadRequest("El token es inválido o ha expirado.");
+            }
+
+            if (user.Status == "Activo")
+            {
+                return Ok("La cuenta ya estaba activa.");
+            }
+
+            user.Status = "Activo";
+            user.ResetToken = null;
+            user.ResetTokenExpiration = null;
+
+            await _Services.UpdateUser(user.id_Users, user);
+
+            return Ok("Cuenta activada exitosamente. Ya puedes iniciar sesión.");
+        }
+
+
+
+        [Authorize]
         [HttpGet("ConsultAllUser")]
         public ActionResult<IEnumerable<User>> AllUsers()
         {

@@ -155,5 +155,87 @@ public void Addlog(string newlog)
                 return (false, ex.Message);
             }
         }
+
+        public async Task<ResponseSend> SendNewUserNotification(List<string> adminEmails, User newUser)
+        {
+            ResponseSend response = new ResponseSend();
+            try
+            {
+                using (SmtpClient smtpClient = new SmtpClient
+                {
+                    Host = ConfigServer.HostName,
+                    Port = ConfigServer.PortHost,
+                    Credentials = new NetworkCredential(ConfigServer.Email, ConfigServer.Password),
+                    EnableSsl = true
+                })
+                {
+                    MailAddress remitente = new MailAddress(ConfigServer.Email, "SOFTWARE PESO PIG", Encoding.UTF8);
+
+                    foreach (var email in adminEmails)
+                    {
+                        if (string.IsNullOrWhiteSpace(email)) continue;
+
+                        using (MailMessage message = new MailMessage(remitente, new MailAddress(email))
+                        {
+                            IsBodyHtml = true,
+                            Subject = "Nuevo usuario registrado (pendiente por activación)",
+                            Body = GenerateAdminNotificationBody(newUser.Nom_Users, newUser.Email),
+                            BodyEncoding = Encoding.UTF8,
+                        })
+                        {
+                            await smtpClient.SendMailAsync(message);
+                        }
+                    }
+                }
+
+                response.Status = true;
+                response.Message = "Correos de notificación enviados.";
+            }
+            catch (Exception ex)
+            {
+                Addlog(ex.ToString());
+                response.Status = false;
+                response.Message = "Error al enviar correos de notificación.";
+            }
+
+            return response;
+        }
+
+        private string GenerateAdminNotificationBody(string userName, string userEmail)
+        {
+            return $@"
+    <html>
+    <head>
+        <style>
+            .card {{
+                font-family: Arial, sans-serif;
+                background: #fff;
+                padding: 20px;
+                border-radius: 10px;
+                box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+                max-width: 500px;
+                margin: auto;
+                text-align: center;
+            }}
+            .footer {{
+                margin-top: 20px;
+                font-size: 14px;
+                color: #555;
+            }}
+        </style>
+    </head>
+    <body>
+        <div class='card'>
+            <h2>Nuevo usuario registrado</h2>
+            <p><strong>Nombre:</strong> {userName}</p>
+            <p><strong>Correo:</strong> {userEmail}</p>
+            <p class='footer'>
+                Por favor ingresa a tu panel de gestión de usuarios para activar la cuenta manualmente.
+            </p>
+        </div>
+    </body>
+    </html>";
+        }
+
     }
 }

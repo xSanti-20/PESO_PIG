@@ -294,10 +294,6 @@ function RegisterFeedingPage({ refreshData, feedingToEdit, onCancelEdit, closeMo
                 <div>
                   <strong>Peso Promedio:</strong> {selectedCorral.averageWeight || 0} kg
                 </div>
-                <div>
-                  <strong>Etapa:</strong>{" "}
-                  {selectedCorral.averageWeight ? getStageByWeight(selectedCorral.averageWeight) || "No válida" : "N/A"}
-                </div>
               </div>
             </div>
           )}
@@ -314,40 +310,6 @@ function RegisterFeedingPage({ refreshData, feedingToEdit, onCancelEdit, closeMo
             />
             <FaWeightHanging className={styles.icon} />
           </div>
-
-          {/* Cálculo automático */}
-          {feedingCalculation && (
-            <div className="bg-green-50 p-4 rounded-md mb-4">
-              <h3 className="font-semibold text-green-800 mb-2 flex items-center">
-                <FaCalculator className="mr-2" />
-                Cálculo Automático - {feedingCalculation.stageName}
-              </h3>
-              <div className="grid grid-cols-2 gap-2 text-sm">
-                <div>
-                  <strong>Ración recomendada:</strong> {feedingCalculation.recommendedConsumption || "N/A"}{" "}
-                  kg/animal/día
-                </div>
-                <div>
-                  <strong>Ración ingresada:</strong> {feedingCalculation.rationPerAnimal} kg/animal/día
-                </div>
-                <div>
-                  <strong>Número de animales:</strong> {feedingCalculation.numberOfAnimals}
-                </div>
-                <div>
-                  <strong>Total calculado:</strong> {feedingCalculation.totalFood.toFixed(2)} kg
-                </div>
-              </div>
-              {feedingCalculation.recommendedConsumption &&
-                feedingCalculation.rationPerAnimal !== feedingCalculation.recommendedConsumption && (
-                  <div className="flex items-center text-orange-600 mt-2">
-                    <FaInfoCircle className="mr-1" />
-                    <span className="text-xs">
-                      La ración ingresada difiere de la recomendada según el plan de alimentación
-                    </span>
-                  </div>
-                )}
-            </div>
-          )}
 
           {/* Total calculado (solo lectura) */}
           <div className={styles.input_box}>
