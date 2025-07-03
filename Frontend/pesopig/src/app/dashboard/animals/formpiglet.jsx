@@ -134,7 +134,7 @@ function RegisterPiglet({ refreshData, pigletToEdit, onCancelEdit, closeModal, s
         e.preventDefault()
         setLoading(true)
 
-        // Validar que el peso esté en el rango correcto para la etapa seleccionada
+        // Validación de etapa por peso
         if (stageValidation && !stageValidation.isValid && !pigletToEdit) {
             const confirmProceed = window.confirm(
                 `${stageValidation.message}. ¿Deseas continuar de todos modos? Se recomienda seleccionar la etapa ${stageValidation.suggestedStage}.`,
@@ -150,21 +150,47 @@ function RegisterPiglet({ refreshData, pigletToEdit, onCancelEdit, closeModal, s
             weight_Initial: Number.parseFloat(formData.weight_Initial),
         }
 
+        // 🔒 Validación de placa SENA duplicada (en registro y edición)
+        if (formData.placa_Sena) {
+            try {
+                const response = await axiosInstance.get("/api/Piglet/ConsultAllPiglets")
+                const duplicate = response.data.find((p) => {
+                    return (
+                        String(p.placa_Sena) === String(formData.placa_Sena) &&
+                        String(p.id_Piglet) !== String(formData.id_Piglet)
+                    )
+                })
+
+                if (duplicate) {
+                    showAlert("Ya existe un lechón con esta placa SENA.", "error")
+                    setLoading(false)
+                    return
+                }
+            } catch (err) {
+                console.error("Error al verificar placa duplicada:", err)
+                // Puedes mostrar un mensaje genérico si falla la consulta
+                showAlert("Error al validar la placa SENA.", "error")
+                setLoading(false)
+                return
+            }
+        }
+
         try {
             if (pigletToEdit) {
                 await axiosInstance.put("/api/Piglet/UpdatePiglet", body)
                 showAlert(
                     "Lechón actualizado correctamente. El sistema ha verificado automáticamente la etapa según el peso actual.",
-                    "success",
+                    "success"
                 )
             } else {
                 await axiosInstance.post("/api/Piglet/CreatePiglet", body)
                 showAlert(
                     "Lechón registrado correctamente. El sistema verificará automáticamente las transiciones de etapa según los nuevos rangos de peso.",
-                    "success",
+                    "success"
                 )
             }
 
+            // Limpiar formulario
             setFormData({
                 name_Piglet: "",
                 weight_Initial: "",
@@ -180,12 +206,15 @@ function RegisterPiglet({ refreshData, pigletToEdit, onCancelEdit, closeModal, s
             closeModal()
         } catch (error) {
             console.error("Error al procesar lechón:", error)
-            const errorMessage = error.response?.data?.message || "Error al procesar el lechón"
+
+            const errorMessage =
+                error.response?.data?.message || "Error al procesar el lechón"
             showAlert(errorMessage, "error")
         } finally {
             setLoading(false)
         }
     }
+
 
     const getSelectedStageInfo = () => {
         if (!formData.id_Stage || !stages.length) return null

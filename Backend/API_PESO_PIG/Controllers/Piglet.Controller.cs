@@ -29,6 +29,14 @@ namespace API_PESO_PIG.Controllers
         {
             try
             {
+                var existing = _Services.GetPiglets()
+                                        .FirstOrDefault(p => p.Placa_Sena == entity.Placa_Sena);
+
+                if (existing != null)
+                {
+                    return BadRequest(new { message = "Ya existe un lechón con esta placa SENA." });
+                }
+
                 await _Services.Add(entity);
                 return Ok(new { message = "Lechón creado con éxito. El sistema verificará automáticamente las transiciones de etapa." });
             }
@@ -38,6 +46,7 @@ namespace API_PESO_PIG.Controllers
                 return StatusCode(500, new { message = "Error interno del servidor", error = ex.Message });
             }
         }
+
 
         [Authorize]
         [HttpGet("ConsultAllPiglets")]
