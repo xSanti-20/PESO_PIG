@@ -73,28 +73,27 @@ function RegisterFeedingPage({ refreshData, feedingToEdit, onCancelEdit, closeMo
   }, [showAlert])
 
   useEffect(() => {
-    if (isEditing && feedingToEdit) {
+    if (
+      isEditing &&
+      feedingToEdit &&
+      foods.length > 0 &&
+      corrals.length > 0 &&
+      users.length > 0
+    ) {
+      console.log("feedingToEdit recibido:", feedingToEdit)
+
       setFormData({
-        Can_Food: feedingToEdit.Can_Food?.toString() || "",
-        Obc_Feeding: feedingToEdit.Obc_Feeding || "",
-        Sum_Food: feedingToEdit.Sum_Food?.toString() || "",
+        Can_Food: feedingToEdit.can_Food?.toString() || "",
+        Obc_Feeding: feedingToEdit.obc_Feeding || "",
+        Sum_Food: feedingToEdit.sum_Food?.toString() || "",
         id_Users: feedingToEdit.id_Users?.toString() || "",
-        Dat_Feeding: feedingToEdit.Dat_Feeding?.split("T")[0] || "",
+        Dat_Feeding: feedingToEdit.dat_Feeding?.split("T")[0] || "",
         id_Corral: feedingToEdit.id_Corral?.toString() || "",
         id_Food: feedingToEdit.id_Food?.toString() || "",
       })
-    } else {
-      setFormData({
-        Can_Food: "",
-        Obc_Feeding: "",
-        Sum_Food: "",
-        id_Users: "",
-        Dat_Feeding: "",
-        id_Corral: "",
-        id_Food: "",
-      })
     }
-  }, [feedingToEdit])
+  }, [isEditing, feedingToEdit, foods, corrals, users])
+
 
   // Calcular automáticamente cuando se selecciona corral y ración
   useEffect(() => {

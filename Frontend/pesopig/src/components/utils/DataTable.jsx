@@ -35,6 +35,8 @@ function DataTable({
   statusField = "isActive",
   showInactiveRecords = true,
   showStatusColumn = false, // ✅ NUEVO: Controlar si mostrar columna de estado
+  showPdfButton = true, // ✅ NUEVO
+
 }) {
   const [searchTerm, setSearchTerm] = useState("")
   const [currentPage, setCurrentPage] = useState(1)
@@ -253,7 +255,7 @@ function DataTable({
                         </DropdownMenuItem>
                       )}
 
-                      {pigletId && (
+                      {showPdfButton && pigletId && (
                         <DropdownMenuItem
                           onClick={() => handleExportPDF(row)}
                           disabled={isExporting}
@@ -263,6 +265,7 @@ function DataTable({
                           {isExporting ? "Exportando..." : "PDF"}
                         </DropdownMenuItem>
                       )}
+
 
                       {filteredActions.map((action, index) => (
                         <DropdownMenuItem
@@ -379,7 +382,7 @@ function DataTable({
                         </Button>
                       )}
 
-                      {pigletId && (
+                      {showPdfButton && pigletId && (
                         <Button
                           variant="outline"
                           size={isMobile ? "sm" : "sm"}
@@ -391,6 +394,7 @@ function DataTable({
                           {isExporting ? (isMobile ? "..." : "Exportando...") : isMobile ? "PDF" : "PDF"}
                         </Button>
                       )}
+
 
                       {/* ✅ Usar acciones filtradas */}
                       {filteredActions.map((action, index) => (

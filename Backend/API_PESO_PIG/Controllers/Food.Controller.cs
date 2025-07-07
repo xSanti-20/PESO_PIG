@@ -54,7 +54,8 @@ namespace PESO_PIG.Controllers
                 Vlr_Unit = p.Vlr_Unit,
                 Und_Extent = p.Und_Extent,
                 Rat_Food = p.Rat_Food,
-                Name_Stage = p.stage.Name_Stage
+                Name_Stage = p.stage.Name_Stage,
+                Id_Stage = p.id_Stage
             }).ToList();
 
             return Ok(foods);

@@ -50,12 +50,17 @@ function RegisterFoodPage({ refreshData, foodToEdit, onCancelEdit, closeModal, s
   }, [showAlert])
 
   useEffect(() => {
+    console.log("foodToEdit recibido:", foodToEdit)
+
     if (isEditing && foodToEdit) {
+      const stageId = foodToEdit.id_Stage?.toString() || ""
+      console.log("ID de etapa cargado:", stageId, "Tipo:", typeof stageId)
+
       setFormData({
         nam_Food: foodToEdit.nam_Food || "",
-        und_Extent: "KG", // Siempre KG
+        und_Extent: "KG",
         vlr_Unit: foodToEdit.vlr_Unit?.toString() || "",
-        id_Stage: foodToEdit.id_Stage?.toString() || "",
+        id_Stage: stageId,
         rat_Food: foodToEdit.rat_Food?.toString() || "",
         existence: foodToEdit.existence?.toString() || "0",
       })
@@ -69,7 +74,8 @@ function RegisterFoodPage({ refreshData, foodToEdit, onCancelEdit, closeModal, s
         existence: "0",
       })
     }
-  }, [foodToEdit])
+  }, [foodToEdit, isEditing])
+
 
   const handleChange = (e) => {
     const { name, value } = e.target

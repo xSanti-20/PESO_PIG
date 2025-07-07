@@ -283,6 +283,8 @@ function Weighing() {
             showDeleteButton={true} // ✅ Mostrar eliminar
             showToggleButton={false} // ✅ No mostrar toggle
             showStatusColumn={false} // ✅ IMPORTANTE: No mostrar columna
+            showPdfButton={false} // ✅ Ocultar botón PDF solo en esta página
+
             TitlesTable={titlesWeighing}
             FormPage={() => (
               <RegisterWeighing

@@ -128,6 +128,8 @@ function Corral() {
           showDeleteButton={true} // ✅ Mostrar eliminar
           showToggleButton={false} // ✅ No mostrar toggle
           showStatusColumn={false} // ✅ IMPORTANTE: No mostrar columna
+          showPdfButton={false} // ✅ Ocultar botón PDF solo en esta página
+
           FormPage={() => (
             <RegisterCorral
               refreshData={fetchCorral}

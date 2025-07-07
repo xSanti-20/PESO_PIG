@@ -136,6 +136,8 @@ function Feeding() {
             showDeleteButton={true} // ✅ Mostrar eliminar
             showToggleButton={false} // ✅ No mostrar toggle
             showStatusColumn={false} // ✅ IMPORTANTE: No mostrar columna
+            showPdfButton={false} // 👈 Oculta el botón PDF
+
             FormPage={() => (
               <RegisterFeeding
                 refreshData={fetchFeedings}

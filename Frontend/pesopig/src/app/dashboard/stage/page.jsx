@@ -115,6 +115,8 @@ function Stage() {
           showDeleteButton={true}
           showToggleButton={false}
           showStatusColumn={false}
+          showPdfButton={false} // ✅ Ocultar botón PDF solo en esta página
+
           FormPage={() => (
             <RegisterStage
               refreshData={fetchStage}

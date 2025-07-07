@@ -364,7 +364,7 @@ function RegisterPiglet({ refreshData, pigletToEdit, onCancelEdit, closeModal, s
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-1">Placa SENA</label>
                             <input
-                                type="text"
+                                type="number"
                                 name="placa_Sena"
                                 value={formData.placa_Sena}
                                 onChange={handleInputChange}

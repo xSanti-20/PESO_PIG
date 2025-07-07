@@ -15,6 +15,7 @@ function ContentPage({
   isModalOpen,
   setIsModalOpen,
   refreshData,
+  showPdfButton = true, // 👈 Nueva prop
 }) {
   const { isMobile } = useMobile()
 
@@ -35,6 +36,8 @@ function ContentPage({
         onUpdate={onUpdate}
         endpoint={endpoint}
         refreshData={refreshData}
+        showPdfButton={showPdfButton} // ✅ Propagación
+
       />
     </div>
   )
