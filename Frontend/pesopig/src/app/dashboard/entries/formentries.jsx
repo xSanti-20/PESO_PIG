@@ -55,32 +55,37 @@ function RegisterEntryPage({ refreshData, entryToEdit, onCancelEdit, closeModal,
   }, [showAlert])
 
   useEffect(() => {
-    if (isEditing && entryToEdit) {
-      setFormData({
-        id_Food: entryToEdit.id_Food?.toString() || "",
-        Fec_Entries: entryToEdit.Fec_Entries || "",
-        Fec_Expiration: entryToEdit.Fec_Expiration || "",
-        Can_Food: entryToEdit.Can_Food?.toString() || "",
-        vlr_Unitary: entryToEdit.vlr_Unitary?.toString() || "",
-        vlr_Total: entryToEdit.vlr_Total || 0,
-        Nam_Food: entryToEdit.nam_Food || "",
-      })
+    const formatDate = (dateString) => {
+      if (!dateString) return ""
+      return new Date(dateString).toISOString().split("T")[0]
+    }
+
+    if (isEditing && entryToEdit && foods.length > 0) {
+      console.log("Datos para editar entrada:", entryToEdit)
 
       const selectedFood = foods.find((food) => food.id_Food === entryToEdit.id_Food)
-      if (selectedFood) setPreviousPrice(selectedFood.vlr_Unit.toString())
-    } else {
+
       setFormData({
-        id_Food: "",
-        Fec_Entries: "",
-        Fec_Expiration: "",
-        Can_Food: "",
-        vlr_Unitary: "",
-        vlr_Total: 0,
-        Nam_Food: "",
+        id_Food: entryToEdit.id_Food?.toString() || "",
+        Fec_Entries: formatDate(entryToEdit.fec_Entries), // corregido
+        Fec_Expiration: formatDate(entryToEdit.fec_Expiration), // corregido
+        Can_Food: entryToEdit.can_Food?.toString() || "", // corregido
+        vlr_Unitary: entryToEdit.vlr_Unitary?.toString() || "",
+        vlr_Total: entryToEdit.vlr_Total || 0,
+        Nam_Food: selectedFood?.nam_Food || entryToEdit.nam_Food || "",
       })
-      setPreviousPrice("")
+
+      if (selectedFood) {
+        setPreviousPrice(selectedFood.vlr_Unit.toString())
+      } else {
+        setPreviousPrice("")
+      }
     }
-  }, [entryToEdit, foods])
+  }, [isEditing, entryToEdit, foods])
+
+
+
+
 
   // Calcular conversión y total cuando cambian cantidad o precio unitario
   useEffect(() => {

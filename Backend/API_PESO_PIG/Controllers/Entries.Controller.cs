@@ -54,7 +54,8 @@ namespace API_PESO_PIG.Controllers
                 Can_Food = p.Can_Food,
                 Vlr_Promedio = p.Vlr_Promedio,
                 Nam_Food = p.food.Nam_Food,
-                
+                id_Food = p.id_Food
+
             }).ToList();
 
             return Ok(entries);
